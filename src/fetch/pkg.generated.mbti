@@ -1,0 +1,43 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moona2a/fetch"
+
+import {
+  "moonbitlang/core/json",
+  "moonbitstack/moona2a",
+  "moonbitstack/moonfetch",
+  "moonbitstack/moonjrpc",
+}
+
+// Values
+pub let token_header : String
+
+pub let webhook_timeout_millis : Int32
+
+// Errors
+pub suberror Unreachable {
+  Unreachable(String)
+}
+
+pub suberror WrongShape {
+  WrongShape(String)
+}
+
+// Types and methods
+pub(all) struct HttpTransport {
+  client : @moonfetch.Client
+  path : String
+  card_path : String
+}
+pub async fn HttpTransport::discover(Self) -> @json.Json
+pub async fn HttpTransport::exchange(Self, @moonjrpc.Message) -> @moonjrpc.Message
+pub fn HttpTransport::new(String, path? : String, card_path? : String) -> Self raise
+pub async fn HttpTransport::stream(Self, @moonjrpc.Message, &@moona2a.ReplySink) -> Unit
+
+pub(all) struct Webhook {
+}
+pub async fn Webhook::notify(Self, @moona2a.TaskPushConfig, @moona2a.StreamEvent) -> Unit
+pub impl @moona2a.Notifier for Webhook
+
+// Type aliases
+
+// Traits

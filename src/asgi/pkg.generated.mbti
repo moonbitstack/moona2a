@@ -1,0 +1,28 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moona2a/asgi"
+
+import {
+  "moonbitstack/moona2a",
+  "moonbitstack/moonasgi/spec",
+  "moonbitstack/moonjrpc",
+}
+
+// Values
+pub fn to_asgi(@moona2a.Server, options? : Options) -> async (@spec.Scope, async () -> @spec.Event, async (@spec.Event) -> Unit) -> Unit
+
+// Errors
+
+// Types and methods
+pub(all) struct Options {
+  rpc_path : String
+  card_path : String
+  cache_seconds : Int32
+}
+pub fn Options::new() -> Self
+
+type Stream
+pub async fn Stream::reply(Self, @moonjrpc.Message) -> Unit
+
+// Type aliases
+
+// Traits

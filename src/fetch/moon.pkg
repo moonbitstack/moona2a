@@ -1,0 +1,34 @@
+// The HTTP side of the wire, over moonfetch: a client that speaks JSON-RPC over HTTP, and a
+// notifier that posts a task's updates to a caller's webhook.
+
+import {
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/json",
+  "moonbitstack/moona2a",
+  "moonbitstack/moonfetch",
+  "moonbitstack/moonhttp/sse",
+  "moonbitstack/moonjrpc",
+}
+
+import {
+  "moonbitlang/async",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/json",
+  "moonbitstack/moona2a",
+  "moonbitstack/moonfetch",
+  "moonbitstack/moonhttp/sse",
+  "moonbitstack/moonjrpc",
+} for "test"
+
+options(
+  targets: {
+    "transport.mbt": [ "native", "wasm" ],
+    "notifier.mbt": [ "native", "wasm" ],
+  },
+)
+
+// The transport needs sockets, so its files exist for the two targets that have them. On the
+// others the package is empty, which leaves its imports unused; that is this package's normal
+// state, not a mistake to report.
+
+warnings = "-29"
