@@ -1,172 +1,253 @@
-// A2A streaming (Koog `a2a-core` `TaskStatusUpdateEvent` / `TaskArtifactUpdateEvent` + the client's
-// `message/stream`): instead of one reply, the agent streams a sequence of events over SSE as the
-// task progresses — status transitions and artifact chunks, ending on a `final` status. The events
-// and their wire form are here; the live SSE body is read through an injectable `EventStream` so the
-// pure parsing is testable, with a real long-lived HTTP connection supplying it in production.
+// The two methods whose answer is a stream: a message the agent works while the caller watches,
+// and a task the caller joins after the fact. Push registrations live here too, because a webhook
+// is the third way the same events reach a caller.
 
 ///|
-/// A task's status changed while streaming (A2A `TaskStatusUpdateEvent`); `is_final` ends the stream.
-pub(all) struct TaskStatusUpdateEvent {
-  task_id : String
-  context_id : String
-  status : TaskStatus
-  is_final : Bool
-  metadata : Json?
-} derive(Eq, Debug)
-
-///|
-/// The agent produced (part of) an artifact while streaming (A2A `TaskArtifactUpdateEvent`).
-pub(all) struct TaskArtifactUpdateEvent {
-  task_id : String
-  context_id : String
-  artifact : Artifact
-  append : Bool?
-  last_chunk : Bool?
-  metadata : Json?
-} derive(Eq, Debug)
-
-///|
-/// One event of a streamed response (A2A streaming `Event` union, discriminated by `kind`).
-pub(all) enum StreamEvent {
-  StreamTask(Task)
-  StreamMessage(Message)
-  StreamStatusUpdate(TaskStatusUpdateEvent)
-  StreamArtifactUpdate(TaskArtifactUpdateEvent)
-} derive(Eq, Debug)
-
-///|
-/// Where a streamed response body comes from (the SSE side of Koog's `ClientTransport`): send the
-/// request, get back the whole SSE body. Injectable so the parsing is testable without a live socket.
-pub(open) trait EventStream {
-  fn open_stream(Self, request : Json) -> String raise
-}
-
-// ─── wire ────────────────────────────────────────────────────────────────────
-
-///|
-pub fn TaskStatusUpdateEvent::to_json(self : TaskStatusUpdateEvent) -> Json {
-  let e = new_obj()
-  e["kind"] = "status-update".to_json()
-  e["taskId"] = self.task_id.to_json()
-  e["contextId"] = self.context_id.to_json()
-  e["status"] = self.status.to_json()
-  e["final"] = self.is_final.to_json()
-  put_opt_json(e, "metadata", self.metadata)
-  Json::object(e)
+/// Where a reply goes. A transport turns each one into an SSE frame, a body, or a test's list.
+pub(open) trait ReplySink {
+  /// Send one JSON-RPC message.
+  async fn reply(Self, @moonjrpc.Message) -> Unit
 }
 
 ///|
-pub fn TaskStatusUpdateEvent::from_json(
-  j : Json,
-) -> TaskStatusUpdateEvent raise {
-  guard j is Object(o) else {
-    raise A2AError("status-update must be an object")
-  }
-  {
-    task_id: str_field(o, "taskId", ""),
-    context_id: str_field(o, "contextId", ""),
-    status: match o.get("status") {
-      Some(s) => TaskStatus::from_json(s)
-      None => raise A2AError("status-update is missing status")
-    },
-    is_final: match opt_bool(o, "final") {
-      Some(b) => b
-      None => false
-    },
-    metadata: o.get("metadata"),
-  }
+/// A sink that wraps each event of a task in the JSON-RPC reply the caller is waiting for.
+priv struct Broadcast {
+  id : @moonjrpc.Id
+  out : &ReplySink
 }
 
 ///|
-pub fn TaskArtifactUpdateEvent::to_json(self : TaskArtifactUpdateEvent) -> Json {
-  let e = new_obj()
-  e["kind"] = "artifact-update".to_json()
-  e["taskId"] = self.task_id.to_json()
-  e["contextId"] = self.context_id.to_json()
-  e["artifact"] = self.artifact.to_json()
-  put_opt_bool(e, "append", self.append)
-  put_opt_bool(e, "lastChunk", self.last_chunk)
-  put_opt_json(e, "metadata", self.metadata)
-  Json::object(e)
+impl EventSink for Broadcast with fn emit(self, event) {
+  self.out.reply(@moonjrpc.Message::Reply(id=self.id, result=event.to_json()))
 }
 
 ///|
-pub fn TaskArtifactUpdateEvent::from_json(
-  j : Json,
-) -> TaskArtifactUpdateEvent raise {
-  guard j is Object(o) else {
-    raise A2AError("artifact-update must be an object")
-  }
-  {
-    task_id: str_field(o, "taskId", ""),
-    context_id: str_field(o, "contextId", ""),
-    artifact: match o.get("artifact") {
-      Some(a) => Artifact::from_json(a)
-      None => raise A2AError("artifact-update is missing artifact")
-    },
-    append: opt_bool(o, "append"),
-    last_chunk: opt_bool(o, "lastChunk"),
-    metadata: o.get("metadata"),
-  }
-}
-
-///|
-/// Parse a streamed event from its JSON, dispatching on `kind`.
-pub fn StreamEvent::from_json(j : Json) -> StreamEvent raise {
-  guard j is Object(o) else { raise A2AError("stream event must be an object") }
-  match str_field(o, "kind", "") {
-    "task" => StreamTask(Task::from_json(j))
-    "message" => StreamMessage(Message::from_json(j))
-    "status-update" => StreamStatusUpdate(TaskStatusUpdateEvent::from_json(j))
-    "artifact-update" =>
-      StreamArtifactUpdate(TaskArtifactUpdateEvent::from_json(j))
-    other => raise A2AError("unknown stream event kind: " + other)
-  }
-}
-
-// ─── client ──────────────────────────────────────────────────────────────────
-
-///|
-/// Send `message` and collect the streamed events (`message/stream`): open the SSE stream, parse
-/// each `data:` frame as a JSON-RPC response, and turn each `result` into a `StreamEvent`.
-pub fn stream_message(
-  source : &EventStream,
-  message : Message,
-) -> Array[StreamEvent] raise {
-  let request : Json = {
-    "jsonrpc": "2.0",
-    "id": Json::number(1),
-    "method": "message/stream",
-    "params": { "message": message.to_json() },
-  }
-  let events : Array[StreamEvent] = []
-  for frame in @sse.events(source.open_stream(request)) {
-    let response = @json.parse(frame.data)
-    guard response is Object(o) else {
-      raise A2AError("streamed frame must be a JSON object")
+/// Answer a streaming method: `SendStreamingMessage` works the message, `SubscribeToTask` joins a
+/// task that is already running. Either way the caller gets one reply per event, and a refusal
+/// with the request's id if the call cannot start.
+async fn Server::stream_call(
+  self : Server,
+  id : @moonjrpc.Id,
+  rpc_name : String,
+  params : Json,
+  out : &ReplySink,
+) -> Unit {
+  let broadcast : Broadcast = { id, out, }
+  let outcome = try {
+    match Method::from_name(rpc_name) {
+      Some(SendStreamingMessage) => {
+        let request : SendMessageRequest = decode(Some(params))
+        let prepared = self.prepare(request)
+        self.remember_inline_push(prepared.task, prepared.configuration.push)
+        self.work(prepared, broadcast) |> ignore
+      }
+      Some(SubscribeToTask) => self.follow(Some(params), broadcast)
+      Some(_) | None => raise UnsupportedOperation(rpc_name).as_failed()
     }
-    match o.get("result") {
-      Some(result) => events.push(StreamEvent::from_json(result))
-      None => raise A2AError("streamed frame is missing 'result'")
+    None
+  } catch {
+    error => Some(error)
+  }
+  match outcome {
+    Some(error) =>
+      out.reply(@moonjrpc.Message::Refusal(id~, failure=failure_of(error))) catch {
+        _ => ()
+      }
+    None => ()
+  }
+}
+
+///|
+/// Answer `SubscribeToTask`: the task as it stands, then everything that happens to it until it
+/// finishes or the caller goes away.
+async fn Server::follow(
+  self : Server,
+  params : Json?,
+  out : &EventSink,
+) -> Unit {
+  let fields = params_object(params)
+  let task_id = match pick_str(fields, "id", "id") {
+    Some(task_id) => task_id
+    None => raise InvalidParams("SubscribeToTask needs an id").as_failed()
+  }
+  let task = match self.state.store.get(task_id) {
+    Some(task) => task
+    None => raise TaskNotFound(task_id).as_failed()
+  }
+  if task.status.state.terminal() {
+    raise UnsupportedOperation(
+      "task \{task_id} has finished and cannot be subscribed to",
+    ).as_failed()
+  }
+  // A subscriber starts from the task as it is now and follows what happens next; what came
+  // before is already in the task's history and artifacts.
+  let mut cursor = match self.state.logs.get(task_id) {
+    Some(log) => log.events.length()
+    None => 0
+  }
+  out.emit(StreamEvent::TaskSnapshot(task))
+  let mut following = true
+  while following {
+    let (events, open) = match self.state.logs.get(task_id) {
+      Some(log) => (log.events, log.open)
+      None => {
+        let none : Array[StreamEvent] = []
+        (none, false)
+      }
+    }
+    while cursor < events.length() {
+      out.emit(events[cursor])
+      cursor = cursor + 1
+    }
+    if open {
+      @async.sleep(follow_tick_millis)
+    } else {
+      following = false
     }
   }
-  events
 }
 
 ///|
-pub extend StreamEvent with Debug::{to_repr}
+/// Register the push configuration that travelled with a send request, so the task's updates go to
+/// the webhook it names.
+fn Server::remember_inline_push(
+  self : Server,
+  task : Task,
+  push : TaskPushConfig?,
+) -> Unit {
+  match push {
+    Some(config) => {
+      let id = if config.id == "" { self.mint() } else { config.id }
+      self.store_push({ ..config, id, task_id: task.id, })
+    }
+    None => ()
+  }
+}
 
 ///|
-pub extend StreamEvent with Eq::{not_equal, equal}
+/// Keep `config` as one of the task's registrations, replacing any earlier one with the same id.
+fn Server::store_push(self : Server, config : TaskPushConfig) -> Unit {
+  let kept : Array[TaskPushConfig] = []
+  for existing in self.push_configs(config.task_id) {
+    if existing.id != config.id {
+      kept.push(existing)
+    }
+  }
+  kept.push(config)
+  self.state.push[config.task_id] = kept
+}
 
 ///|
-pub extend TaskArtifactUpdateEvent with Debug::{to_repr}
+/// Answer `CreateTaskPushNotificationConfig`.
+fn Server::on_push_create(
+  self : Server,
+  params : Json?,
+) -> Json raise @moonjrpc.Failed {
+  self.push_supported()
+  let config : TaskPushConfig = decode(params)
+  if config.task_id == "" {
+    raise InvalidParams("a push configuration needs a taskId").as_failed()
+  }
+  if config.url == "" {
+    raise InvalidParams("a push configuration needs a url").as_failed()
+  }
+  match self.state.store.get(config.task_id) {
+    Some(_) => ()
+    None => raise TaskNotFound(config.task_id).as_failed()
+  }
+  let id = if config.id == "" { self.mint() } else { config.id }
+  let stored = { ..config, id, }
+  self.store_push(stored)
+  stored.to_json()
+}
 
 ///|
-pub extend TaskArtifactUpdateEvent with Eq::{not_equal, equal}
+/// Answer `GetTaskPushNotificationConfig`.
+fn Server::on_push_get(
+  self : Server,
+  params : Json?,
+) -> Json raise @moonjrpc.Failed {
+  self.push_supported()
+  let fields = params_object(params)
+  let task_id = match pick_str(fields, "taskId", "task_id") {
+    Some(task_id) => task_id
+    None => raise InvalidParams("a push lookup needs a taskId").as_failed()
+  }
+  let id = match pick_str(fields, "id", "id") {
+    Some(id) => id
+    None => raise InvalidParams("a push lookup needs an id").as_failed()
+  }
+  for config in self.push_configs(task_id) {
+    if config.id == id {
+      return config.to_json()
+    }
+  }
+  raise TaskNotFound("\{task_id}/\{id}").as_failed()
+}
 
 ///|
-pub extend TaskStatusUpdateEvent with Debug::{to_repr}
+/// Answer `ListTaskPushNotificationConfigs`.
+fn Server::on_push_list(
+  self : Server,
+  params : Json?,
+) -> Json raise @moonjrpc.Failed {
+  self.push_supported()
+  let fields = params_object(params)
+  let task_id = match pick_str(fields, "taskId", "task_id") {
+    Some(task_id) => task_id
+    None => raise InvalidParams("a push listing needs a taskId").as_failed()
+  }
+  let encoded : Array[Json] = []
+  for config in self.push_configs(task_id) {
+    encoded.push(config.to_json())
+  }
+  Json::object({
+    "configs": Json::array(encoded),
+    "nextPageToken": Json::string(""),
+  })
+}
 
 ///|
-pub extend TaskStatusUpdateEvent with Eq::{not_equal, equal}
+/// Answer `DeleteTaskPushNotificationConfig`. Deleting a registration that is already gone is not
+/// an error: the caller asked for a state, and the state holds.
+fn Server::on_push_delete(
+  self : Server,
+  params : Json?,
+) -> Json raise @moonjrpc.Failed {
+  self.push_supported()
+  let fields = params_object(params)
+  let task_id = match pick_str(fields, "taskId", "task_id") {
+    Some(task_id) => task_id
+    None => raise InvalidParams("a push deletion needs a taskId").as_failed()
+  }
+  let id = match pick_str(fields, "id", "id") {
+    Some(id) => id
+    None => raise InvalidParams("a push deletion needs an id").as_failed()
+  }
+  let kept : Array[TaskPushConfig] = []
+  for config in self.push_configs(task_id) {
+    if config.id != id {
+      kept.push(config)
+    }
+  }
+  self.state.push[task_id] = kept
+  Json::null()
+}
+
+///|
+/// Refuse the push methods when the card does not claim them, as section 3.3.4 asks.
+fn Server::push_supported(self : Server) -> Unit raise @moonjrpc.Failed {
+  if !self.state.card.capabilities.push_notifications {
+    raise PushNotificationNotSupported("").as_failed()
+  }
+}
+
+///|
+/// A sink that throws its events away, for a run nobody is watching.
+pub struct Discard {}
+
+///|
+impl EventSink for Discard with fn emit(self, event) {
+  ignore(self)
+  ignore(event)
+}

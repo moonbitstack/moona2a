@@ -1,104 +1,228 @@
-// The A2A client (Koog `a2a-client` `A2AClient`): the JSON-RPC 2.0 methods a caller uses to talk to
-// a remote agent — `message/send` (which resolves to either a `Task` the agent opened or a direct
-// `Message` reply), `tasks/get`, and `tasks/cancel`. As with the MCP adapter, the transport is an
-// injectable synchronous round-trip: a mock in tests, a real HTTP/JSON-RPC call in production.
+// The calling side: the methods a server answers, invoked over a transport that carries JSON-RPC.
+// `moona2a/http` supplies one over HTTP; a test supplies one that answers from a table.
 
 ///|
-/// A synchronous A2A transport: send one JSON-RPC request, get its response (Koog `ClientTransport`).
-pub(open) trait A2ATransport {
-  fn round_trip(Self, request : Json) -> Json raise
+/// How a client reaches an agent. A transport carries JSON-RPC messages and finds the card; it
+/// knows nothing about tasks.
+pub(open) trait Transport {
+  /// Send one message and return the answer.
+  async fn exchange(Self, @moonjrpc.Message) -> @moonjrpc.Message
+  /// Send one message and hand every reply to `out` as it arrives, for a method whose answer is a
+  /// stream.
+  async fn stream(Self, @moonjrpc.Message, &ReplySink) -> Unit
+  /// Read the agent's card from its well-known address.
+  async fn discover(Self) -> Json
 }
 
 ///|
-/// The outcome of `message/send`: the agent either opened a task or replied with a message directly
-/// (A2A's result is a `Task | Message` union, discriminated by `kind`).
-pub(all) enum SendResult {
-  ResultTask(Task)
-  ResultMessage(Message)
-} derive(Eq, Debug)
-
-///|
-/// A client for a remote agent over `transport`, issuing JSON-RPC 2.0 calls with increasing ids.
-pub struct A2AClient {
-  transport : &A2ATransport
-  mut next_id : Int32
+/// A caller's handle on a remote agent.
+pub struct Client {
+  transport : &Transport
+  mut next : Int64
 }
 
 ///|
 /// A client talking to the agent behind `transport`.
-pub fn A2AClient::new(transport : &A2ATransport) -> A2AClient {
-  { transport, next_id: 1, }
+pub fn Client::new(transport : &Transport) -> Client {
+  { transport, next: 0L, }
 }
 
 ///|
-/// Issue a JSON-RPC call and return its `result`, raising on a JSON-RPC `error` or a missing result.
-fn A2AClient::request(
-  self : A2AClient,
-  rpc_method : String,
-  params : Json,
-) -> Json raise {
-  let id = self.next_id
-  self.next_id = self.next_id + 1
-  let request : Json = {
-    "jsonrpc": "2.0",
-    "id": Json::number(id.to_double()),
-    "method": rpc_method,
-    "params": params,
-  }
-  let response = self.transport.round_trip(request)
-  guard response is Object(o) else {
-    raise A2AError("JSON-RPC response must be a JSON object")
-  }
-  if o.get("error") is Some(Object(e)) {
-    raise A2AError("A2A error: " + str_field(e, "message", "unknown"))
-  }
-  match o.get("result") {
-    Some(r) => r
-    None => raise A2AError("JSON-RPC response is missing 'result'")
+/// The next request identifier. Ids only have to be unique to this client, since the transport
+/// pairs each answer with the request it sent.
+fn Client::take_id(self : Client) -> @moonjrpc.Id {
+  self.next = self.next + 1L
+  @moonjrpc.Id::int(self.next)
+}
+
+///|
+/// Read what an agent sent. A shape this library cannot read is the agent's fault, not the
+/// caller's, so it comes back as `InvalidAgentResponse` naming the path that would not read.
+fn[T : @json.FromJson] read_reply(json : Json) -> T raise {
+  @json.from_json(json) catch {
+    @json.JsonDecodeError((path, reason)) =>
+      raise InvalidAgentResponse("\{path}: \{reason}")
   }
 }
 
 ///|
-/// Send `message` to the agent (`message/send`), returning the task it opened or its direct reply.
-pub fn A2AClient::send_message(
-  self : A2AClient,
+/// Send `message` and return what the agent answered with: a task, or a message.
+pub async fn Client::send_message(
+  self : Client,
   message : Message,
-) -> SendResult raise {
-  let result = self.request("message/send", { "message": message.to_json() })
-  guard result is Object(o) else {
-    raise A2AError("message/send result must be a JSON object")
+  configuration? : SendMessageConfig,
+  metadata? : Json,
+  tenant? : String,
+) -> StreamEvent {
+  let request : SendMessageRequest = {
+    message,
+    configuration,
+    metadata,
+    tenant,
   }
-  match str_field(o, "kind", "") {
-    "task" => ResultTask(Task::from_json(result))
-    "message" => ResultMessage(Message::from_json(result))
-    other => raise A2AError("unexpected message/send result kind: " + other)
+  let result = self.call(Method::SendMessage, request.to_json())
+  let event : StreamEvent = read_reply(result)
+  match event {
+    TaskSnapshot(_) | TaskMessage(_) => event
+    StatusChange(update) =>
+      raise InvalidAgentResponse(
+        "SendMessage answered with a \{update.status.state.wire()} event",
+      )
+    ArtifactChunk(update) =>
+      raise InvalidAgentResponse(
+        "SendMessage answered with an artifact \{update.artifact.artifact_id}",
+      )
   }
 }
 
 ///|
-/// Fetch the current state of a task (`tasks/get`), optionally bounding the returned history.
-pub fn A2AClient::get_task(
-  self : A2AClient,
-  task_id : String,
+/// Send `message` and hand every event to `sink` as it arrives.
+pub async fn Client::send_streaming_message(
+  self : Client,
+  message : Message,
+  sink : &ReplySink,
+  configuration? : SendMessageConfig,
+  metadata? : Json,
+  tenant? : String,
+) -> Unit {
+  let request : SendMessageRequest = {
+    message,
+    configuration,
+    metadata,
+    tenant,
+  }
+  let call = @moonjrpc.Message::Call(
+    id=self.take_id(),
+    name=Method::SendStreamingMessage.name(),
+    params=Some(request.to_json()),
+  )
+  self.transport.stream(call, sink)
+}
+
+///|
+/// Read a task as it stands.
+pub async fn Client::get_task(
+  self : Client,
+  id : String,
   history_length? : Int32,
-) -> Task raise {
-  let params = new_obj()
-  params["id"] = task_id.to_json()
-  match history_length {
-    Some(n) => params["historyLength"] = Json::number(n.to_double())
-    None => ()
+) -> Task {
+  let params = object()
+  params["id"] = Json::string(id)
+  put_int(params, "historyLength", history_length)
+  read_reply(self.call(Method::GetTask, Json::object(params)))
+}
+
+///|
+/// Read the tasks the caller may see.
+pub async fn Client::list_tasks(
+  self : Client,
+  query : ListTasksQuery,
+) -> TaskPage {
+  read_reply(self.call(Method::ListTasks, query.to_json()))
+}
+
+///|
+/// Ask the agent to stop a task.
+pub async fn Client::cancel_task(self : Client, id : String) -> Task {
+  let params = object()
+  params["id"] = Json::string(id)
+  read_reply(self.call(Method::CancelTask, Json::object(params)))
+}
+
+///|
+/// Join a task that is already running, and follow it to its end.
+pub async fn Client::subscribe_to_task(
+  self : Client,
+  id : String,
+  sink : &ReplySink,
+) -> Unit {
+  let params = object()
+  params["id"] = Json::string(id)
+  let call = @moonjrpc.Message::Call(
+    id=self.take_id(),
+    name=Method::SubscribeToTask.name(),
+    params=Some(Json::object(params)),
+  )
+  self.transport.stream(call, sink)
+}
+
+///|
+/// Register a webhook for a task's updates.
+pub async fn Client::create_push_config(
+  self : Client,
+  config : TaskPushConfig,
+) -> TaskPushConfig {
+  read_reply(self.call(Method::CreatePushConfig, config.to_json()))
+}
+
+///|
+/// Read one of a task's webhook registrations.
+pub async fn Client::get_push_config(
+  self : Client,
+  task_id : String,
+  id : String,
+) -> TaskPushConfig {
+  let params = object()
+  params["taskId"] = Json::string(task_id)
+  params["id"] = Json::string(id)
+  read_reply(self.call(Method::GetPushConfig, Json::object(params)))
+}
+
+///|
+/// Read every webhook registration a task has.
+pub async fn Client::list_push_configs(
+  self : Client,
+  task_id : String,
+) -> Array[TaskPushConfig] {
+  let params = object()
+  params["taskId"] = Json::string(task_id)
+  let page : PushConfigPage = read_reply(
+    self.call(Method::ListPushConfigs, Json::object(params)),
+  )
+  page.configs
+}
+
+///|
+/// Remove a webhook registration. Removing one that is already gone is not an error.
+pub async fn Client::delete_push_config(
+  self : Client,
+  task_id : String,
+  id : String,
+) -> Unit {
+  let params = object()
+  params["taskId"] = Json::string(task_id)
+  params["id"] = Json::string(id)
+  self.call(Method::DeletePushConfig, Json::object(params)) |> ignore
+}
+
+///|
+/// Read the card the agent shows only to authenticated callers.
+pub async fn Client::extended_card(self : Client) -> AgentCard {
+  read_reply(self.call(Method::GetExtendedCard, Json::object(Map([]))))
+}
+
+///|
+/// Read the agent's public card.
+pub async fn Client::discover(self : Client) -> AgentCard {
+  read_reply(self.transport.discover())
+}
+
+///|
+/// Make one call and return its result, turning a refusal into the error it names.
+async fn Client::call(self : Client, rpc : Method, params : Json) -> Json {
+  let call = @moonjrpc.Message::Call(
+    id=self.take_id(),
+    name=rpc.name(),
+    params=Some(params),
+  )
+  let answer = self.transport.exchange(call)
+  match answer {
+    @moonjrpc.Message::Reply(result~, ..) => result
+    @moonjrpc.Message::Refusal(failure~, ..) =>
+      raise Refused::from_failure(failure)
+    _ =>
+      raise InvalidAgentResponse(
+        "the transport answered a call with something that is not a reply",
+      )
   }
-  Task::from_json(self.request("tasks/get", Json::object(params)))
 }
-
-///|
-/// Request cancellation of a task (`tasks/cancel`), returning its updated state.
-pub fn A2AClient::cancel_task(self : A2AClient, task_id : String) -> Task raise {
-  Task::from_json(self.request("tasks/cancel", { "id": task_id }))
-}
-
-///|
-pub extend SendResult with Debug::{to_repr}
-
-///|
-pub extend SendResult with Eq::{not_equal, equal}

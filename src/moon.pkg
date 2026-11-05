@@ -1,11 +1,17 @@
-// The Agent2Agent protocol: cards, tasks, streaming, push.
+// The wire model, the JSON-RPC method table and the task lifecycle. No socket here.
 
 import {
+  "moonbitlang/async",
+  "moonbitlang/core/encoding/base64",
+  "moonbitlang/core/env",
   "moonbitlang/core/json",
-  "moonbitstack/moonhttp/sse",
+  "moonbitlang/core/string",
+  "moonbitstack/moondate",
+  "moonbitstack/moonjrpc",
 }
 
 import {
+  "moonbitlang/async",
   "moonbitlang/core/json",
-  "moonbitstack/moonhttp/sse",
+  "moonbitstack/moonjrpc",
 } for "test"

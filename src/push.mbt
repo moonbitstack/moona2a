@@ -1,178 +1,161 @@
-// A2A push-notification config (Koog `a2a-core` `TaskPushNotificationConfig` + the four
-// `tasks/pushNotificationConfig/*` client methods): a caller registers a webhook the agent calls
-// when a task changes state out of band, then reads, lists, and deletes those registrations. Model
-// with its wire form, plus the client calls over the same JSON-RPC transport.
+// Push notifications: a caller leaves a URL, and the agent posts task updates there when the task
+// runs on after the caller has gone. The registration and the delivered configuration are the same
+// object in 1.0, flattened into one message.
 
 ///|
-/// How the agent authenticates its callback to the caller (A2A `PushNotificationAuthenticationInfo`).
-pub(all) struct PushAuthInfo {
-  schemes : Array[String]
+/// How the agent proves itself to the caller's webhook (A2A `AuthenticationInfo`).
+#derive(Eq)
+pub(all) struct AuthenticationInfo {
+  scheme : String
   credentials : String?
-} derive(Eq, Debug)
+}
 
 ///|
-/// A webhook the agent calls on task updates (A2A `PushNotificationConfig`).
-pub(all) struct PushNotificationConfig {
-  id : String?
+/// A bearer token the agent sends with each notification.
+pub fn AuthenticationInfo::bearer(token : String) -> AuthenticationInfo {
+  { scheme: "Bearer", credentials: Some(token), }
+}
+
+///|
+/// Where the agent posts a task's updates, and how it authenticates there (A2A
+/// `TaskPushNotificationConfig`).
+#derive(Eq)
+pub(all) struct TaskPushConfig {
+  id : String
+  task_id : String
   url : String
   token : String?
-  authentication : PushAuthInfo?
-} derive(Eq, Debug)
-
-///|
-/// A push-notification config bound to a task (A2A `TaskPushNotificationConfig`).
-pub(all) struct TaskPushConfig {
-  task_id : String
-  config : PushNotificationConfig
-} derive(Eq, Debug)
-
-// ─── wire ────────────────────────────────────────────────────────────────────
-
-///|
-pub fn PushAuthInfo::to_json(self : PushAuthInfo) -> Json {
-  let a = new_obj()
-  a["schemes"] = Json::array(self.schemes.map(fn(s) { s.to_json() }))
-  put_opt_str(a, "credentials", self.credentials)
-  Json::object(a)
+  authentication : AuthenticationInfo?
+  tenant : String?
 }
 
 ///|
-pub fn PushAuthInfo::from_json(j : Json) -> PushAuthInfo raise {
-  guard j is Object(o) else {
-    raise A2AError("push auth info must be an object")
-  }
+/// A registration of `url` for `task_id`, under `id`.
+pub fn TaskPushConfig::new(
+  id : String,
+  task_id : String,
+  url : String,
+) -> TaskPushConfig {
+  { id, task_id, url, token: None, authentication: None, tenant: None, }
+}
+
+///|
+/// The same registration, carrying the caller's own `token` in each notification's headers.
+pub fn TaskPushConfig::with_token(
+  self : TaskPushConfig,
+  token : String,
+) -> TaskPushConfig {
+  { ..self, token: Some(token), }
+}
+
+///|
+/// The same registration, authenticating with `authentication`.
+pub fn TaskPushConfig::authenticating(
+  self : TaskPushConfig,
+  authentication : AuthenticationInfo,
+) -> TaskPushConfig {
+  { ..self, authentication: Some(authentication), }
+}
+
+///|
+/// One page of a task's registrations (A2A `ListTaskPushNotificationConfigsResponse`).
+#derive(Eq)
+pub(all) struct PushConfigPage {
+  configs : Array[TaskPushConfig]
+  next_page_token : String
+}
+
+///|
+pub impl @json.ToJson for AuthenticationInfo with fn to_json(self) {
+  let fields = object()
+  fields["scheme"] = Json::string(self.scheme)
+  put_str(fields, "credentials", self.credentials)
+  Json::object(fields)
+}
+
+///|
+pub impl @json.FromJson for AuthenticationInfo with fn from_json(json, path) {
+  let fields = as_object(json, path)
   {
-    schemes: req_str_array(o, "schemes"),
-    credentials: opt_str(o, "credentials"),
+    scheme: need_str(fields, "scheme", path),
+    credentials: opt_str(fields, "credentials"),
   }
 }
 
 ///|
-pub fn PushNotificationConfig::to_json(self : PushNotificationConfig) -> Json {
-  let c = new_obj()
-  put_opt_str(c, "id", self.id)
-  c["url"] = self.url.to_json()
-  put_opt_str(c, "token", self.token)
+pub impl @json.ToJson for TaskPushConfig with fn to_json(self) {
+  let fields = object()
+  fields["id"] = Json::string(self.id)
+  fields["taskId"] = Json::string(self.task_id)
+  fields["url"] = Json::string(self.url)
+  put_str(fields, "token", self.token)
+  put_str(fields, "tenant", self.tenant)
   match self.authentication {
-    Some(a) => c["authentication"] = a.to_json()
+    Some(authentication) => fields["authentication"] = authentication.to_json()
     None => ()
   }
-  Json::object(c)
+  Json::object(fields)
 }
 
 ///|
-pub fn PushNotificationConfig::from_json(
-  j : Json,
-) -> PushNotificationConfig raise {
-  guard j is Object(o) else { raise A2AError("push config must be an object") }
+pub impl @json.FromJson for TaskPushConfig with fn from_json(json, path) {
+  let fields = as_object(json, path)
   {
-    id: opt_str(o, "id"),
-    url: str_field(o, "url", ""),
-    token: opt_str(o, "token"),
-    authentication: match o.get("authentication") {
-      Some(a) => Some(PushAuthInfo::from_json(a))
-      None => None
-    },
+    id: opt_str(fields, "id").unwrap_or(""),
+    task_id: pick_str(fields, "taskId", "task_id").unwrap_or(""),
+    url: need_str(fields, "url", path),
+    token: opt_str(fields, "token"),
+    authentication: read_opt(
+      fields,
+      "authentication",
+      path,
+      AuthenticationInfo::from_json,
+    ),
+    tenant: opt_str(fields, "tenant"),
   }
 }
 
 ///|
-pub fn TaskPushConfig::to_json(self : TaskPushConfig) -> Json {
-  { "taskId": self.task_id, "pushNotificationConfig": self.config.to_json() }
-}
-
-///|
-pub fn TaskPushConfig::from_json(j : Json) -> TaskPushConfig raise {
-  guard j is Object(o) else {
-    raise A2AError("task push config must be an object")
-  }
-  {
-    task_id: str_field(o, "taskId", ""),
-    config: match o.get("pushNotificationConfig") {
-      Some(c) => PushNotificationConfig::from_json(c)
-      None =>
-        raise A2AError("task push config is missing pushNotificationConfig")
-    },
-  }
-}
-
-// ─── client calls ────────────────────────────────────────────────────────────
-
-///|
-/// Register a push-notification webhook for a task (`tasks/pushNotificationConfig/set`).
-pub fn A2AClient::set_push_config(
-  self : A2AClient,
-  config : TaskPushConfig,
-) -> TaskPushConfig raise {
-  TaskPushConfig::from_json(
-    self.request("tasks/pushNotificationConfig/set", config.to_json()),
-  )
-}
-
-///|
-/// Read a task's push-notification config (`tasks/pushNotificationConfig/get`).
-pub fn A2AClient::get_push_config(
-  self : A2AClient,
-  task_id : String,
-  config_id? : String,
-) -> TaskPushConfig raise {
-  let p = new_obj()
-  p["id"] = task_id.to_json()
-  match config_id {
-    Some(c) => p["pushNotificationConfigId"] = c.to_json()
-    None => ()
-  }
-  TaskPushConfig::from_json(
-    self.request("tasks/pushNotificationConfig/get", Json::object(p)),
-  )
-}
-
-///|
-/// List a task's push-notification configs (`tasks/pushNotificationConfig/list`).
-pub fn A2AClient::list_push_configs(
-  self : A2AClient,
-  task_id : String,
-) -> Array[TaskPushConfig] raise {
-  match self.request("tasks/pushNotificationConfig/list", { "id": task_id }) {
-    Array(a) => {
-      let out : Array[TaskPushConfig] = []
-      for x in a {
-        out.push(TaskPushConfig::from_json(x))
-      }
-      out
-    }
-    _ => raise A2AError("list result must be a JSON array")
-  }
-}
-
-///|
-/// Delete a task's push-notification config (`tasks/pushNotificationConfig/delete`).
-pub fn A2AClient::delete_push_config(
-  self : A2AClient,
-  task_id : String,
-  config_id : String,
-) -> Unit raise {
-  self.request("tasks/pushNotificationConfig/delete", {
-    "id": task_id,
-    "pushNotificationConfigId": config_id,
+pub impl @json.ToJson for PushConfigPage with fn to_json(self) {
+  Json::object({
+    "configs": Json::array(self.configs.map(TaskPushConfig::to_json)),
+    "nextPageToken": Json::string(self.next_page_token),
   })
-  |> ignore
 }
 
 ///|
-pub extend PushAuthInfo with Debug::{to_repr}
+pub impl @json.FromJson for PushConfigPage with fn from_json(json, path) {
+  let fields = as_object(json, path)
+  {
+    configs: read_opt_array(fields, "configs", path, TaskPushConfig::from_json).unwrap_or([],
+    ),
+    next_page_token: opt_str(fields, "nextPageToken").unwrap_or(""),
+  }
+}
 
 ///|
-pub extend PushAuthInfo with Eq::{not_equal, equal}
+pub extend AuthenticationInfo with @json.ToJson::{to_json}
 
 ///|
-pub extend PushNotificationConfig with Debug::{to_repr}
+pub extend TaskPushConfig with @json.ToJson::{to_json}
 
 ///|
-pub extend PushNotificationConfig with Eq::{not_equal, equal}
+pub extend PushConfigPage with @json.ToJson::{to_json}
 
 ///|
-pub extend TaskPushConfig with Debug::{to_repr}
+pub extend AuthenticationInfo with @json.FromJson::{from_json}
+
+///|
+pub extend TaskPushConfig with @json.FromJson::{from_json}
+
+///|
+pub extend PushConfigPage with @json.FromJson::{from_json}
+
+///|
+pub extend AuthenticationInfo with Eq::{not_equal, equal}
 
 ///|
 pub extend TaskPushConfig with Eq::{not_equal, equal}
+
+///|
+pub extend PushConfigPage with Eq::{not_equal, equal}

@@ -1,12 +1,612 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitstack/moona2a"
 
+import {
+  "moonbitlang/async",
+  "moonbitlang/core/json",
+  "moonbitstack/moonjrpc",
+}
+
 // Values
+pub let card_path : String
+
+pub let default_capacity : Int32
+
+pub let follow_tick_millis : Int32
+
+pub fn is_streaming_method(String) -> Bool
+
+pub let protocol_version : String
+
+pub fn request_method(StringView) -> String?
+
+pub fn timestamp_now() -> String
 
 // Errors
+pub(all) suberror Refused {
+  TaskNotFound(String)
+  TaskNotCancelable(String)
+  PushNotificationNotSupported(String)
+  UnsupportedOperation(String)
+  ContentTypeNotSupported(String)
+  InvalidAgentResponse(String)
+  ExtendedAgentCardNotConfigured(String)
+  ExtensionSupportRequired(String)
+  VersionNotSupported(String)
+  InvalidRequest(String)
+  InvalidParams(String)
+}
+pub fn Refused::as_failed(Self) -> @moonjrpc.Failed
+pub fn Refused::code(Self) -> Int32
+pub fn Refused::detail(Self) -> String?
+pub fn Refused::failure(Self) -> @moonjrpc.Failure
+pub fn Refused::from_failure(@moonjrpc.Failure) -> Self
+pub fn Refused::mention(Self) -> String
+pub fn Refused::reason(Self) -> String
 
 // Types and methods
+#derive(Eq)
+pub(all) struct AgentCapabilities {
+  streaming : Bool
+  push_notifications : Bool
+  extended_agent_card : Bool
+  extensions : Array[AgentExtension]
+}
+pub fn AgentCapabilities::equal(Self, Self) -> Bool
+pub fn AgentCapabilities::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AgentCapabilities::not_equal(Self, Self) -> Bool
+pub fn AgentCapabilities::plain() -> Self
+pub fn AgentCapabilities::streaming_and_push() -> Self
+pub fn AgentCapabilities::to_json(Self) -> @json.Json
+pub impl @json.FromJson for AgentCapabilities
+pub impl @json.ToJson for AgentCapabilities
+
+#derive(Eq)
+pub(all) struct AgentCard {
+  name : String
+  description : String
+  supported_interfaces : Array[AgentInterface]
+  provider : AgentProvider?
+  version : String
+  documentation_url : String?
+  capabilities : AgentCapabilities
+  security_schemes : @json.Json?
+  security_requirements : @json.Json?
+  default_input_modes : Array[String]
+  default_output_modes : Array[String]
+  skills : Array[AgentSkill]
+  signatures : @json.Json?
+  icon_url : String?
+}
+pub fn AgentCard::capable(Self, AgentCapabilities) -> Self
+pub fn AgentCard::equal(Self, Self) -> Bool
+pub fn AgentCard::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AgentCard::input_modes(Self) -> Array[String]
+pub fn AgentCard::new(String, String, String, String, Array[AgentSkill]) -> Self
+pub fn AgentCard::not_equal(Self, Self) -> Bool
+pub fn AgentCard::preferred(Self) -> AgentInterface?
+pub fn AgentCard::to_json(Self) -> @json.Json
+pub impl @json.FromJson for AgentCard
+pub impl @json.ToJson for AgentCard
+
+#derive(Eq)
+pub(all) struct AgentExtension {
+  uri : String
+  description : String?
+  required : Bool
+  params : @json.Json?
+}
+pub fn AgentExtension::equal(Self, Self) -> Bool
+pub fn AgentExtension::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AgentExtension::not_equal(Self, Self) -> Bool
+pub fn AgentExtension::to_json(Self) -> @json.Json
+pub impl @json.FromJson for AgentExtension
+pub impl @json.ToJson for AgentExtension
+
+#derive(Eq)
+pub(all) struct AgentInterface {
+  url : String
+  protocol_binding : String
+  protocol_version : String
+  tenant : String?
+}
+pub fn AgentInterface::equal(Self, Self) -> Bool
+pub fn AgentInterface::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AgentInterface::json_rpc(String, protocol_version~ : String) -> Self
+pub fn AgentInterface::not_equal(Self, Self) -> Bool
+pub fn AgentInterface::to_json(Self) -> @json.Json
+pub impl @json.FromJson for AgentInterface
+pub impl @json.ToJson for AgentInterface
+
+#derive(Eq)
+pub(all) struct AgentProvider {
+  organization : String
+  url : String
+}
+pub fn AgentProvider::equal(Self, Self) -> Bool
+pub fn AgentProvider::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AgentProvider::not_equal(Self, Self) -> Bool
+pub fn AgentProvider::to_json(Self) -> @json.Json
+pub impl @json.FromJson for AgentProvider
+pub impl @json.ToJson for AgentProvider
+
+#derive(Eq)
+pub(all) struct AgentSkill {
+  id : String
+  name : String
+  description : String
+  tags : Array[String]
+  examples : Array[String]
+  input_modes : Array[String]
+  output_modes : Array[String]
+}
+pub fn AgentSkill::equal(Self, Self) -> Bool
+pub fn AgentSkill::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AgentSkill::new(String, String, String, Array[String]) -> Self
+pub fn AgentSkill::not_equal(Self, Self) -> Bool
+pub fn AgentSkill::to_json(Self) -> @json.Json
+pub impl @json.FromJson for AgentSkill
+pub impl @json.ToJson for AgentSkill
+
+#derive(Eq)
+pub(all) struct Artifact {
+  artifact_id : String
+  name : String?
+  description : String?
+  parts : Array[Part]
+  extensions : Array[String]?
+  metadata : @json.Json?
+}
+pub fn Artifact::equal(Self, Self) -> Bool
+pub fn Artifact::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn Artifact::named(Self, String) -> Self
+pub fn Artifact::new(String, Array[Part]) -> Self
+pub fn Artifact::not_equal(Self, Self) -> Bool
+pub fn Artifact::text(String, String) -> Self
+pub fn Artifact::text_of(Self) -> String
+pub fn Artifact::to_json(Self) -> @json.Json
+pub impl @json.FromJson for Artifact
+pub impl @json.ToJson for Artifact
+
+#derive(Eq)
+pub(all) struct AuthenticationInfo {
+  scheme : String
+  credentials : String?
+}
+pub fn AuthenticationInfo::bearer(String) -> Self
+pub fn AuthenticationInfo::equal(Self, Self) -> Bool
+pub fn AuthenticationInfo::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AuthenticationInfo::not_equal(Self, Self) -> Bool
+pub fn AuthenticationInfo::to_json(Self) -> @json.Json
+pub impl @json.FromJson for AuthenticationInfo
+pub impl @json.ToJson for AuthenticationInfo
+
+pub struct CallableExecutor {
+  run : async (RequestContext, &EventSink) -> Unit
+  stop : async (String) -> Unit
+}
+pub async fn CallableExecutor::cancel(Self, String) -> Unit
+pub async fn CallableExecutor::execute(Self, RequestContext, &EventSink) -> Unit
+pub fn CallableExecutor::new(run~ : async (RequestContext, &EventSink) -> Unit, stop~ : async (String) -> Unit) -> Self
+pub impl Executor for CallableExecutor
+
+pub struct Client {
+  transport : &Transport
+  mut next : Int64
+}
+pub async fn Client::cancel_task(Self, String) -> Task
+pub async fn Client::create_push_config(Self, TaskPushConfig) -> TaskPushConfig
+pub async fn Client::delete_push_config(Self, String, String) -> Unit
+pub async fn Client::discover(Self) -> AgentCard
+pub async fn Client::extended_card(Self) -> AgentCard
+pub async fn Client::get_push_config(Self, String, String) -> TaskPushConfig
+pub async fn Client::get_task(Self, String, history_length? : Int32) -> Task
+pub async fn Client::list_push_configs(Self, String) -> Array[TaskPushConfig]
+pub async fn Client::list_tasks(Self, ListTasksQuery) -> TaskPage
+pub fn Client::new(&Transport) -> Self
+pub async fn Client::send_message(Self, Message, configuration? : SendMessageConfig, metadata? : @json.Json, tenant? : String) -> StreamEvent
+pub async fn Client::send_streaming_message(Self, Message, &ReplySink, configuration? : SendMessageConfig, metadata? : @json.Json, tenant? : String) -> Unit
+pub async fn Client::subscribe_to_task(Self, String, &ReplySink) -> Unit
+
+pub struct Collected {
+  taken : Array[StreamEvent]
+}
+pub async fn Collected::emit(Self, StreamEvent) -> Unit
+pub fn Collected::events(Self) -> Array[StreamEvent]
+pub fn Collected::message(Self) -> Message?
+pub fn Collected::new() -> Self
+pub impl EventSink for Collected
+
+pub struct Discard {
+}
+
+#derive(Eq)
+pub(all) struct ListTasksQuery {
+  context_id : String?
+  state : TaskState?
+  page_size : Int32?
+  page_token : String?
+  history_length : Int32?
+  status_timestamp_after : String?
+  include_artifacts : Bool
+  tenant : String?
+}
+pub fn ListTasksQuery::all() -> Self
+pub fn ListTasksQuery::equal(Self, Self) -> Bool
+pub fn ListTasksQuery::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn ListTasksQuery::in_context(Self, String) -> Self
+pub fn ListTasksQuery::not_equal(Self, Self) -> Bool
+pub fn ListTasksQuery::to_json(Self) -> @json.Json
+pub impl @json.FromJson for ListTasksQuery
+pub impl @json.ToJson for ListTasksQuery
+
+pub struct MemoryStore {
+  tasks : Map[String, Task]
+  mut order : Array[String]
+  capacity : Int32
+}
+pub fn MemoryStore::all(Self) -> Array[Task]
+pub fn MemoryStore::get(Self, String) -> Task?
+pub fn MemoryStore::new(capacity? : Int32) -> Self
+pub fn MemoryStore::put(Self, Task) -> Unit
+pub fn MemoryStore::remove(Self, String) -> Unit
+pub impl TaskStore for MemoryStore
+
+#derive(Eq)
+pub(all) struct Message {
+  message_id : String
+  role : Role
+  parts : Array[Part]
+  context_id : String?
+  task_id : String?
+  reference_task_ids : Array[String]?
+  extensions : Array[String]?
+  metadata : @json.Json?
+}
+pub fn Message::agent(String, String) -> Self
+pub fn Message::equal(Self, Self) -> Bool
+pub fn Message::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn Message::in_task(Self, String, String) -> Self
+pub fn Message::new(String, Role, Array[Part]) -> Self
+pub fn Message::not_equal(Self, Self) -> Bool
+pub fn Message::text(Self) -> String
+pub fn Message::to_json(Self) -> @json.Json
+pub fn Message::user(String, String) -> Self
+pub impl @json.FromJson for Message
+pub impl @json.ToJson for Message
+
+#derive(Eq)
+pub(all) enum Method {
+  SendMessage
+  SendStreamingMessage
+  GetTask
+  ListTasks
+  CancelTask
+  SubscribeToTask
+  CreatePushConfig
+  GetPushConfig
+  ListPushConfigs
+  DeletePushConfig
+  GetExtendedCard
+}
+pub fn Method::equal(Self, Self) -> Bool
+pub fn Method::from_name(String) -> Self?
+pub fn Method::name(Self) -> String
+pub fn Method::not_equal(Self, Self) -> Bool
+pub fn Method::streams(Self) -> Bool
+
+#derive(Eq)
+pub(all) struct Part {
+  content : PartContent
+  metadata : @json.Json?
+}
+pub fn Part::bytes(Bytes, filename? : String, media_type? : String) -> Self
+pub fn Part::data(@json.Json) -> Self
+pub fn Part::equal(Self, Self) -> Bool
+pub fn Part::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn Part::media_type(Self) -> String?
+pub fn Part::not_equal(Self, Self) -> Bool
+pub fn Part::text(String) -> Self
+pub fn Part::text_of(Self) -> String?
+pub fn Part::to_json(Self) -> @json.Json
+pub fn Part::uri(String, filename? : String, media_type? : String) -> Self
+pub fn Part::with_metadata(Self, @json.Json) -> Self
+pub impl @json.FromJson for Part
+pub impl @json.ToJson for Part
+
+#derive(Eq)
+pub(all) enum PartContent {
+  Text(String)
+  Raw(bytes~ : Bytes, filename~ : String?, media_type~ : String?)
+  Url(url~ : String, filename~ : String?, media_type~ : String?)
+  Data(@json.Json)
+}
+pub fn PartContent::equal(Self, Self) -> Bool
+pub fn PartContent::not_equal(Self, Self) -> Bool
+
+#derive(Eq)
+pub(all) struct PushConfigPage {
+  configs : Array[TaskPushConfig]
+  next_page_token : String
+}
+pub fn PushConfigPage::equal(Self, Self) -> Bool
+pub fn PushConfigPage::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn PushConfigPage::not_equal(Self, Self) -> Bool
+pub fn PushConfigPage::to_json(Self) -> @json.Json
+pub impl @json.FromJson for PushConfigPage
+pub impl @json.ToJson for PushConfigPage
+
+pub(all) struct RequestContext {
+  message : Message
+  task_id : String
+  context_id : String
+  task : Task?
+}
+pub fn RequestContext::artifact(Self, Artifact, append? : Bool, last_chunk? : Bool) -> StreamEvent
+pub fn RequestContext::replying(Self, Array[Part]) -> StreamEvent
+pub fn RequestContext::status(Self, TaskState) -> StreamEvent
+
+#derive(Eq)
+pub(all) enum Role {
+  Unspecified
+  User
+  Agent
+}
+pub fn Role::equal(Self, Self) -> Bool
+pub fn Role::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn Role::from_wire(String) -> Self
+pub fn Role::not_equal(Self, Self) -> Bool
+pub fn Role::to_json(Self) -> @json.Json
+pub fn Role::wire(Self) -> String
+pub impl @json.FromJson for Role
+pub impl @json.ToJson for Role
+
+#derive(Eq)
+pub(all) struct SendMessageConfig {
+  return_immediately : Bool
+  history_length : Int32?
+  accepted_output_modes : Array[String]
+  push : TaskPushConfig?
+}
+pub fn SendMessageConfig::at_most(Self, Int32) -> Self
+pub fn SendMessageConfig::equal(Self, Self) -> Bool
+pub fn SendMessageConfig::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn SendMessageConfig::immediately(Self) -> Self
+pub fn SendMessageConfig::not_equal(Self, Self) -> Bool
+pub fn SendMessageConfig::pushing(Self, TaskPushConfig) -> Self
+pub fn SendMessageConfig::to_json(Self) -> @json.Json
+pub fn SendMessageConfig::waiting() -> Self
+pub impl @json.FromJson for SendMessageConfig
+pub impl @json.ToJson for SendMessageConfig
+
+#derive(Eq)
+pub(all) struct SendMessageRequest {
+  message : Message
+  configuration : SendMessageConfig?
+  metadata : @json.Json?
+  tenant : String?
+}
+pub fn SendMessageRequest::equal(Self, Self) -> Bool
+pub fn SendMessageRequest::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn SendMessageRequest::new(Message) -> Self
+pub fn SendMessageRequest::not_equal(Self, Self) -> Bool
+pub fn SendMessageRequest::to_json(Self) -> @json.Json
+pub impl @json.FromJson for SendMessageRequest
+pub impl @json.ToJson for SendMessageRequest
+
+pub struct Server {
+  state : ServerState
+}
+pub async fn Server::answer(Self, StringView, extensions? : Array[String], version? : String) -> String?
+pub async fn Server::answer_stream(Self, StringView, &ReplySink, extensions? : Array[String], version? : String) -> Unit
+pub fn Server::attach(Self, @async.TaskGroup[Unit]) -> Self
+pub fn Server::card(Self) -> AgentCard
+pub fn Server::card_json(Self) -> @json.Json
+pub fn Server::configured(executor~ : &Executor, card~ : AgentCard, store~ : &TaskStore, notifier~ : &Notifier, config~ : ServerConfig) -> Self
+pub fn Server::new(&Executor, AgentCard) -> Self
+pub fn Server::notifying(Self, &Notifier) -> Self
+pub fn Server::storing(Self, &TaskStore) -> Self
+pub fn Server::under(Self, ServerConfig) -> Self
+pub fn Server::with_extended_card(Self, AgentCard) -> Self
+
+pub(all) struct ServerConfig {
+  history_limit : Int32
+  page_size : Int32
+  max_page_size : Int32
+  refuse_unknown_media : Bool
+}
+pub fn ServerConfig::new() -> Self
+
+type ServerState
+
+#derive(Eq)
+pub(all) enum StreamEvent {
+  TaskSnapshot(Task)
+  TaskMessage(Message)
+  StatusChange(TaskStatusUpdate)
+  ArtifactChunk(TaskArtifactUpdate)
+}
+pub fn StreamEvent::equal(Self, Self) -> Bool
+pub fn StreamEvent::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn StreamEvent::is_final(Self) -> Bool
+pub fn StreamEvent::not_equal(Self, Self) -> Bool
+pub fn StreamEvent::state(Self) -> TaskState?
+pub fn StreamEvent::task_id(Self) -> String?
+pub fn StreamEvent::to_json(Self) -> @json.Json
+pub impl @json.FromJson for StreamEvent
+pub impl @json.ToJson for StreamEvent
+
+#derive(Eq)
+pub(all) struct Task {
+  id : String
+  context_id : String
+  status : TaskStatus
+  artifacts : Array[Artifact]
+  history : Array[Message]
+  metadata : @json.Json?
+}
+pub fn Task::artifact(Self, String) -> Artifact?
+pub fn Task::encode(Self, view? : View) -> @json.Json
+pub fn Task::equal(Self, Self) -> Bool
+pub fn Task::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn Task::new(String, String) -> Self
+pub fn Task::not_equal(Self, Self) -> Bool
+pub fn Task::recent(Self, Int32?) -> Array[Message]
+pub fn Task::saying(Self, Message) -> Self
+pub fn Task::taking(Self, Artifact, Bool) -> Self
+pub fn Task::to_json(Self) -> @json.Json
+pub fn Task::with_state(Self, TaskState) -> Self
+pub impl @json.FromJson for Task
+pub impl @json.ToJson for Task
+
+#derive(Eq)
+pub(all) struct TaskArtifactUpdate {
+  task_id : String
+  context_id : String
+  artifact : Artifact
+  append : Bool
+  last_chunk : Bool
+  metadata : @json.Json?
+}
+pub fn TaskArtifactUpdate::equal(Self, Self) -> Bool
+pub fn TaskArtifactUpdate::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn TaskArtifactUpdate::not_equal(Self, Self) -> Bool
+pub fn TaskArtifactUpdate::of(String, String, Artifact, append? : Bool, last_chunk? : Bool) -> Self
+pub fn TaskArtifactUpdate::to_json(Self) -> @json.Json
+pub impl @json.FromJson for TaskArtifactUpdate
+pub impl @json.ToJson for TaskArtifactUpdate
+
+pub struct TaskLog {
+  events : Array[StreamEvent]
+  mut open : Bool
+}
+pub fn TaskLog::new() -> Self
+
+#derive(Eq)
+pub(all) struct TaskPage {
+  tasks : Array[Task]
+  next_page_token : String
+  page_size : Int32
+  total_size : Int32
+}
+pub fn TaskPage::equal(Self, Self) -> Bool
+pub fn TaskPage::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn TaskPage::not_equal(Self, Self) -> Bool
+pub fn TaskPage::to_json(Self) -> @json.Json
+pub impl @json.FromJson for TaskPage
+pub impl @json.ToJson for TaskPage
+
+#derive(Eq)
+pub(all) struct TaskPushConfig {
+  id : String
+  task_id : String
+  url : String
+  token : String?
+  authentication : AuthenticationInfo?
+  tenant : String?
+}
+pub fn TaskPushConfig::authenticating(Self, AuthenticationInfo) -> Self
+pub fn TaskPushConfig::equal(Self, Self) -> Bool
+pub fn TaskPushConfig::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn TaskPushConfig::new(String, String, String) -> Self
+pub fn TaskPushConfig::not_equal(Self, Self) -> Bool
+pub fn TaskPushConfig::to_json(Self) -> @json.Json
+pub fn TaskPushConfig::with_token(Self, String) -> Self
+pub impl @json.FromJson for TaskPushConfig
+pub impl @json.ToJson for TaskPushConfig
+
+#derive(Eq)
+pub(all) enum TaskState {
+  Unspecified
+  Submitted
+  Working
+  Completed
+  Failed
+  Canceled
+  InputRequired
+  Rejected
+  AuthRequired
+}
+pub fn TaskState::equal(Self, Self) -> Bool
+pub fn TaskState::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn TaskState::from_wire(String) -> Self
+pub fn TaskState::interrupted(Self) -> Bool
+pub fn TaskState::not_equal(Self, Self) -> Bool
+pub fn TaskState::terminal(Self) -> Bool
+pub fn TaskState::to_json(Self) -> @json.Json
+pub fn TaskState::wire(Self) -> String
+pub impl @json.FromJson for TaskState
+pub impl @json.ToJson for TaskState
+
+#derive(Eq)
+pub(all) struct TaskStatus {
+  state : TaskState
+  message : Message?
+  timestamp : String?
+}
+pub fn TaskStatus::equal(Self, Self) -> Bool
+pub fn TaskStatus::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn TaskStatus::not_equal(Self, Self) -> Bool
+pub fn TaskStatus::of(TaskState) -> Self
+pub fn TaskStatus::recorded(TaskState) -> Self
+pub fn TaskStatus::to_json(Self) -> @json.Json
+pub impl @json.FromJson for TaskStatus
+pub impl @json.ToJson for TaskStatus
+
+#derive(Eq)
+pub(all) struct TaskStatusUpdate {
+  task_id : String
+  context_id : String
+  status : TaskStatus
+  metadata : @json.Json?
+}
+pub fn TaskStatusUpdate::equal(Self, Self) -> Bool
+pub fn TaskStatusUpdate::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn TaskStatusUpdate::not_equal(Self, Self) -> Bool
+pub fn TaskStatusUpdate::of(String, String, TaskState) -> Self
+pub fn TaskStatusUpdate::to_json(Self) -> @json.Json
+pub impl @json.FromJson for TaskStatusUpdate
+pub impl @json.ToJson for TaskStatusUpdate
+
+#derive(Eq)
+pub(all) struct View {
+  artifacts : Bool
+  history : Int32?
+}
+pub fn View::bare() -> Self
+pub fn View::equal(Self, Self) -> Bool
+pub fn View::full() -> Self
+pub fn View::not_equal(Self, Self) -> Bool
 
 // Type aliases
 
 // Traits
+pub(open) trait EventSink {
+  async fn emit(Self, StreamEvent) -> Unit
+}
+
+pub(open) trait Executor {
+  async fn execute(Self, RequestContext, &EventSink) -> Unit
+  async fn cancel(Self, String) -> Unit
+}
+
+pub(open) trait Notifier {
+  async fn notify(Self, TaskPushConfig, StreamEvent) -> Unit
+}
+
+pub(open) trait ReplySink {
+  async fn reply(Self, @moonjrpc.Message) -> Unit
+}
+
+pub(open) trait TaskStore {
+  fn get(Self, String) -> Task?
+  fn put(Self, Task) -> Unit
+  fn all(Self) -> Array[Task]
+  fn remove(Self, String) -> Unit
+}
+
+pub(open) trait Transport {
+  async fn exchange(Self, @moonjrpc.Message) -> @moonjrpc.Message
+  async fn stream(Self, @moonjrpc.Message, &ReplySink) -> Unit
+  async fn discover(Self) -> @json.Json
+}
