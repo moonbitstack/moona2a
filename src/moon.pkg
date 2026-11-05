@@ -1,1 +1,11 @@
-// The Agent2Agent protocol. https://github.com/a2aproject/A2A
+// The Agent2Agent protocol: cards, tasks, streaming, push.
+
+import {
+  "moonbitlang/core/json",
+  "moonbitstack/moonhttp/sse",
+}
+
+import {
+  "moonbitlang/core/json",
+  "moonbitstack/moonhttp/sse",
+} for "test"

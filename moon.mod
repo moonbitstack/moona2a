@@ -23,3 +23,7 @@ keywords = [
 description = "The Agent2Agent protocol for MoonBit: agent cards, tasks, streaming and push notifications, as client and server."
 
 source = "src"
+
+import {
+  "moonbitstack/moonhttp@0.15.8",
+}
