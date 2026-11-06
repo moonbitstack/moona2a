@@ -1,7 +1,0 @@
-
-import {
-  "moonbitstack/moona2a",
-  "moonbitstack/moonhttp/sse",
-}
-
-pkgtype(kind: "executable")

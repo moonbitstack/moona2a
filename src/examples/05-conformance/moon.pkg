@@ -1,0 +1,18 @@
+// A server to run a conformance suite against: it answers the message ids the suite sends with
+// the behaviours the suite checks, over HTTP with the card at its well-known address.
+
+import {
+  "moonbitlang/async",
+  "moonbitlang/async/http",
+  "moonbitlang/async/socket",
+  "moonbitlang/core/json",
+  "moonbitstack/moona2a",
+  "moonbitstack/moona2a/asgi",
+  "moonbitstack/moona2a/fetch",
+  "moonbitstack/moonasgi",
+  "moonbitstack/moonasgi/spec",
+}
+
+supported_targets = "+native"
+
+pkgtype(kind: "executable")

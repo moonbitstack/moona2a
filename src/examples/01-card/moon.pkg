@@ -1,7 +1,5 @@
-
 import {
   "moonbitstack/moona2a",
-  "moonbitlang/core/json",
 }
 
 pkgtype(kind: "executable")

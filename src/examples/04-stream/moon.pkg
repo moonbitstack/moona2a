@@ -1,0 +1,10 @@
+import {
+  "moonbitlang/async",
+  "moonbitstack/moona2a",
+  "moonbitlang/core/json",
+  "moonbitstack/moonjrpc",
+}
+
+supported_targets = "+native"
+
+pkgtype(kind: "executable")
