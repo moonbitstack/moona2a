@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MoonA2A — the Agent2Agent protocol for MoonBit</title>
 <meta name="description" content="MoonA2A is the Agent2Agent protocol in MoonBit: an agent card, one JSON-RPC endpoint for the protocol's methods, tasks that stream, push notifications, and a client for calling an agent someone else runs.">
-<meta name="theme-color" content="#f5f0e5">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f5f0e5'/%3E%3Cpath d='M12 2.6 14.4 8.9 21.2 9.2 15.8 13.4 17.7 19.9 12 16.1 6.3 19.9 8.2 13.4 2.8 9.2 9.6 8.9Z' fill='none' stroke='%23a8611a' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#f7f1ec">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f7f1ec'/%3E%3Cpath d='M12 2.6 14.4 8.9 21.2 9.2 15.8 13.4 17.7 19.9 12 16.1 6.3 19.9 8.2 13.4 2.8 9.2 9.6 8.9Z' fill='none' stroke='%23a2525e' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -47,19 +47,21 @@
 <main id="main">
 
 <section class="hero">
+  <div class="hatch" aria-hidden="true"></div>
   <div class="wrap">
     <div class="hero-rule">
-      <span class="eyebrow">Agent2Agent</span>
-      <span class="specimen">Protocol 1.0 · MoonBit · Apache 2.0</span>
+      <span class="eyebrow">MoonA2A / Specification</span>
+      <span class="specimen">A2A 1.0 · MoonBit · Apache 2.0</span>
     </div>
 
     <div class="hero-grid">
       <div class="hero-copy">
-        <h1>The comb<br>that <em>speaks</em>.</h1>
-        <p class="lede">An agent card that says what an agent is, one JSON-RPC path that answers the protocol's methods, and a stream that reports a task while it runs. Serve one from MoonBit, or call someone else's.</p>
+        <h1><span class="line">Agent2Agent 1.0</span><span class="line">for MoonBit.</span></h1>
+        <span class="hero-stroke" aria-hidden="true"></span>
+        <p class="lede">An agent card declares what an agent is. One JSON-RPC endpoint answers the protocol's eleven methods. A stream reports a task while it runs. Serve one from MoonBit, or call one someone else runs.</p>
         <div class="actions">
-          <a class="btn" href="guide.html">Start the guide <span class="arrow">→</span></a>
-          <a class="btn ghost" href="showcase.html">Watch a task cross the wire</a>
+          <a class="btn" href="guide.html">Read the guide <span class="arrow">→</span></a>
+          <a class="btn ghost" href="showcase.html">Explore the star</a>
         </div>
       </div>
 
@@ -70,11 +72,11 @@
           </g>
           <path class="penta" d="M320 40 L484.6 546.5 L53.7 233.5 L586.3 233.5 L155.4 546.5 Z"/>
           <g class="flows">
-        <circle class="flow" r="3.4"><animateMotion dur="4.6s" begin="-1.2s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1" path="M320 320 L320 40"/></circle>
-        <circle class="flow" r="3.4"><animateMotion dur="5.2s" begin="-2.9s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1" path="M320 320 L586.3 233.5"/></circle>
-        <circle class="flow" r="3.4"><animateMotion dur="4.1s" begin="-0.6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1" path="M320 320 L484.6 546.5"/></circle>
-        <circle class="flow" r="3.4"><animateMotion dur="4.9s" begin="-3.4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1" path="M320 320 L155.4 546.5"/></circle>
-        <circle class="flow" r="3.4"><animateMotion dur="5.6s" begin="-1.8s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1" path="M320 320 L53.7 233.5"/></circle>
+        <circle class="flow" r="3.4"><animateMotion dur="4.6s" begin="-1.2s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M320 320 L320 72"/></circle><animate attributeName="opacity" dur="4.6s" begin="-1.2s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
+        <circle class="flow" r="3.4"><animateMotion dur="5.2s" begin="-2.9s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M320 320 L561.6 241.5"/></circle><animate attributeName="opacity" dur="5.2s" begin="-2.9s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
+        <circle class="flow" r="3.4"><animateMotion dur="4.1s" begin="-0.6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M320 320 L469.3 525.5"/></circle><animate attributeName="opacity" dur="4.1s" begin="-0.6s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
+        <circle class="flow" r="3.4"><animateMotion dur="4.9s" begin="-3.4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M320 320 L170.7 525.5"/></circle><animate attributeName="opacity" dur="4.9s" begin="-3.4s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
+        <circle class="flow" r="3.4"><animateMotion dur="5.6s" begin="-1.8s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M320 320 L78.4 241.5"/></circle><animate attributeName="opacity" dur="5.6s" begin="-1.8s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
           </g>
           <g class="cells">
             <path d="M320 16 L340.8 28 L340.8 52 L320 64 L299.2 52 L299.2 28 Z"/>
@@ -83,15 +85,15 @@
             <path d="M155.4 522.5 L176.2 534.5 L176.2 558.5 L155.4 570.5 L134.6 558.5 L134.6 534.5 Z"/>
             <path d="M53.7 209.5 L74.5 221.5 L74.5 245.5 L53.7 257.5 L32.9 245.5 L32.9 221.5 Z"/>
           </g>
+          <path class="hub" d="M320 286 L349.4 303 L349.4 337 L320 354 L290.6 337 L290.6 303 Z"/>
           <g class="faces">
         <g class="face"><line x1="311.8" y1="32.8" x2="311.8" y2="43.8"/><line x1="328.2" y1="32.8" x2="328.2" y2="43.8"/></g>
         <g class="face"><line x1="578.1" y1="226.3" x2="578.1" y2="237.3"/><line x1="594.5" y1="226.3" x2="594.5" y2="237.3"/></g>
         <g class="face"><line x1="476.4" y1="539.3" x2="476.4" y2="550.3"/><line x1="492.8" y1="539.3" x2="492.8" y2="550.3"/></g>
         <g class="face"><line x1="147.2" y1="539.3" x2="147.2" y2="550.3"/><line x1="163.6" y1="539.3" x2="163.6" y2="550.3"/></g>
         <g class="face"><line x1="45.5" y1="226.3" x2="45.5" y2="237.3"/><line x1="61.9" y1="226.3" x2="61.9" y2="237.3"/></g>
-        <g class="face"><line x1="308.4" y1="309.8" x2="308.4" y2="325.4"/><line x1="331.6" y1="309.8" x2="331.6" y2="325.4"/></g>
+        <g class="face"><line x1="309.4" y1="308.6" x2="309.4" y2="322.4"/><line x1="330.6" y1="308.6" x2="330.6" y2="322.4"/><line x1="311.4" y1="334.4" x2="328.6" y2="334.4"/></g>
           </g>
-          <path class="hub" d="M320 286 L349.4 303 L349.4 337 L320 354 L290.6 337 L290.6 303 Z"/>
         </svg>
         <span class="legend">one hub · five agents · one task</span>
       </div>
@@ -114,7 +116,7 @@
     <div class="section-head reveal">
       <div>
         <span class="kicker">§ 01 — The comb</span>
-        <h2>Six cells,<br>one <em>protocol</em>.</h2>
+        <h2>Six cells,<br>one protocol.</h2>
       </div>
       <p>A task is a cell: it is opened, filled, sealed. What a caller may do to it belongs to the protocol rather than to the agent, so the same six cells answer for every agent built on this library.</p>
     </div>
@@ -165,7 +167,7 @@
     <div class="section-head reveal">
       <div>
         <span class="kicker">§ 02 — The wire</span>
-        <h2>JSON-RPC,<br>and nothing <em>else</em>.</h2>
+        <h2>JSON-RPC,<br>and nothing else.</h2>
       </div>
       <p>One POST body carries a call. A streaming method answers with server-sent events, each one a whole JSON-RPC reply. What you see below is what this library writes.</p>
     </div>
@@ -217,7 +219,7 @@
     <div class="section-head reveal">
       <div>
         <span class="kicker">§ 03 — The methods</span>
-        <h2>Eleven calls,<br>one <em>path</em>.</h2>
+        <h2>Eleven calls,<br>one path.</h2>
       </div>
       <p>Everything an agent can be asked is one of these eleven. Six answer once, two answer with a stream, three keep the bookkeeping of a task that someone else is watching.</p>
     </div>
@@ -250,7 +252,7 @@
     <div class="section-head reveal">
       <div>
         <span class="kicker">§ 04 — The agent</span>
-        <h2>An agent is<br>an <em>executor</em>.</h2>
+        <h2>An agent is<br>an executor.</h2>
       </div>
       <p>Say what happens; the server turns it into a task, keeps the history, answers the protocol around it, and hands the same events to every watcher.</p>
     </div>
@@ -299,7 +301,7 @@ let app = @asgi.to_asgi(server)</code></pre>
         <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.8 14.6 8.4 22.2 8.7 16.2 13.4 18.3 20.8 12 16.6 5.7 20.8 7.8 13.4 1.8 8.7 9.4 8.4Z"/></svg>
         <span>MoonA2A</span>
       </a>
-      <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams, push. Apache-2.0.</p>
+      <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams, push. Apache 2.0.</p>
       <div class="links">
         <a href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener">GitHub</a>
         <a href="https://mooncakes.io/docs/moonbitstack/moona2a" target="_blank" rel="noopener">mooncakes</a>
@@ -308,7 +310,7 @@ let app = @asgi.to_asgi(server)</code></pre>
         <a href="showcase.html">The star</a>
       </div>
     </div>
-    <div class="legal"><span>Apache-2.0</span><span>Built with MoonBit</span></div>
+    <div class="legal"><span>Apache 2.0</span><span>Built with MoonBit</span></div>
   </div>
 </footer>
 </body>

@@ -44,6 +44,32 @@
   outline-offset: 2px;
 }
 
+// The dial: the face of the watch in the reference — a sandblasted ground, a hairline bezel of rose
+// gold, and the one soft highlight that tells you it is a surface rather than a shape.
+.dial() {
+  border-radius: 50%;
+  background-color: var(--dial-2);
+  background-image: var(--frost),
+    radial-gradient(120% 120% at 32% 20%, var(--dial-1), transparent 62%),
+    linear-gradient(158deg, transparent 54%, var(--dial-3));
+  box-shadow:
+    inset 0 0 0 1px var(--metal-3),
+    inset 0 1px 0 rgb(255 255 255 / 26%),
+    0 0 0 1px color-mix(in srgb, var(--metal-2) 55%, transparent),
+    0 18px 46px -32px rgb(22 16 15 / 42%);
+}
+
+// The parallel hatch of a manga panel — "Araki lines". It is placed only where a surface has
+// nothing else to say, and it always fades out before it reaches the type. A 0.7px line at a 7px
+// interval reads as a printing screen, never as a pattern wallpaper.
+.araki(@alpha: 7%, @gap: 7px, @angle: 135deg) {
+  background-image: repeating-linear-gradient(
+    @angle,
+    color-mix(in srgb, var(--ink) @alpha, transparent) 0 0.7px,
+    transparent 0.7px @gap
+  );
+}
+
 .star-stroke() {
   fill: none;
   stroke: currentColor;
@@ -73,6 +99,14 @@
   --sheen-soft: rgb(255 255 255 / 4%);
   --edge: rgb(0 0 0 / 45%);
   --grain-opacity: 0.2;
+  --dial-1: #3a4e77;
+  --dial-2: #22314f;
+  --dial-3: #141f33;
+  --metal-1: #f9d8d3;
+  --metal-2: #e8b4b8;
+  --metal-3: #c2868e;
+  --metal-4: #f4cfc9;
+  --frost: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23f)' opacity='0.16'/%3E%3C/svg%3E");
 }
 
 :root {
@@ -106,6 +140,15 @@
   --sheen-soft: rgb(255 255 255 / 34%);
   --edge: rgb(22 16 15 / 7%);
   --grain-opacity: 0.34;
+  // The dial, taken from the rose-gold watch: a sandblasted blue face under a metal bezel.
+  --dial-1: #dfe8f8;
+  --dial-2: #b9cbe9;
+  --dial-3: #8fa8d1;
+  --metal-1: #f8dcd4;
+  --metal-2: #e2adb0;
+  --metal-3: #b8777f;
+  --metal-4: #f0cdc4;
+  --frost: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23f)' opacity='0.16'/%3E%3C/svg%3E");
 
   --wrap: 1160px;
   --gutter: clamp(1.25rem, 4.4vw, 3.75rem);
@@ -154,11 +197,36 @@ body {
   .no-pick();
 }
 
-// Fields are for typing in, so they take the selection back.
+// An instrument, not a document: every node starts as "not text". A stray drag across the star
+// used to leave a blue selection over the diagram, and a long press on iOS raised a callout.
+// Stating the default on every descendant also catches SVG labels and native controls, which can
+// otherwise opt themselves back into text selection.
+body,
+body * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}
+
+// These are the reading surfaces: fields, code, frames, signatures and anything explicitly
+// marked `.pick`. Nothing else can be selected.
 input,
 textarea,
-select {
-  .pick();
+select,
+[contenteditable="true"],
+pre,
+code,
+.pick,
+pre *,
+code *,
+.pick * {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+  -webkit-user-drag: auto;
+  -webkit-touch-callout: default;
 }
 
 button,
@@ -444,9 +512,24 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
 .hero {
   position: relative;
   z-index: 1;
-  padding-block: clamp(1.6rem, 4vh, 2.4rem) 0;
+  padding-block: clamp(2.2rem, 6vh, 3.6rem) 0;
   overflow: clip;
   border-bottom: 1px solid var(--line);
+}
+
+// Araki lines, in the one field with nothing to say. They are parallel, one hair wide, and fade
+// out long before they reach the type or the star.
+.hatch {
+  position: absolute;
+  top: clamp(3.2rem, 10vh, 6.4rem);
+  right: clamp(0.5rem, 4vw, 4rem);
+  width: min(30vw, 21rem);
+  height: min(36vh, 16rem);
+  .araki(11%, 8px, 135deg);
+  mask-image: linear-gradient(215deg, #000 8%, transparent 82%);
+  opacity: 0.75;
+  pointer-events: none;
+  z-index: 0;
 }
 
 // Two fields behind the hero: a slanted panel of rose blue on the right, and a corner of screentone.
@@ -459,18 +542,16 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   z-index: 0;
 }
 
+// The hero is a wrist: one frosted dial, bled off the right edge, with the constellation laid over
+// it. It is cropped, so it reads as a close-up rather than as a picture of a watch.
 .hero::before {
-  inset: 5.2rem 0 0 0;
-  background: linear-gradient(
-    190deg,
-    color-mix(in srgb, var(--blue) 11%, transparent),
-    transparent 58%
-  );
-  // A soft diagonal edge, printed rather than cut: the field fades in from the left and out at the
-  // top, so neither the copy nor the header rule sits on a seam.
-  mask-image: linear-gradient(72deg, transparent 34%, #000 58%),
-    linear-gradient(to bottom, transparent, #000 16%);
-  mask-composite: intersect;
+  top: 50%;
+  right: clamp(-13rem, -6vw, -2rem);
+  width: clamp(22rem, 41vw, 34rem);
+  aspect-ratio: 1;
+  translate: 0 -50%;
+  .dial();
+  opacity: 0.92;
 }
 
 .hero::after {
@@ -485,7 +566,7 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   );
   background-size: 6px 6px;
   mask-image: linear-gradient(to top left, #000, transparent 62%);
-  opacity: 0.13;
+  opacity: 0.07;
 }
 
 .hero-rule {
@@ -494,9 +575,11 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   justify-content: space-between;
   align-items: baseline;
   gap: 0.6rem 1.4rem;
-  border-bottom: 1px solid var(--line-soft);
-  padding-bottom: 0.65rem;
-  margin-bottom: clamp(2rem, 6vh, 3.6rem);
+  position: relative;
+  z-index: 1;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.8rem;
+  margin-bottom: clamp(2.6rem, 8vh, 4.6rem);
 }
 
 .eyebrow {
@@ -523,20 +606,36 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
   align-items: center;
-  gap: clamp(1rem, 3vw, 2.4rem);
-  padding-bottom: clamp(1.2rem, 3.4vh, 2rem);
+  gap: clamp(1.4rem, 4vw, 3.4rem);
+  position: relative;
+  z-index: 1;
+  padding-bottom: clamp(2rem, 6vh, 3.4rem);
 }
 
 .hero-copy {
+  position: relative;
   min-width: 0;
+
+  // The binding rule: one hairline to the left of the measure, the way a specification sheet
+  // keeps its columns. It never touches the type and disappears where the page gets narrow.
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0.35rem;
+    bottom: 0.35rem;
+    left: clamp(-1.8rem, -1.4vw, -1rem);
+    width: 1px;
+    background: var(--line);
+  }
 }
 
 .hero h1 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  line-height: 0.94;
-  letter-spacing: -0.032em;
+  font-size: clamp(2.85rem, 5vw, 4.3rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.038em;
   margin: 0;
 
   .line {
@@ -544,44 +643,80 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   }
 }
 
+// A short cast in rose gold between the statement and the explanation: one measured rule, not a
+// decorative flourish.
+.hero-stroke {
+  display: block;
+  width: 3.4rem;
+  height: 2px;
+  margin-top: clamp(1.5rem, 3.6vh, 2.2rem);
+  background: linear-gradient(90deg, var(--metal-3), color-mix(in srgb, var(--metal-3) 30%, transparent));
+}
+
 .hero-copy .lede {
-  margin-top: clamp(1.2rem, 3vh, 1.8rem);
-  max-width: 33rem;
-  font-size: clamp(0.95rem, 0.4vw + 0.9rem, 1.04rem);
+  margin-top: clamp(1.1rem, 2.6vh, 1.5rem);
+  max-width: 34rem;
+  font-size: clamp(0.98rem, 0.4vw + 0.9rem, 1.08rem);
+  line-height: 1.72;
+  color: var(--ink-soft);
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.7rem;
   align-items: center;
-  margin-top: clamp(1.4rem, 3.5vh, 2rem);
+  margin-top: clamp(1.6rem, 4vh, 2.4rem);
 }
 
 .btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.8rem 1.25rem 0.86rem;
-  border: 1px solid var(--ink);
+  justify-content: center;
+  gap: 0.7rem;
+  min-height: 2.85rem;
+  padding: 0.85rem 1.45rem;
+  border: 1px solid color-mix(in srgb, var(--metal-3) 72%, transparent);
   border-radius: 2px;
-  background-color: var(--ink);
-  background-image: linear-gradient(180deg, rgb(255 255 255 / 10%), transparent 55%);
-  color: var(--paper);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%), 0 1px 0 var(--edge);
+  background-color: var(--metal-2);
+  background-image: linear-gradient(
+    168deg,
+    var(--metal-1),
+    var(--metal-2) 42%,
+    var(--metal-3) 60%,
+    var(--metal-4)
+  );
+  color: #1a1113;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 55%), 0 1px 0 var(--edge);
   font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   text-decoration: none;
   line-height: 1;
   .no-pick();
   transition: background 0.25s, color 0.25s, border-color 0.25s;
 
+  // Araki lines pressed into the moulding: a fine hatch that fades towards the right edge, so the
+  // metal reads as a machined surface instead of a flat block of colour.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    .araki(13%, 6px, 135deg);
+    mask-image: linear-gradient(100deg, #000, transparent 78%);
+    pointer-events: none;
+  }
+
   &:hover {
-    background-color: var(--rose);
-    border-color: var(--rose);
-    color: var(--paper);
+    background-color: var(--metal-1);
+    border-color: var(--metal-4);
+    color: #1a1113;
   }
 
   &:focus-visible {
@@ -592,6 +727,10 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
     background: none;
     color: var(--ink-soft);
     border-color: var(--line);
+
+    &::before {
+      .araki(6%, 7px, 135deg);
+    }
 
     &:hover {
       color: var(--rose);
@@ -658,34 +797,17 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   }
 
   .cells path {
-    fill: var(--paper);
-    stroke: var(--rose);
+    fill: var(--card);
+    stroke: var(--metal-3);
     stroke-width: 1.35;
   }
 
+  // The hub is the watch: a sandblasted blue face in a rose-gold bezel. It holds still — a face
+  // that pulses reads as a control blinking, which is exactly the effect we do not want.
   .hub {
-    fill: var(--paper-2);
-    stroke: var(--rose);
-    stroke-width: 1.15;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .hub {
-      animation: pulse 6s ease-in-out infinite;
-      transform-box: fill-box;
-      transform-origin: center;
-    }
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.45;
+    fill: var(--dial-2);
+    stroke: var(--metal-3);
+    stroke-width: 1.6;
   }
 }
 
@@ -737,6 +859,24 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   &.alt {
     background: var(--paper-2);
     border-block: 1px solid var(--line-soft);
+
+    // The tinted band is the widest empty surface on the page. One corner of Araki lines keeps it
+    // from reading as a flat fill, and fades out long before it reaches the copy.
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 0 auto;
+      width: min(40vw, 26rem);
+      .araki(6%, 9px, 135deg);
+      mask-image: linear-gradient(to left, #000, transparent 88%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    > .wrap {
+      position: relative;
+      z-index: 1;
+    }
   }
 }
 
@@ -1390,8 +1530,14 @@ pre {
 .map-panel {
   position: sticky;
   top: 88px;
+}
 
-  // The same aura the hero's constellation carries: the stands around the hub.
+// The dial and its rays belong to the drawing alone. Tying them to the SVG's own box keeps the
+// blue face off the index table below: a plate must never sit under its own parts list. Centred,
+// the whole star falls on the blue face, the way a dial sits inside its rose-gold bezel.
+.map-figure {
+  position: relative;
+
   &::before {
     content: "";
     position: absolute;
@@ -1402,6 +1548,20 @@ pre {
       transparent 0.5deg 8deg
     );
     mask: radial-gradient(circle at 50% 50%, transparent 30%, #000 44%, transparent 74%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    width: 82%;
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    .dial();
+    opacity: 0.9;
     pointer-events: none;
     z-index: 0;
   }
@@ -1442,9 +1602,11 @@ pre {
   }
 
   .hub {
-    fill: var(--paper-2);
-    stroke: var(--ink);
-    stroke-width: 1.05;
+    // The hub is the watch: sandblasted blue under a rose-gold bezel. Its eyes and the short bar
+    // of its mouth are drawn after it, and none of them ever change.
+    fill: var(--dial-2);
+    stroke: var(--metal-3);
+    stroke-width: 1.6;
   }
 }
 
@@ -1459,7 +1621,7 @@ pre {
 
   .disc {
     fill: var(--card);
-    stroke: color-mix(in srgb, var(--ink) 26%, transparent);
+    stroke: var(--metal-3);
     stroke-width: 1.1;
     transition: stroke 0.25s, fill 0.25s;
   }
@@ -1483,24 +1645,93 @@ pre {
     }
   }
 
-  text {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.06em;
-    fill: var(--ink-soft);
-    text-anchor: middle;
-    pointer-events: none;
+  // The drawing carries reference numbers only. Names and skills live in the index under the
+  // plate, so a label can never again land on a spoke, an edge or a cell.
+  .ref {
+    rect {
+      fill: var(--card);
+      stroke: var(--metal-3);
+      stroke-width: 0.9;
+    }
+
+    text {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      fill: var(--rose);
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
   }
 
-  &[aria-pressed="true"] text {
+  &[aria-pressed="true"] .ref rect {
+    fill: var(--rose-wash);
+    stroke: var(--rose);
+    stroke-width: 1.3;
+  }
+
+  &[aria-pressed="true"] .ref text {
     fill: var(--ink);
   }
+}
 
-  .role {
-    font-size: 8.4px;
+// The index is the legend: a parts list under the plate, ruled like a specification table.
+.node-index {
+  width: 100%;
+  margin-top: 0.9rem;
+  border-collapse: collapse;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font-size: 0.72rem;
+
+  th {
+    .overline();
+    font-size: 0.58rem;
+    font-weight: 400;
+    text-align: left;
+    padding: 0.5rem 0.6rem;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  td {
+    padding: 0.42rem 0.6rem;
+    border-bottom: 1px solid var(--line-soft);
+    color: var(--ink-soft);
+  }
+
+  tbody tr {
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+
+    &:last-child td {
+      border-bottom: 0;
+    }
+
+    &:hover td,
+    &.lit td {
+      color: var(--ink);
+      background: var(--rose-wash);
+    }
+  }
+
+  td:first-child {
+    width: 3.4rem;
+    font-family: var(--mono);
+    font-size: 0.66rem;
     letter-spacing: 0.12em;
-    text-transform: uppercase;
-    fill: var(--ink-faint);
+    color: var(--rose);
+  }
+
+  td:nth-child(2) {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  td:last-child {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
   }
 }
 
@@ -1787,20 +2018,18 @@ pre {
 
 /* ------------------------------------------------------------------ faces */
 
-// An agent is a cell with two eyes. Nothing more: the expression is the whole character.
+// An agent is a cell with two eyes; the hub, being larger, has a short mouth as well. The face is
+// constant — no blink, no change on selection, no pulse. A face that lights up is a control, and
+// the expression is the whole character.
 .face line {
   stroke: var(--ink);
   stroke-width: 1.2;
   stroke-linecap: round;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
-.node-btn[aria-pressed="true"] .face line {
-  stroke: var(--rose);
-  opacity: 1;
-}
-
-// A message in flight: one dot running out along a spoke and back.
+// A message in flight: one dot running out along a spoke. It fades before it touches the cell, so
+// nothing is ever seen sitting inside a face or passing through it.
 .flow {
   fill: var(--rose);
 }

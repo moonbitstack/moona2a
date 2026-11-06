@@ -574,7 +574,7 @@ def footer() -> str:
         {MARK}
         <span>MoonA2A</span>
       </a>
-      <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams, push. Apache-2.0.</p>
+      <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams, push. Apache 2.0.</p>
       <div class="links">
         <a href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener">GitHub</a>
         <a href="https://mooncakes.io/docs/moonbitstack/moona2a" target="_blank" rel="noopener">mooncakes</a>
@@ -583,7 +583,7 @@ def footer() -> str:
         <a href="index.html">Home</a>
       </div>
     </div>
-    <div class="legal"><span>Apache-2.0</span><span>Built with MoonBit</span></div>
+    <div class="legal"><span>Apache 2.0</span><span>Built with MoonBit</span></div>
   </div>
 </footer>"""
 
@@ -598,8 +598,8 @@ def render(packages: list[tuple[str, dict]], docs: dict, params: dict) -> str:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>API reference — moona2a</title>
 <meta name="description" content="Every public type, function and constant in moona2a, generated from the package interfaces and the sources' documentation comments.">
-<meta name="theme-color" content="#f4eee2">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f4eee2'/%3E%3Cpath d='M12 2.4 14.5 9 21.4 9.3 15.9 13.7 17.8 20.4 12 16.5 6.2 20.4 8.1 13.7 2.6 9.3 9.5 9Z' fill='none' stroke='%23b8721a' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#f7f1ec">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f7f1ec'/%3E%3Cpath d='M12 2.4 14.5 9 21.4 9.3 15.9 13.7 17.8 20.4 12 16.5 6.2 20.4 8.1 13.7 2.6 9.3 9.5 9Z' fill='none' stroke='%23a2525e' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -614,7 +614,7 @@ def render(packages: list[tuple[str, dict]], docs: dict, params: dict) -> str:
   <section class="page-hero">
     <div class="wrap">
       <span class="eyebrow">API</span>
-      <h1>The <em>reference</em>.</h1>
+      <h1>The API reference.</h1>
       <p class="lede">Every public type, function and constant, grouped by package. Generated from <span class="mono">pkg.generated.mbti</span> and the sources' own documentation comments, so it says what the code says.</p>
     </div>
   </section>

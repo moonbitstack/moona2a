@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The star — moona2a</title>
 <meta name="description" content="An interactive map of an agent-to-agent exchange: pick an agent of the star, send it a message, and read the JSON-RPC frames this library actually encodes.">
-<meta name="theme-color" content="#f4eee2">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f4eee2'/%3E%3Cpath d='M12 2.4 14.5 9 21.4 9.3 15.9 13.7 17.8 20.4 12 16.5 6.2 20.4 8.1 13.7 2.6 9.3 9.5 9Z' fill='none' stroke='%23b8721a' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#f7f1ec">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f7f1ec'/%3E%3Cpath d='M12 2.4 14.5 9 21.4 9.3 15.9 13.7 17.8 20.4 12 16.5 6.2 20.4 8.1 13.7 2.6 9.3 9.5 9Z' fill='none' stroke='%23a2525e' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -50,7 +50,7 @@
 <section class="page-hero">
   <div class="wrap">
     <span class="eyebrow">The star</span>
-    <h1>Six agents, <em>one task</em>.</h1>
+    <h1>Six agents, one task.</h1>
     <p class="lede">A hub convenes five spokes; each spoke is an agent with one skill. Pick a spoke, send it a line, and read the frame this library encodes: the call, the task, and every update after it. Nothing on this page is a picture of a protocol — the JSON comes from the library, compiled to JavaScript.</p>
   </div>
 </section>
@@ -58,6 +58,7 @@
 <div class="wrap star-layout">
 
   <div class="map-panel">
+    <div class="map-figure">
     <svg class="star-map" viewBox="-68 -66 556 452" role="group" aria-label="An agent star: a hub with five spokes">
       <path class="outline" d="M200 15 245.8 136.9 375.9 142.8 274.2 224.1 308.8 349.7 200 278 91.2 349.7 125.8 224.1 24.1 142.8 154.2 136.9Z"/>
       <g id="edges">
@@ -68,49 +69,55 @@
         <line class="edge" data-agent="scout" x1="200" y1="200" x2="24.1" y2="142.8"/>
       </g>
       <g class="flows">
-        <circle class="flow" r="2.8"><animateMotion dur="4.2s" begin="0s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1" path="M200 200 L200 15"/></circle>
-        <circle class="flow" r="2.8"><animateMotion dur="5.1s" begin="-1.7s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1" path="M200 200 L375.9 142.8"/></circle>
-        <circle class="flow" r="2.8"><animateMotion dur="3.7s" begin="-0.9s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1" path="M200 200 L308.8 349.7"/></circle>
-        <circle class="flow" r="2.8"><animateMotion dur="4.7s" begin="-2.6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1" path="M200 200 L91.2 349.7"/></circle>
-        <circle class="flow" r="2.8"><animateMotion dur="5.6s" begin="-3.9s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1" path="M200 200 L24.1 142.8"/></circle>
+        <circle class="flow" r="2.8"><animateMotion dur="4.2s" begin="0s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M200 200 L200 30"/></circle><animate attributeName="opacity" dur="4.2s" begin="0s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
+        <circle class="flow" r="2.8"><animateMotion dur="5.1s" begin="-1.7s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M200 200 L363.6 146.9"/></circle><animate attributeName="opacity" dur="5.1s" begin="-1.7s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
+        <circle class="flow" r="2.8"><animateMotion dur="3.7s" begin="-0.9s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M200 200 L301.2 339.2"/></circle><animate attributeName="opacity" dur="3.7s" begin="-0.9s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
+        <circle class="flow" r="2.8"><animateMotion dur="4.7s" begin="-2.6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M200 200 L98.8 339.2"/></circle><animate attributeName="opacity" dur="4.7s" begin="-2.6s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
+        <circle class="flow" r="2.8"><animateMotion dur="5.6s" begin="-3.9s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M200 200 L36.5 146.8"/></circle><animate attributeName="opacity" dur="5.6s" begin="-3.9s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
       </g>
 
       <g class="node-btn" data-agent="convener" role="button" tabindex="0" aria-pressed="true" aria-label="Convener, the hub">
         <path class="hub" d="M200.0 180.0 L217.3 190.0 L217.3 210.0 L200.0 220.0 L182.7 210.0 L182.7 190.0 Z"/>
-        <g class="face"><line x1="193.2" y1="194.0" x2="193.2" y2="203.2"/><line x1="206.8" y1="194.0" x2="206.8" y2="203.2"/></g>
+        <g class="face"><line x1="193.4" y1="193.0" x2="193.4" y2="200.6"/><line x1="206.6" y1="193.0" x2="206.6" y2="200.6"/><line x1="194.4" y1="207.4" x2="205.6" y2="207.4"/></g>
       </g>
 
       <g class="node-btn" data-agent="planner" role="button" tabindex="0" aria-pressed="false" aria-label="Planner">
         <path class="disc" d="M200.0 0.0 L213.0 7.5 L213.0 22.5 L200.0 30.0 L187.0 22.5 L187.0 7.5 Z"/>
         <g class="face"><line x1="194.9" y1="10.5" x2="194.9" y2="17.4"/><line x1="205.1" y1="10.5" x2="205.1" y2="17.4"/></g>
-        <text x="200" y="-34" style="font-size:10.5px">planner</text>
-        <text class="role" x="200" y="-46">input required</text>
+        <g class="ref"><rect x="189" y="-34" width="22" height="16" rx="1"/><text x="200" y="-26">01</text></g>
       </g>
       <g class="node-btn" data-agent="archivist" role="button" tabindex="0" aria-pressed="false" aria-label="Archivist">
         <path class="disc" d="M375.9 127.8 L388.9 135.3 L388.9 150.3 L375.9 157.8 L362.9 150.3 L362.9 135.3 Z"/>
         <g class="face"><line x1="370.8" y1="138.3" x2="370.8" y2="145.2"/><line x1="381.0" y1="138.3" x2="381.0" y2="145.2"/></g>
-        <text x="410" y="139" text-anchor="start" style="font-size:10.5px">archivist</text>
-        <text class="role" x="410" y="151" text-anchor="start">artifacts</text>
+        <g class="ref"><rect x="402" y="135" width="22" height="16" rx="1"/><text x="413" y="143">02</text></g>
       </g>
       <g class="node-btn" data-agent="herald" role="button" tabindex="0" aria-pressed="false" aria-label="Herald">
         <path class="disc" d="M308.8 334.7 L321.8 342.2 L321.8 357.2 L308.8 364.7 L295.8 357.2 L295.8 342.2 Z"/>
         <g class="face"><line x1="303.7" y1="345.2" x2="303.7" y2="352.1"/><line x1="313.9" y1="345.2" x2="313.9" y2="352.1"/></g>
-        <text x="343" y="346" text-anchor="start" style="font-size:10.5px">herald</text>
-        <text class="role" x="343" y="358" text-anchor="start">webhook</text>
+        <g class="ref"><rect x="338" y="358" width="22" height="16" rx="1"/><text x="349" y="366">03</text></g>
       </g>
       <g class="node-btn" data-agent="sentinel" role="button" tabindex="0" aria-pressed="false" aria-label="Sentinel">
         <path class="disc" d="M91.2 334.7 L104.2 342.2 L104.2 357.2 L91.2 364.7 L78.2 357.2 L78.2 342.2 Z"/>
         <g class="face"><line x1="86.1" y1="345.2" x2="86.1" y2="352.1"/><line x1="96.3" y1="345.2" x2="96.3" y2="352.1"/></g>
-        <text x="57" y="346" text-anchor="end" style="font-size:10.5px">sentinel</text>
-        <text class="role" x="57" y="358" text-anchor="end">cancellation</text>
+        <g class="ref"><rect x="40" y="358" width="22" height="16" rx="1"/><text x="51" y="366">04</text></g>
       </g>
       <g class="node-btn" data-agent="scout" role="button" tabindex="0" aria-pressed="false" aria-label="Scout">
         <path class="disc" d="M24.1 127.8 L37.1 135.3 L37.1 150.3 L24.1 157.8 L11.1 150.3 L11.1 135.3 Z"/>
         <g class="face"><line x1="19.0" y1="138.3" x2="19.0" y2="145.2"/><line x1="29.2" y1="138.3" x2="29.2" y2="145.2"/></g>
-        <text x="-10" y="139" text-anchor="end" style="font-size:10.5px">scout</text>
-        <text class="role" x="-10" y="151" text-anchor="end">discovery</text>
+        <g class="ref"><rect x="-40" y="135" width="22" height="16" rx="1"/><text x="-29" y="143">05</text></g>
       </g>
     </svg>
+    </div>
+    <table class="node-index">
+      <thead><tr><th scope="col">Ref</th><th scope="col">Agent</th><th scope="col">Skill</th></tr></thead>
+      <tbody>
+        <tr tabindex="0" data-agent="planner"><td>01</td><td>Planner</td><td>decompose</td></tr>
+        <tr tabindex="0" data-agent="archivist"><td>02</td><td>Archivist</td><td>artifacts</td></tr>
+        <tr tabindex="0" data-agent="herald"><td>03</td><td>Herald</td><td>webhooks</td></tr>
+        <tr tabindex="0" data-agent="sentinel"><td>04</td><td>Sentinel</td><td>cancellation</td></tr>
+        <tr tabindex="0" data-agent="scout"><td>05</td><td>Scout</td><td>discovery</td></tr>
+      </tbody>
+    </table>
     <div class="map-caption">
       <span id="map-state">hub · convene</span>
       <span id="engine-state">loading the engine…</span>
@@ -144,7 +151,7 @@
     <div class="section-head reveal">
       <div>
         <span class="kicker">The lifecycle</span>
-        <h2>A task is a cell; these are its <em>walls</em>.</h2>
+        <h2>A task is a cell; these are its walls.</h2>
       </div>
       <p>Eight states, and four of them are final: once a task is completed, failed, canceled or rejected, no message, cancellation or transition applies to it again.</p>
     </div>
@@ -161,7 +168,7 @@
         <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6 14.7 8.28 22.46 8.6 16.38 13.42 18.47 20.9 12 16.6 5.53 20.9 7.62 13.42 1.54 8.6 9.3 8.28Z"/></svg>
         <span>MoonA2A</span>
       </a>
-      <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams, push. Apache-2.0.</p>
+      <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams, push. Apache 2.0.</p>
       <div class="links">
         <a href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener">GitHub</a>
         <a href="https://mooncakes.io/docs/moonbitstack/moona2a" target="_blank" rel="noopener">mooncakes</a>
@@ -170,7 +177,7 @@
         <a href="index.html">Home</a>
       </div>
     </div>
-    <div class="legal"><span>Apache-2.0</span><span>Built with MoonBit</span></div>
+    <div class="legal"><span>Apache 2.0</span><span>Built with MoonBit</span></div>
   </div>
 </footer>
 </body>

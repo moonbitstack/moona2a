@@ -94,6 +94,9 @@
     for (const edge of document.querySelectorAll(".edge")) {
       edge.classList.toggle("lit", id === "convener" || edge.dataset.agent === id);
     }
+    for (const row of document.querySelectorAll(".node-index tbody tr")) {
+      row.classList.toggle("lit", row.dataset.agent === id);
+    }
 
     title.textContent = agent.name;
     role.textContent = agent.kind + " · " + agent.skill;
@@ -107,14 +110,21 @@
     history.replaceState(null, "", "#" + id);
   }
 
-  for (const node of document.querySelectorAll(".node-btn")) {
-    node.addEventListener("click", () => select(node.dataset.agent));
-    node.addEventListener("keydown", (e) => {
+  const activate = (el, id) => {
+    el.addEventListener("click", () => select(id));
+    el.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        select(node.dataset.agent);
+        select(id);
       }
     });
+  };
+
+  for (const node of document.querySelectorAll(".node-btn")) {
+    activate(node, node.dataset.agent);
+  }
+  for (const row of document.querySelectorAll(".node-index tbody tr")) {
+    activate(row, row.dataset.agent);
   }
 
   composer.addEventListener("submit", (e) => {
