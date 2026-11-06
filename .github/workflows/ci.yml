@@ -49,9 +49,12 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           for dir in src/examples/*/; do
-            if grep -q 'kind: "executable"' "$dir/moon.pkg" && ! grep -q 'supported_targets = "js"' "$dir/moon.pkg"; then
-              moon run "$dir" --target native > /dev/null
-            fi
+            # The conformance server runs until it is stopped, and the conformance job is what
+            # starts it.
+            case "$(basename "$dir")" in
+              05-conformance) continue ;;
+            esac
+            moon run "$dir" --target native > /dev/null
           done
 
       - name: lint (fmt is clean)
@@ -61,3 +64,30 @@ jobs:
       - name: interfaces are up to date
         run: |
           moon info --target all && git diff --exit-code
+
+  conformance:
+    permissions:
+      contents: read
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: install moon
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: post install
+        run: |
+          moon version --all
+          moon update
+
+      - name: install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: official conformance suite
+        run: scripts/conformance/check.sh
