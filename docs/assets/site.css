@@ -15,6 +15,9 @@
   --honey: #a8611a;
   --honey-lit: #dd9b3d;
   --honey-wash: rgba(221, 155, 61, 0.13);
+  --violet: #5b46a8;
+  --violet-wash: rgba(91, 70, 168, 0.09);
+  --emerald: #146f63;
   --shadow: 0 22px 60px -46px rgba(19, 17, 9, 0.7);
   --wrap: 1160px;
   --gutter: clamp(1.25rem, 4.4vw, 3.75rem);
@@ -32,6 +35,9 @@
   --honey: #e2a24a;
   --honey-lit: #f6cd8b;
   --honey-wash: rgba(226, 162, 74, 0.12);
+  --violet: #9c86f0;
+  --violet-wash: rgba(156, 134, 240, 0.1);
+  --emerald: #4ec9b4;
   --shadow: 0 24px 60px -42px #000;
 }
 @media (prefers-color-scheme: dark) {
@@ -47,6 +53,9 @@
     --honey: #e2a24a;
     --honey-lit: #f6cd8b;
     --honey-wash: rgba(226, 162, 74, 0.12);
+    --violet: #9c86f0;
+    --violet-wash: rgba(156, 134, 240, 0.1);
+    --emerald: #4ec9b4;
     --shadow: 0 24px 60px -42px #000;
   }
 }
@@ -106,8 +115,14 @@ a {
   color: inherit;
 }
 ::selection {
-  background: color-mix(in srgb, var(--honey-lit) 42%, transparent);
-  color: var(--ink);
+  background: var(--honey-lit);
+  color: #100e0b;
+  text-shadow: none;
+}
+::-moz-selection {
+  background: var(--honey-lit);
+  color: #100e0b;
+  text-shadow: none;
 }
 ::marker {
   color: var(--honey);
@@ -307,6 +322,29 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
   overflow: clip;
   border-bottom: 1px solid var(--line);
 }
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero::before {
+  inset: 5.2rem 0 0 0;
+  background: linear-gradient(190deg, color-mix(in srgb, var(--violet) 11%, transparent), transparent 58%);
+  mask-image: linear-gradient(72deg, transparent 34%, #000 58%), linear-gradient(to bottom, transparent, #000 16%);
+  mask-composite: intersect;
+}
+.hero::after {
+  right: 0;
+  bottom: 0;
+  width: 46%;
+  height: 58%;
+  background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--ink) 55%, transparent) 0.9px, transparent 1.2px);
+  background-size: 6px 6px;
+  mask-image: linear-gradient(to top left, #000, transparent 62%);
+  opacity: 0.13;
+}
 .hero-rule {
   display: flex;
   flex-wrap: wrap;
@@ -424,6 +462,15 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
   margin-inline-end: clamp(-5rem, -3.2vw, 0rem);
   pointer-events: none;
 }
+.constellation::before {
+  content: "";
+  position: absolute;
+  inset: -14%;
+  background: repeating-conic-gradient(from 0deg at 50% 50%, color-mix(in srgb, var(--violet) 22%, transparent) 0deg 0.5deg, transparent 0.5deg 7.5deg);
+  mask: radial-gradient(circle at 50% 50%, transparent 33%, #000 46%, transparent 76%);
+  opacity: 0.55;
+  z-index: -1;
+}
 .constellation svg {
   width: 100%;
   height: auto;
@@ -510,6 +557,51 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
   color: var(--ink-faint);
   font-size: 0.6rem;
   letter-spacing: 0.2em;
+}
+/* ---------------------------------------------------------------- sections */
+.section {
+  position: relative;
+  z-index: 1;
+  padding-block: clamp(3.2rem, 9vh, 5.6rem);
+}
+.section.alt {
+  background: var(--paper-2);
+  border-block: 1px solid var(--line-soft);
+}
+.section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+  gap: clamp(1rem, 4vw, 3.5rem);
+  align-items: end;
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+}
+.section-head h2 {
+  font-size: clamp(2rem, 4.2vw, 3.2rem);
+  letter-spacing: -0.028em;
+}
+.section-head p {
+  color: var(--ink-soft);
+  font-size: 0.96rem;
+  max-width: 52ch;
+}
+.kicker {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.85rem;
+  color: var(--honey);
+}
+.kicker::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  transform: translateY(-0.18em);
 }
 /* -------------------------------------------------------------------- comb */
 .comb {
@@ -1042,6 +1134,20 @@ pre code {
   position: sticky;
   top: 88px;
 }
+.map-panel::before {
+  content: "";
+  position: absolute;
+  inset: -6% -4%;
+  background: repeating-conic-gradient(from 0deg at 50% 50%, color-mix(in srgb, var(--violet) 20%, transparent) 0deg 0.5deg, transparent 0.5deg 8deg);
+  mask: radial-gradient(circle at 50% 50%, transparent 30%, #000 44%, transparent 74%);
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
+}
+.map-panel .star-map {
+  position: relative;
+  z-index: 1;
+}
 .star-map {
   width: 100%;
   aspect-ratio: 1;
@@ -1315,6 +1421,55 @@ pre code {
   font-size: 0.8rem;
   line-height: 1.45;
   color: var(--ink-soft);
+}
+/* ----------------------------------------------------------------- methods */
+.methods-wrap {
+  overflow-x: auto;
+}
+.methods {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  border-top: 1px solid var(--line);
+}
+.methods th {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 400;
+  font-size: 0.58rem;
+  text-align: left;
+  padding: 0.5rem 1rem 0.5rem 0;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.methods td {
+  padding: 0.62rem 1rem 0.62rem 0;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: baseline;
+  color: var(--ink-soft);
+}
+.methods td:nth-child(1) {
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.methods td:nth-child(2) {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--honey);
+  white-space: nowrap;
+  width: 7.5rem;
+}
+.methods tbody tr {
+  transition: background 0.2s;
+}
+.methods tbody tr:hover {
+  background: color-mix(in srgb, var(--honey-wash) 45%, transparent);
 }
 /* ------------------------------------------------------------------- gauge */
 .gauge {

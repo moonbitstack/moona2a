@@ -98,7 +98,7 @@
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <span class="kicker">01 — The comb</span>
+        <span class="kicker">§ 01 — The comb</span>
         <h2>Six cells,<br>one <em>protocol</em>.</h2>
       </div>
       <p>A task is a cell: it is opened, filled, sealed. What a caller may do to it belongs to the protocol rather than to the agent, so the same six cells answer for every agent built on this library.</p>
@@ -149,7 +149,7 @@
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <span class="kicker">02 — The wire</span>
+        <span class="kicker">§ 02 — The wire</span>
         <h2>JSON-RPC,<br>and nothing <em>else</em>.</h2>
       </div>
       <p>One POST body carries a call. A streaming method answers with server-sent events, each one a whole JSON-RPC reply. What you see below is what this library writes.</p>
@@ -196,11 +196,45 @@
   </div>
 </section>
 
+
+<section class="section alt">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="kicker">§ 03 — The methods</span>
+        <h2>Eleven calls,<br>one <em>path</em>.</h2>
+      </div>
+      <p>Everything an agent can be asked is one of these eleven. Six answer once, two answer with a stream, three keep the bookkeeping of a task that someone else is watching.</p>
+    </div>
+
+    <div class="methods-wrap reveal">
+      <table class="methods">
+        <thead>
+          <tr><th scope="col">Method</th><th scope="col">Answer</th><th scope="col">What it does</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>SendMessage</td><td>reply</td><td>Send a message; get back the task it opened, or the message the agent answered with</td></tr>
+          <tr><td>SendStreamingMessage</td><td>stream</td><td>The same, with every event as it happens</td></tr>
+          <tr><td>GetTask</td><td>reply</td><td>Read a task, with as much of its history as the caller asks for</td></tr>
+          <tr><td>ListTasks</td><td>reply</td><td>A page of the caller's tasks, newest first</td></tr>
+          <tr><td>CancelTask</td><td>reply</td><td>Ask a task to stop; a finished one refuses with a code</td></tr>
+          <tr><td>SubscribeToTask</td><td>stream</td><td>Join a running task, then follow what happens after</td></tr>
+          <tr><td>CreateTaskPushNotificationConfig</td><td>reply</td><td>Leave a webhook for a task's updates</td></tr>
+          <tr><td>GetTaskPushNotificationConfig</td><td>reply</td><td>Read one registration</td></tr>
+          <tr><td>ListTaskPushNotificationConfigs</td><td>reply</td><td>Every registration a task carries</td></tr>
+          <tr><td>DeleteTaskPushNotificationConfig</td><td>reply</td><td>Remove a registration, idempotently</td></tr>
+          <tr><td>GetExtendedAgentCard</td><td>reply</td><td>The card shown to a caller that authenticated</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
 <section class="section">
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <span class="kicker">03 — The agent</span>
+        <span class="kicker">§ 04 — The agent</span>
         <h2>An agent is<br>an <em>executor</em>.</h2>
       </div>
       <p>Say what happens; the server turns it into a task, keeps the history, answers the protocol around it, and hands the same events to every watcher.</p>
