@@ -36,9 +36,9 @@ source = "src"
 
 import {
   "moonbitlang/async@0.22.5",
-  "moonbitstack/moondate@0.1.4",
+  "moonbitstack/moondate@0.1.5",
   "moonbitstack/moonasgi@0.10.6",
-  "moonbitstack/moonfetch@0.1.5",
-  "moonbitstack/moonhttp@0.15.8",
+  "moonbitstack/moonfetch@0.1.6",
+  "moonbitstack/moonhttp@0.15.9",
   "moonbitstack/moonjrpc@0.1.3",
 }
