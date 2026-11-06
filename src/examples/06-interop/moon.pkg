@@ -1,0 +1,14 @@
+// Calls an agent that is already running, over HTTP. Native only: it needs sockets.
+
+import {
+  "moonbitlang/async",
+  "moonbitlang/core/env",
+  "moonbitlang/core/json",
+  "moonbitstack/moona2a",
+  "moonbitstack/moona2a/fetch",
+  "moonbitstack/moonjrpc",
+}
+
+supported_targets = "+native"
+
+pkgtype(kind: "executable")

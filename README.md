@@ -170,6 +170,11 @@ speaks JSON-RPC, so there is no gRPC or HTTP+JSON endpoint for the suite to driv
 of section 5.4, the multi-stream ordering, the resubscription cases and webhook delivery are all
 covered.
 
+The same server and client were run against the [official Python SDK](https://github.com/a2aproject/a2a-python)
+(1.3.0) in both directions — the MoonBit client reading a card and streaming from a Python agent,
+and the Python client sending, streaming and reading a task back from the MoonBit server —
+with `scripts/interop/check.sh`.
+
 Two behaviours are worth naming:
 
 - **Media types are not refused by default.** Section 3.1.1 asks an agent to answer
@@ -189,6 +194,7 @@ Two behaviours are worth naming:
 | 03 | [`server`](src/examples/03-server/) | A server answering a `SendMessage` body |
 | 04 | [`stream`](src/examples/04-stream/) | A streaming answer, event by event |
 | 05 | [`conformance`](src/examples/05-conformance/) | The server the conformance suite drives, over HTTP |
+| 06 | [`interop`](src/examples/06-interop/) | A client calling a live agent: card, message, stream |
 
 ## Tests
 
