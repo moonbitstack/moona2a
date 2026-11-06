@@ -69,6 +69,10 @@
   --blue-wash: rgb(147 166 204 / 10%);
   --aura: rgb(170 189 230 / 17%);
   --shadow: 0 24px 60px -42px #000;
+  --sheen: rgb(255 255 255 / 7%);
+  --sheen-soft: rgb(255 255 255 / 4%);
+  --edge: rgb(0 0 0 / 45%);
+  --grain-opacity: 0.2;
 }
 
 :root {
@@ -96,6 +100,12 @@
   --blue-wash: rgb(94 111 153 / 9%);
   --aura: rgb(94 111 153 / 9%);
   --shadow: 0 22px 60px -46px rgb(22 16 15 / 46%);
+  // The finish: a chalky ground, lacquered panels. `--sheen` is the highlight along a top edge,
+  // `--edge` the shadow that keeps a panel off the paper.
+  --sheen: rgb(255 255 255 / 72%);
+  --sheen-soft: rgb(255 255 255 / 34%);
+  --edge: rgb(22 16 15 / 7%);
+  --grain-opacity: 0.34;
 
   --wrap: 1160px;
   --gutter: clamp(1.25rem, 4.4vw, 3.75rem);
@@ -172,6 +182,20 @@ a {
 
 // Selection is the one moment the page is marked up by hand, so it is a block of rose gold with ink
 // knocked out of it — the same ink-on-metal the buttons use, rather than a wash of tint.
+// Limewash: a fixed, very fine grain over the paper. It does not scroll, so the page reads as one
+// surface rather than as a texture that follows the reader.
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
 ::selection {
   background: var(--rose-lit);
   color: #16100f;
@@ -540,8 +564,11 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   gap: 0.6rem;
   padding: 0.8rem 1.25rem 0.86rem;
   border: 1px solid var(--ink);
-  background: var(--ink);
+  border-radius: 2px;
+  background-color: var(--ink);
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 10%), transparent 55%);
   color: var(--paper);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%), 0 1px 0 var(--edge);
   font-family: var(--mono);
   font-size: 0.7rem;
   letter-spacing: 0.12em;
@@ -552,7 +579,7 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   transition: background 0.25s, color 0.25s, border-color 0.25s;
 
   &:hover {
-    background: var(--rose);
+    background-color: var(--rose);
     border-color: var(--rose);
     color: var(--paper);
   }
@@ -767,11 +794,12 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   gap: 0.55rem;
   min-height: 11.6rem;
   padding: 1.5rem 1.45rem 1.35rem;
-  background: var(--paper);
-  transition: background 0.3s;
+  background-color: var(--card);
+  background-image: linear-gradient(180deg, var(--sheen-soft), transparent 38%);
+  transition: background-color 0.3s;
 
   &:hover {
-    background: color-mix(in srgb, var(--rose-wash) 45%, var(--paper));
+    background-color: color-mix(in srgb, var(--rose-wash) 45%, var(--card));
   }
 
   .index {
@@ -819,7 +847,10 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
 .code-block {
   position: relative;
   border: 1px solid var(--line);
-  background: var(--card);
+  border-radius: 2px;
+  background-color: var(--card);
+  background-image: linear-gradient(180deg, var(--sheen-soft), transparent 46%);
+  box-shadow: inset 0 1px 0 var(--sheen), 0 1px 0 var(--edge);
 
   .tick {
     position: absolute;
@@ -1218,7 +1249,9 @@ pre {
   font-family: var(--mono);
   font-size: 0.76rem;
   line-height: 1.7;
-  background: var(--paper-2);
+  border-radius: 2px;
+  background-color: var(--paper-2);
+  background-image: linear-gradient(180deg, var(--sheen-soft), transparent 60%);
   border-left: 2px solid var(--rose);
   padding: 0.65rem 0.85rem;
   overflow-x: auto;
@@ -1560,7 +1593,10 @@ pre {
 
 .frame {
   border: 1px solid var(--line);
-  background: var(--card);
+  border-radius: 2px;
+  background-color: var(--card);
+  background-image: linear-gradient(180deg, var(--sheen-soft), transparent 40%);
+  box-shadow: inset 0 1px 0 var(--sheen);
   opacity: 0;
   transform: translateY(5px);
   animation: arrive 0.42s var(--ease) forwards;
@@ -1667,7 +1703,8 @@ pre {
 }
 
 .state {
-  background: var(--card);
+  background-color: var(--card);
+  background-image: linear-gradient(180deg, var(--sheen-soft), transparent 42%);
   padding: 0.8rem 0.9rem;
   transition: background 0.25s;
 
