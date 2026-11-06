@@ -56,6 +56,11 @@
   --sb-thumb-dim: color-mix(in srgb, var(--ink) 15%, transparent);
   --sb-thumb-in: color-mix(in srgb, var(--ink) 19%, transparent);
 
+  // The transcript's spine and its nodes. They are read at one pixel, so they are colours rather
+  // than ink percentages: a hairline that works on paper disappears on a dark panel.
+  --rail-ink: #d3ccbf;
+  --node-ink: #b3aa9b;
+
   --wrap: 1128px;
   --gutter: clamp(1.25rem, 4.2vw, 3.25rem);
   --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
@@ -107,6 +112,9 @@
   --sb-thumb: color-mix(in srgb, var(--ink) 42%, transparent);
   --sb-thumb-dim: color-mix(in srgb, var(--ink) 26%, transparent);
   --sb-thumb-in: color-mix(in srgb, var(--ink) 34%, transparent);
+
+  --rail-ink: #3f3a33;
+  --node-ink: #6d6459;
 
   color-scheme: dark;
 }
@@ -778,19 +786,24 @@ hr {
   font-weight: 600;
   letter-spacing: -0.014em;
 
-  // Two bars of equal weight on the diagonal, mirrored: the metal and the dial it sits against.
-  // Equal area is the point — the mark is a pair, not a glyph with a highlight on it.
+  // One wire with a socket at each end, mirrored into a cross: two exchanges, four terminals, one
+  // crossing. The sockets are drawn rather than implied, because who is on each end is the whole
+  // point of the library. Both halves carry the same stroke, so neither reads as a highlight.
   .mark {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     flex: none;
+    fill: none;
+    stroke-width: 2.05;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 
     .m-a {
-      fill: var(--mark-a);
+      stroke: var(--mark-a);
     }
 
     .m-b {
-      fill: var(--mark-b);
+      stroke: var(--mark-b);
     }
   }
 }
@@ -1323,6 +1336,11 @@ hr {
 }
 
 .transcript {
+  // One axis for the whole panel: the header's dot, the rail, the node of every frame, the packet
+  // and the footer's dot are all placed from --rail, so none of them can drift from the others.
+  --rail-pad: 1.15rem;
+  --rail: 6px;
+  --node: 5px;
   border: 1px solid var(--hair);
   border-radius: 3px;
   background: var(--paper);
@@ -1330,10 +1348,11 @@ hr {
 }
 
 .t-head {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  padding: 0.62rem 0.85rem;
+  padding: 0.62rem 0.85rem 0.62rem var(--rail-pad);
   border-bottom: 1px solid var(--hair-2);
   background: var(--paper-2);
   font-family: var(--mono);
@@ -1344,11 +1363,14 @@ hr {
   // The header is the caller's side of the exchange, so it takes the blue. Everything the agent
   // answers with, below, stays in the metal.
   .dot {
-    width: 5px;
-    height: 5px;
+    position: absolute;
+    left: calc(var(--rail) - var(--node) / 2);
+    top: 50%;
+    width: var(--node);
+    height: var(--node);
     border-radius: 50%;
     background: var(--blue);
-    flex: none;
+    transform: translateY(-50%);
   }
 
   .t-method {
@@ -1361,10 +1383,11 @@ hr {
 }
 
 .t-body {
-  padding: 0.95rem 0.9rem 1.05rem 1.15rem;
+  padding: 0.95rem 0.9rem 1.05rem var(--rail-pad);
 }
 
 .t-frame {
+  --pad: 0;
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -1388,27 +1411,31 @@ hr {
   }
 
   & + .t-frame {
-    padding-top: 0.85rem;
+    --pad: 0.85rem;
+    padding-top: var(--pad);
     border-top: 1px dashed var(--hair-2);
   }
 
+  // The node sits on the rail, level with the first line of the label — not at a fixed distance
+  // from the frame's top, which is where the old mark drifted whenever a frame gained padding.
   &::before {
     content: "";
     position: absolute;
-    left: -0.72rem;
-    top: 1.28rem;
-    width: 5px;
-    height: 5px;
+    left: calc(var(--rail) - var(--rail-pad));
+    top: calc(var(--pad) + 0.36rem);
+    width: var(--node);
+    height: var(--node);
     border-radius: 50%;
+    transform: translate(-50%, -50%);
     background: var(--paper);
-    border: 1px solid var(--hair);
+    box-shadow: inset 0 0 0 1px var(--node-ink);
   }
 
   // The first frame is the request, so it carries the caller's colour; every frame after it is
   // the agent answering, and stays in the metal.
   &:first-child::before {
     background: var(--blue);
-    border-color: var(--blue);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 16%, transparent);
   }
 
   pre {
@@ -1428,6 +1455,7 @@ hr {
     margin-bottom: 0.3rem;
     font-family: var(--mono);
     font-size: 0.6rem;
+    line-height: 1.2;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--ink-3);
@@ -1441,10 +1469,11 @@ hr {
 }
 
 .t-foot {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.55rem 0.85rem;
+  padding: 0.55rem 0.85rem 0.55rem var(--rail-pad);
   border-top: 1px solid var(--hair-2);
   background: var(--paper-2);
   font-family: var(--mono);
@@ -1453,59 +1482,72 @@ hr {
   color: var(--ink-3);
 
   .dot {
-    width: 5px;
-    height: 5px;
+    position: absolute;
+    left: calc(var(--rail) - var(--node) / 2);
+    top: 50%;
+    width: var(--node);
+    height: var(--node);
     border-radius: 50%;
     background: var(--rose);
-    flex: none;
+    transform: translateY(-50%);
   }
 }
 
 .t-body {
   position: relative;
 
-  // One packet, travelling the rail the frames hang from. It is the only thing on the page that
-  // moves without being asked, and it says what the section is about.
-  &::after {
-    content: "";
-    position: absolute;
-    left: 0.25rem;
-    top: 1.2rem;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--rose);
-    animation: packet 7.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-  }
-
+  // The rail is the transcript's spine: the frames hang off it and one packet travels down it,
+  // which is the whole subject of the section. It fades at both ends rather than butting into
+  // the panel's rules.
   &::before {
     content: "";
     position: absolute;
-    left: 0.42rem;
-    top: 1.2rem;
-    bottom: 1.2rem;
+    left: calc(var(--rail) - 0.5px);
+    top: 0.95rem;
+    bottom: 1.05rem;
     width: 1px;
-    background: var(--hair-2);
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--rail-ink) 0.9rem,
+      var(--rail-ink) calc(100% - 0.9rem),
+      transparent
+    );
+  }
+
+  // The packet: a short comet, head at the bottom, tail fading upward. It runs at a constant
+  // speed because a stream does not ease — it arrives at a rate.
+  &::after {
+    content: "";
+    position: absolute;
+    left: calc(var(--rail) - 2.5px);
+    top: 0.55rem;
+    width: 5px;
+    height: 16px;
+    border-radius: 2.5px;
+    background: radial-gradient(circle at 50% 13px, var(--rose) 0 2.5px, transparent 2.6px),
+      linear-gradient(to bottom, transparent, color-mix(in srgb, var(--rose) 45%, transparent));
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--rose) 40%, transparent));
+    animation: packet 6.5s linear infinite;
   }
 }
 
 @keyframes packet {
   0% {
-    top: 1.2rem;
+    top: 0.55rem;
     opacity: 0;
   }
 
-  10% {
+  12% {
     opacity: 1;
   }
 
-  82% {
+  88% {
     opacity: 1;
   }
 
-  96%,
   100% {
-    top: calc(100% - 1.4rem);
+    top: calc(100% - 1.6rem);
     opacity: 0;
   }
 }
@@ -2119,6 +2161,9 @@ pre {
     stroke: var(--hair-2);
     stroke-width: 1;
     stroke-dasharray: 2 5;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: orbit-turn 90s linear infinite;
   }
 
   .outline {
@@ -2182,7 +2227,7 @@ pre {
 
   .edge {
     stroke: var(--rose);
-    opacity: 0.3;
+    opacity: 0.38;
     transition: opacity 0.2s var(--ease), stroke 0.2s var(--ease);
   }
 
@@ -2191,8 +2236,22 @@ pre {
     opacity: 0.78;
   }
 
+  // Each spoke carries a comet: a head and a tail that fades into the wire behind it. Duration
+  // is the agent's own cadence, which is why the five never fall into step.
   .flow {
     fill: var(--rose);
+    filter: drop-shadow(0 0 3px color-mix(in srgb, var(--rose) 55%, transparent));
+
+    .tail {
+      fill: none;
+      stroke: url(#comet);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+    }
+  }
+
+  #comet stop {
+    stop-color: var(--rose);
   }
 
   .node {
@@ -2259,6 +2318,24 @@ pre {
   .hub-ring {
     fill: var(--rose-wash);
     stroke: color-mix(in srgb, var(--rose) 55%, transparent);
+    animation: hub-breathe 9s ease-in-out infinite;
+  }
+}
+
+@keyframes orbit-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hub-breathe {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
   }
 }
 

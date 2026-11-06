@@ -6,7 +6,8 @@
 <title>Guide — MoonA2A</title>
 <meta name="description" content="A guide to moona2a: publish an agent card, write an executor, serve the JSON-RPC endpoint as ASGI, call an agent, follow a task's stream, and register a webhook.">
 <meta name="theme-color" content="#fbfaf6">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23fbfaf6'/%3E%3Cpath d='M17.844%203.044%2020.956%206.156%206.156%2020.956%203.044%2017.844Z' fill='%232f4a73'/%3E%3Cpath d='M6.156%203.044%2020.956%2017.844%2017.844%2020.956%203.044%206.156Z' fill='%23a86f4f'/%3E%3C/svg%3E">
+<script>try{var e=document.documentElement,n=performance.getEntriesByType("navigation")[0];if(n&&n.type==="reload")sessionStorage.removeItem("moona2a-theme");else{var t=sessionStorage.getItem("moona2a-theme");if(t)e.setAttribute("data-theme",t)}}catch(r){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Crect%20width='24'%20height='24'%20fill='%23fbfaf6'/%3E%3Cg%20fill='none'%20stroke-width='2.05'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M6.37%2017.63%2017.63%206.37M7.69%2018.39%205.10%2015.80%202.00%2018.90%205.10%2022.00%208.20%2018.90%205.61%2016.31M16.31%205.61%2018.90%208.20%2022.00%205.10%2018.90%202.00%2015.80%205.10%2018.39%207.69'%20stroke='%232f4a73'/%3E%3Cpath%20d='M6.37%206.37%2017.63%2017.63M5.61%207.69%208.20%205.10%205.10%202.00%202.00%205.10%205.10%208.20%207.69%205.61M18.39%2016.31%2015.80%2018.90%2018.90%2022.00%2022.00%2018.90%2018.90%2015.80%2016.31%2018.39'%20stroke='%23a86f4f'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -19,14 +20,14 @@
 <header class="topbar">
   <div class="wrap bar">
     <a class="brand" href="index.html">
-      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path class="m-b" d="M17.844 3.044 20.956 6.156 6.156 20.956 3.044 17.844Z"/><path class="m-a" d="M6.156 3.044 20.956 17.844 17.844 20.956 3.044 6.156Z"/></svg>
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path class="m-b" d="M6.37 17.63 17.63 6.37M7.69 18.39 5.10 15.80 2.00 18.90 5.10 22.00 8.20 18.90 5.61 16.31M16.31 5.61 18.90 8.20 22.00 5.10 18.90 2.00 15.80 5.10 18.39 7.69"/><path class="m-a" d="M6.37 6.37 17.63 17.63M5.61 7.69 8.20 5.10 5.10 2.00 2.00 5.10 5.10 8.20 7.69 5.61M18.39 16.31 15.80 18.90 18.90 22.00 22.00 18.90 18.90 15.80 16.31 18.39"/></svg>
       <span>MoonA2A</span>
     </a>
     <nav class="mainnav" aria-label="Primary">
       <a href="index.html">Home</a>
       <a href="guide.html" aria-current="page">Guide</a>
       <a href="api.html">API</a>
-      <a href="showcase.html">Showcase</a>
+      <a href="showcase.html">ShowCase</a>
     </nav>
     <div class="tools">
       <a class="icon-btn tip" href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener" aria-label="GitHub repository" data-tip="Source">
@@ -271,7 +272,7 @@ VersionNotSupported             -32009   a protocol version this interface does 
     <div class="foot-main">
       <div class="foot-brand">
         <a class="brand" href="index.html">
-          <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path class="m-b" d="M17.844 3.044 20.956 6.156 6.156 20.956 3.044 17.844Z"/><path class="m-a" d="M6.156 3.044 20.956 17.844 17.844 20.956 3.044 6.156Z"/></svg>
+          <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path class="m-b" d="M6.37 17.63 17.63 6.37M7.69 18.39 5.10 15.80 2.00 18.90 5.10 22.00 8.20 18.90 5.61 16.31M16.31 5.61 18.90 8.20 22.00 5.10 18.90 2.00 15.80 5.10 18.39 7.69"/><path class="m-a" d="M6.37 6.37 17.63 17.63M5.61 7.69 8.20 5.10 5.10 2.00 2.00 5.10 5.10 8.20 7.69 5.61M18.39 16.31 15.80 18.90 18.90 22.00 22.00 18.90 18.90 15.80 16.31 18.39"/></svg>
           <span>MoonA2A</span>
         </a>
         <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams and push, served or called.</p>
@@ -281,7 +282,7 @@ VersionNotSupported             -32009   a protocol version this interface does 
         <a href="index.html">Home</a>
         <a href="guide.html">Guide</a>
         <a href="api.html">API</a>
-        <a href="showcase.html">Showcase</a>
+        <a href="showcase.html">ShowCase</a>
       </div>
       <div class="foot-col">
         <h4>Elsewhere</h4>

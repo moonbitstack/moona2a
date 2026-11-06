@@ -8,10 +8,31 @@
 
   /* ---------------------------------------------------------------- theme */
 
-  // The page opens on the system setting, and the toggle is a light/dark switch for this visit
-  // only: nothing is stored, so a reload hands the decision back to the system.
+  // The page opens on the system setting. A switch made with the toggle follows the reader from
+  // page to page for this visit — the choice is written to session storage and read back in the
+  // document head, before the stylesheet paints, so moving between pages does not flash. A reload
+  // is the reader asking for the page again rather than the next page, so it clears the choice and
+  // hands the decision back to the system.
   const PAPER = { light: "#fbfaf6", dark: "#12100d" };
+  const KEY = "moona2a-theme";
   const media = matchMedia("(prefers-color-scheme: dark)");
+
+  const stored = () => {
+    try {
+      return sessionStorage.getItem(KEY);
+    } catch {
+      return null;
+    }
+  };
+
+  const remember = (theme) => {
+    try {
+      if (theme) sessionStorage.setItem(KEY, theme);
+      else sessionStorage.removeItem(KEY);
+    } catch {
+      /* storage is a convenience here, never a requirement */
+    }
+  };
 
   const current = () => root.getAttribute("data-theme") || (media.matches ? "dark" : "light");
 
@@ -27,7 +48,9 @@
 
   for (const btn of document.querySelectorAll(".theme-toggle")) {
     btn.addEventListener("click", () => {
-      root.setAttribute("data-theme", current() === "dark" ? "light" : "dark");
+      const next = current() === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      remember(next);
       paint();
     });
   }
@@ -35,6 +58,8 @@
   media.addEventListener("change", () => {
     if (!root.hasAttribute("data-theme")) paint();
   });
+
+  if (stored() && !root.hasAttribute("data-theme")) root.setAttribute("data-theme", stored());
 
   paint();
 

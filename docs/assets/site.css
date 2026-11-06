@@ -30,6 +30,8 @@
   --sb-thumb: color-mix(in srgb, var(--ink) 30%, transparent);
   --sb-thumb-dim: color-mix(in srgb, var(--ink) 15%, transparent);
   --sb-thumb-in: color-mix(in srgb, var(--ink) 19%, transparent);
+  --rail-ink: #d3ccbf;
+  --node-ink: #b3aa9b;
   --wrap: 1128px;
   --gutter: clamp(1.25rem, 4.2vw, 3.25rem);
   --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
@@ -60,6 +62,8 @@
   --sb-thumb: color-mix(in srgb, var(--ink) 42%, transparent);
   --sb-thumb-dim: color-mix(in srgb, var(--ink) 26%, transparent);
   --sb-thumb-in: color-mix(in srgb, var(--ink) 34%, transparent);
+  --rail-ink: #3f3a33;
+  --node-ink: #6d6459;
   color-scheme: dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -85,6 +89,8 @@
     --sb-thumb: color-mix(in srgb, var(--ink) 42%, transparent);
     --sb-thumb-dim: color-mix(in srgb, var(--ink) 26%, transparent);
     --sb-thumb-in: color-mix(in srgb, var(--ink) 34%, transparent);
+    --rail-ink: #3f3a33;
+    --node-ink: #6d6459;
     color-scheme: dark;
   }
 }
@@ -633,15 +639,19 @@ hr {
   letter-spacing: -0.014em;
 }
 .brand .mark {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   flex: none;
+  fill: none;
+  stroke-width: 2.05;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .brand .mark .m-a {
-  fill: var(--mark-a);
+  stroke: var(--mark-a);
 }
 .brand .mark .m-b {
-  fill: var(--mark-b);
+  stroke: var(--mark-b);
 }
 .mainnav {
   display: flex;
@@ -1055,16 +1065,20 @@ hr {
   }
 }
 .transcript {
+  --rail-pad: 1.15rem;
+  --rail: 6px;
+  --node: 5px;
   border: 1px solid var(--hair);
   border-radius: 3px;
   background: var(--paper);
   overflow: hidden;
 }
 .t-head {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  padding: 0.62rem 0.85rem;
+  padding: 0.62rem 0.85rem 0.62rem var(--rail-pad);
   border-bottom: 1px solid var(--hair-2);
   background: var(--paper-2);
   font-family: var(--mono);
@@ -1073,11 +1087,14 @@ hr {
   color: var(--ink-3);
 }
 .t-head .dot {
-  width: 5px;
-  height: 5px;
+  position: absolute;
+  left: calc(var(--rail) - var(--node) / 2);
+  top: 50%;
+  width: var(--node);
+  height: var(--node);
   border-radius: 50%;
   background: var(--blue);
-  flex: none;
+  transform: translateY(-50%);
 }
 .t-head .t-method {
   color: var(--blue);
@@ -1086,9 +1103,10 @@ hr {
   margin-left: auto;
 }
 .t-body {
-  padding: 0.95rem 0.9rem 1.05rem 1.15rem;
+  padding: 0.95rem 0.9rem 1.05rem var(--rail-pad);
 }
 .t-frame {
+  --pad: 0;
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -1108,23 +1126,25 @@ hr {
   animation-delay: 0.48s;
 }
 .t-frame + .t-frame {
-  padding-top: 0.85rem;
+  --pad: 0.85rem;
+  padding-top: var(--pad);
   border-top: 1px dashed var(--hair-2);
 }
 .t-frame::before {
   content: "";
   position: absolute;
-  left: -0.72rem;
-  top: 1.28rem;
-  width: 5px;
-  height: 5px;
+  left: calc(var(--rail) - var(--rail-pad));
+  top: calc(var(--pad) + 0.36rem);
+  width: var(--node);
+  height: var(--node);
   border-radius: 50%;
+  transform: translate(-50%, -50%);
   background: var(--paper);
-  border: 1px solid var(--hair);
+  box-shadow: inset 0 0 0 1px var(--node-ink);
 }
 .t-frame:first-child::before {
   background: var(--blue);
-  border-color: var(--blue);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 16%, transparent);
 }
 .t-frame pre {
   margin: 0;
@@ -1142,6 +1162,7 @@ hr {
   margin-bottom: 0.3rem;
   font-family: var(--mono);
   font-size: 0.6rem;
+  line-height: 1.2;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-3);
@@ -1152,10 +1173,11 @@ hr {
   color: var(--rose-ink);
 }
 .t-foot {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.55rem 0.85rem;
+  padding: 0.55rem 0.85rem 0.55rem var(--rail-pad);
   border-top: 1px solid var(--hair-2);
   background: var(--paper-2);
   font-family: var(--mono);
@@ -1164,49 +1186,52 @@ hr {
   color: var(--ink-3);
 }
 .t-foot .dot {
-  width: 5px;
-  height: 5px;
+  position: absolute;
+  left: calc(var(--rail) - var(--node) / 2);
+  top: 50%;
+  width: var(--node);
+  height: var(--node);
   border-radius: 50%;
   background: var(--rose);
-  flex: none;
+  transform: translateY(-50%);
 }
 .t-body {
   position: relative;
 }
-.t-body::after {
-  content: "";
-  position: absolute;
-  left: 0.25rem;
-  top: 1.2rem;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--rose);
-  animation: packet 7.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-}
 .t-body::before {
   content: "";
   position: absolute;
-  left: 0.42rem;
-  top: 1.2rem;
-  bottom: 1.2rem;
+  left: calc(var(--rail) - 0.5px);
+  top: 0.95rem;
+  bottom: 1.05rem;
   width: 1px;
-  background: var(--hair-2);
+  background: linear-gradient(to bottom, transparent, var(--rail-ink) 0.9rem, var(--rail-ink) calc(100% - 0.9rem), transparent);
+}
+.t-body::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--rail) - 2.5px);
+  top: 0.55rem;
+  width: 5px;
+  height: 16px;
+  border-radius: 2.5px;
+  background: radial-gradient(circle at 50% 13px, var(--rose) 0 2.5px, transparent 2.6px), linear-gradient(to bottom, transparent, color-mix(in srgb, var(--rose) 45%, transparent));
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--rose) 40%, transparent));
+  animation: packet 6.5s linear infinite;
 }
 @keyframes packet {
   0% {
-    top: 1.2rem;
+    top: 0.55rem;
     opacity: 0;
   }
-  10% {
+  12% {
     opacity: 1;
   }
-  82% {
+  88% {
     opacity: 1;
   }
-  96%,
   100% {
-    top: calc(100% - 1.4rem);
+    top: calc(100% - 1.6rem);
     opacity: 0;
   }
 }
@@ -1716,6 +1741,9 @@ pre {
   stroke: var(--hair-2);
   stroke-width: 1;
   stroke-dasharray: 2 5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: orbit-turn 90s linear infinite;
 }
 .star-map .outline {
   fill: none;
@@ -1768,7 +1796,7 @@ pre {
 }
 .star-map .edge {
   stroke: var(--rose);
-  opacity: 0.3;
+  opacity: 0.38;
   transition: opacity 0.2s var(--ease), stroke 0.2s var(--ease);
 }
 .star-map .edge.lit {
@@ -1777,6 +1805,16 @@ pre {
 }
 .star-map .flow {
   fill: var(--rose);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--rose) 55%, transparent));
+}
+.star-map .flow .tail {
+  fill: none;
+  stroke: url(#comet);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.star-map #comet stop {
+  stop-color: var(--rose);
 }
 .star-map .node {
   cursor: pointer;
@@ -1829,6 +1867,21 @@ pre {
 .star-map .hub-ring {
   fill: var(--rose-wash);
   stroke: color-mix(in srgb, var(--rose) 55%, transparent);
+  animation: hub-breathe 9s ease-in-out infinite;
+}
+@keyframes orbit-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes hub-breathe {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 .node-index {
   width: 100%;
