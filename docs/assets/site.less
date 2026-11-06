@@ -73,7 +73,10 @@
 
 :root {
   --body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --display: "Bodoni Moda", "Iowan Old Style", Georgia, serif;
+  // One family for the whole page. A display serif with an italic accent in every heading was
+  // the sort of decoration that wears off after the second screen; a single grotesque, set tight,
+  // keeps the document legible and the tone even.
+  --display: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
   --paper: #f5f0e5;
@@ -191,16 +194,19 @@ h3,
 h4 {
   margin: 0;
   font-family: var(--display);
-  font-weight: 400;
-  line-height: 1.03;
-  letter-spacing: -0.015em;
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.022em;
   font-variant-numeric: lining-nums;
+  color: var(--ink);
 }
 
+// Emphasis stays inside the sentence: same colour, same family, no second voice.
 h1 em,
-h2 em {
-  font-style: italic;
-  color: var(--honey);
+h2 em,
+h3 em {
+  font-style: normal;
+  color: inherit;
 }
 
 p {
@@ -286,8 +292,9 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   gap: 0.55rem;
   text-decoration: none;
   font-family: var(--display);
-  font-size: 1.22rem;
-  letter-spacing: -0.005em;
+  font-weight: 600;
+  font-size: 1.02rem;
+  letter-spacing: -0.01em;
   white-space: nowrap;
 
   .mark {
@@ -501,7 +508,7 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
 }
 
 .hero h1 {
-  font-size: clamp(2.9rem, 6.6vw, 5.5rem);
+  font-size: clamp(2.5rem, 5vw, 4rem);
   line-height: 0.94;
   letter-spacing: -0.032em;
   margin: 0;
@@ -674,8 +681,8 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   b {
     display: block;
     font-family: var(--display);
-    font-size: clamp(1.5rem, 2.5vw, 2.1rem);
-    font-weight: 400;
+    font-size: clamp(1.35rem, 2vw, 1.75rem);
+    font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1;
     font-variant-numeric: lining-nums tabular-nums;
@@ -713,8 +720,8 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   margin-bottom: clamp(2rem, 5vw, 3rem);
 
   h2 {
-    font-size: clamp(2rem, 4.2vw, 3.2rem);
-    letter-spacing: -0.028em;
+    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+    letter-spacing: -0.024em;
   }
 
   p {
@@ -767,15 +774,15 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   }
 
   .index {
-    font-family: var(--display);
-    font-size: 1.45rem;
-    line-height: 1;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
     color: var(--honey);
-    font-variant-numeric: lining-nums;
   }
 
   h3 {
-    font-size: 1.2rem;
+    font-size: 1.02rem;
+    font-weight: 600;
     margin-top: 0.2rem;
   }
 
@@ -983,8 +990,8 @@ pre {
   border-bottom: 1px solid var(--line-soft);
 
   h1 {
-    font-size: clamp(2.3rem, 4.8vw, 3.6rem);
-    margin-bottom: 1.1rem;
+    font-size: clamp(2rem, 3.6vw, 2.8rem);
+    margin-bottom: 1rem;
   }
 
   .lede {
@@ -1040,8 +1047,8 @@ pre {
   }
 
   h2 {
-    font-size: clamp(1.55rem, 2.8vw, 2.05rem);
-    margin-top: 2.9rem;
+    font-size: clamp(1.35rem, 2vw, 1.65rem);
+    margin-top: 2.7rem;
     scroll-margin-top: 88px;
   }
 
@@ -1154,7 +1161,7 @@ pre {
   }
 
   h2 {
-    font-size: clamp(1.7rem, 3vw, 2.2rem);
+    font-size: clamp(1.4rem, 2.2vw, 1.8rem);
   }
 
   .imp {
@@ -1189,9 +1196,10 @@ pre {
   margin-bottom: 0.45rem;
 
   h3 {
-    font-family: var(--display);
-    font-size: 1.3rem;
-    font-weight: 400;
+    font-family: var(--mono);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 }
 
@@ -1373,7 +1381,7 @@ pre {
 
 .star-map {
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 556 / 452;
   overflow: visible;
 
   .edge {
@@ -1488,7 +1496,7 @@ pre {
     flex-wrap: wrap;
 
     h2 {
-      font-size: clamp(1.5rem, 2.6vw, 1.95rem);
+      font-size: clamp(1.3rem, 2vw, 1.6rem);
     }
 
     .role-tag {
@@ -1737,6 +1745,32 @@ pre {
 
   tbody tr:hover {
     background: color-mix(in srgb, var(--honey-wash) 45%, transparent);
+  }
+}
+
+/* ------------------------------------------------------------------ faces */
+
+// An agent is a cell with two eyes. Nothing more: the expression is the whole character.
+.face line {
+  stroke: var(--ink);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  opacity: 0.8;
+}
+
+.node-btn[aria-pressed="true"] .face line {
+  stroke: var(--honey);
+  opacity: 1;
+}
+
+// A message in flight: one dot running out along a spoke and back.
+.flow {
+  fill: var(--honey);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow {
+    display: none;
   }
 }
 
