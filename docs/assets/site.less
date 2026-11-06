@@ -552,6 +552,10 @@ hr {
     color: var(--ink);
     background: var(--wash);
   }
+
+  &:active {
+    transform: translateY(1px);
+  }
 }
 
 .theme-toggle {
@@ -610,6 +614,10 @@ hr {
 
   &:hover {
     background: var(--rose-2);
+  }
+
+  &:active {
+    transform: translateY(1px);
   }
 
   .arrow {
@@ -940,6 +948,20 @@ hr {
 .t-body {
   position: relative;
 
+  // One packet, travelling the rail the frames hang from. It is the only thing on the page that
+  // moves without being asked, and it says what the section is about.
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0.25rem;
+    top: 1.2rem;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--rose);
+    animation: packet 7.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+
   &::before {
     content: "";
     position: absolute;
@@ -948,6 +970,27 @@ hr {
     bottom: 1.2rem;
     width: 1px;
     background: var(--hair-2);
+  }
+}
+
+@keyframes packet {
+  0% {
+    top: 1.2rem;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  82% {
+    opacity: 1;
+  }
+
+  96%,
+  100% {
+    top: calc(100% - 1.4rem);
+    opacity: 0;
   }
 }
 
@@ -1792,6 +1835,10 @@ pre {
     &:hover {
       background: var(--rose);
       color: var(--on-rose);
+    }
+
+    &:active {
+      transform: translateY(1px);
     }
   }
 }
