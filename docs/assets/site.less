@@ -439,7 +439,7 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
   align-items: center;
   gap: clamp(1rem, 3vw, 2.4rem);
-  padding-bottom: clamp(1.6rem, 4.5vh, 2.8rem);
+  padding-bottom: clamp(1.2rem, 3.4vh, 2rem);
 }
 
 .hero-copy {
@@ -534,14 +534,24 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
     fill: none;
     stroke: var(--line);
     stroke-width: 0.7;
-    opacity: 0.7;
+    opacity: 0.45;
+  }
+
+  .legend {
+    display: block;
+    margin-top: 0.2rem;
+    .overline();
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+    text-align: end;
   }
 
   .penta {
     fill: none;
     stroke: var(--ink);
-    stroke-width: 1;
-    opacity: 0.4;
+    stroke-width: 1.05;
+    opacity: 0.5;
   }
 
   .cells path {
