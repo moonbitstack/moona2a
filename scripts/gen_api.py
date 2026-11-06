@@ -545,9 +545,10 @@ def nav(active: str) -> str:
       <span>MoonA2A</span>
     </a>
     <nav class="mainnav" aria-label="Primary">
+      {link("index.html", "home", "Home")}
       {link("guide.html", "guide", "Guide")}
       {link("api.html", "api", "API")}
-      {link("showcase.html", "star", "The star")}
+      {link("showcase.html", "showcase", "Showcase")}
     </nav>
     <div class="tools">
       <a class="icon-btn" href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener" aria-label="GitHub repository">
@@ -559,31 +560,35 @@ def nav(active: str) -> str:
       </button>
     </div>
   </div>
-</header>
-
-<div class="gauge" aria-hidden="false"><span class="pct">0%</span>
-  {MARK}
-</div>"""
+</header>"""
 
 
 def footer() -> str:
     return f"""<footer class="foot">
   <div class="wrap">
-    <div class="row">
-      <a class="brand" href="index.html">
-        {MARK}
-        <span>MoonA2A</span>
-      </a>
-      <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams, push. Apache 2.0.</p>
-      <div class="links">
+    <div class="foot-main">
+      <div class="foot-brand">
+        <a class="brand" href="index.html">
+          {MARK}
+          <span>MoonA2A</span>
+        </a>
+        <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams and push, served or called.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Site</h4>
+        <a href="index.html">Home</a>
+        <a href="guide.html">Guide</a>
+        <a href="api.html">API</a>
+        <a href="showcase.html">Showcase</a>
+      </div>
+      <div class="foot-col">
+        <h4>Elsewhere</h4>
         <a href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener">GitHub</a>
         <a href="https://mooncakes.io/docs/moonbitstack/moona2a" target="_blank" rel="noopener">mooncakes</a>
-        <a href="guide.html">Guide</a>
-        <a href="showcase.html">The star</a>
-        <a href="index.html">Home</a>
+        <a href="https://github.com/moonbitstack/moona2a/blob/master/LICENSE" target="_blank" rel="noopener">Apache-2.0</a>
       </div>
     </div>
-    <div class="legal"><span>Apache 2.0</span><span>Built with MoonBit</span></div>
+    <div class="legal"><span>Apache-2.0</span><span>Built with MoonBit</span></div>
   </div>
 </footer>"""
 
@@ -598,11 +603,11 @@ def render(packages: list[tuple[str, dict]], docs: dict, params: dict) -> str:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>API reference — moona2a</title>
 <meta name="description" content="Every public type, function and constant in moona2a, generated from the package interfaces and the sources' documentation comments.">
-<meta name="theme-color" content="#f7f1ec">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f7f1ec'/%3E%3Cpath d='M12 2.4 14.5 9 21.4 9.3 15.9 13.7 17.8 20.4 12 16.5 6.2 20.4 8.1 13.7 2.6 9.3 9.5 9Z' fill='none' stroke='%23a2525e' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#fbfaf6">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23fbfaf6'/%3E%3Cpath d='M12 2.6 14.4 8.9 21.2 9.2 15.8 13.4 17.7 19.9 12 16.1 6.3 19.9 8.2 13.4 2.8 9.2 9.6 8.9Z' fill='none' stroke='%239c4a57' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css">
 <script>try{{const t=localStorage.getItem("moona2a-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}}catch(e){{}}</script>
 <script src="assets/site.js" defer></script>
@@ -613,8 +618,8 @@ def render(packages: list[tuple[str, dict]], docs: dict, params: dict) -> str:
 <main id="main">
   <section class="page-hero">
     <div class="wrap">
-      <span class="eyebrow">API</span>
-      <h1>The API reference.</h1>
+      <span class="eyebrow">API reference</span>
+      <h1>Every public name.</h1>
       <p class="lede">Every public type, function and constant, grouped by package. Generated from <span class="mono">pkg.generated.mbti</span> and the sources' own documentation comments, so it says what the code says.</p>
     </div>
   </section>

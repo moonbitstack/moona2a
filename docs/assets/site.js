@@ -1,5 +1,5 @@
-// The site's behaviour: theme, the gauge that stands in for a scrollbar, reveal, and the small
-// conveniences a reader expects. No framework, no build step.
+// The site's behaviour: theme, the top-of-page scrollbar state, reveal, and the small conveniences a
+// reader expects. No framework, no build step.
 
 (() => {
   "use strict";
@@ -9,6 +9,7 @@
   /* ---------------------------------------------------------------- theme */
 
   const KEY = "moona2a-theme";
+  const PAPER = { light: "#fbfaf6", dark: "#12100d" };
 
   const apply = (mode) => {
     if (mode === "system") {
@@ -23,7 +24,7 @@
       const dark =
         mode === "dark" ||
         (mode !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
-      meta.setAttribute("content", dark ? "#0d0a0b" : "#f7f1ec");
+      meta.setAttribute("content", dark ? PAPER.dark : PAPER.light);
     }
   };
 
@@ -45,67 +46,19 @@
     });
   }
 
-  /* ---------------------------------------------------------------- gauge */
+  /* ------------------------------------------------------------- scrollbar */
 
-  // A hexagon at the right edge that fills with rose gold as the page is read. It is the position
-  // indicator, and it is the way back to the top; the native scrollbar keeps its width but has no
-  // thumb, so nothing jumps when it appears.
-  const gauge = document.querySelector(".gauge");
-  let gaugeFill = null;
-  let gaugePct = null;
-
-  if (gauge) {
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", "0 0 46 54");
-    svg.setAttribute("aria-hidden", "true");
-    svg.innerHTML = `
-      <defs>
-        <clipPath id="gauge-clip">
-          <path d="M23 1 L45 13.5 L45 40.5 L23 53 L1 40.5 L1 13.5 Z"/>
-        </clipPath>
-      </defs>
-      <path class="cell-line" d="M23 1 L45 13.5 L45 40.5 L23 53 L1 40.5 L1 13.5 Z"/>
-      <rect class="fill" x="1" y="52" width="44" height="0" clip-path="url(#gauge-clip)"/>
-    `;
-    gauge.prepend(svg);
-    gaugeFill = svg.querySelector(".fill");
-    gaugePct = gauge.querySelector(".pct");
-    gauge.setAttribute("role", "button");
-    gauge.setAttribute("tabindex", "0");
-    gauge.setAttribute("aria-label", "Scroll position. Activate to return to the top.");
-    const toTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
-    gauge.addEventListener("click", toTop);
-    gauge.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        toTop();
-      }
-    });
-  }
-
-  let ticking = false;
-  const paint = () => {
-    ticking = false;
-    if (gaugeFill) {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-      const h = 52 * p;
-      gaugeFill.setAttribute("y", String(52 - h));
-      gaugeFill.setAttribute("height", String(h));
-      if (gaugePct) gaugePct.textContent = Math.round(p * 100) + "%";
-    }
-    spy();
+  // The page scrollbar is the position indicator. Its thumb is transparent while the page sits at
+  // the top and appears once the reader moves, which is the one place this site hides it.
+  const markTop = () => {
+    root.classList.toggle("at-top", window.scrollY <= 0);
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    root.style.setProperty("--progress", p.toFixed(4));
   };
-
-  const onScroll = () => {
-    if (!ticking) {
-      ticking = true;
-      requestAnimationFrame(paint);
-    }
-  };
-
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll, { passive: true });
+  window.addEventListener("scroll", markTop, { passive: true });
+  window.addEventListener("resize", markTop, { passive: true });
+  markTop();
 
   /* ------------------------------------------------------------------ spy */
 
@@ -128,6 +81,20 @@
     }
   }
 
+  let ticking = false;
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        spy();
+      });
+    },
+    { passive: true }
+  );
+
   /* --------------------------------------------------------------- reveal */
 
   const reveals = document.querySelectorAll(".reveal");
@@ -144,7 +111,7 @@
             }
           }
         },
-        { rootMargin: "-8% 0px -12% 0px", threshold: 0.05 }
+        { rootMargin: "-6% 0px -10% 0px", threshold: 0.04 }
       );
       reveals.forEach((el) => io.observe(el));
     }
@@ -241,6 +208,5 @@
     block.querySelector(".cap")?.append(btn);
   }
 
-  paint();
   spy();
 })();

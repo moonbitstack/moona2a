@@ -1,213 +1,83 @@
-// moona2a — the hive.
+// moona2a — the transcript.
 //
-// A hairline comb behind the page, one star at its centre, and no browser chrome left unstyled.
-// Compiled with `lessc` into site.css; nothing here is written by hand into the output.
+// The library's whole output is a transcript: a card, a call, and a stream of frames that say what
+// the task is doing. The site is set the same way — paper, one hairline weight, a serif for the
+// headline and a mono for anything the machine says. Colour is used twice only: rose for the agent,
+// blue for the caller.
+//
+// Compiled with `lessc` into site.css by the docs workflow; nothing is written by hand into the
+// output.
 
-/* ------------------------------------------------------------------ mixins */
-
-// Nothing on this page is text to be dragged: a page that highlights on every stray drag reads as
-// a document, and this one is meant to read as an instrument. The few places where text is the
-// product — code, signatures, frames — take it back with `.pick()`.
-.no-pick() {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.pick() {
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  user-select: text;
-}
-
-// A rule that is always one physical pixel, whatever the zoom.
-.hair(@side: bottom, @color: var(--line)) {
-  border-@{side}: 1px solid @color;
-}
-
-.hex-clip() {
-  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
-}
-
-// The small uppercase mono label that titles a group.
-.overline() {
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-.focus-ring() {
-  outline: 1px solid var(--rose);
-  outline-offset: 2px;
-}
-
-// The dial: the face of the watch in the reference — a sandblasted ground, a hairline bezel of rose
-// gold, and the one soft highlight that tells you it is a surface rather than a shape.
-.dial() {
-  border-radius: 50%;
-  background-color: var(--dial-2);
-  background-image: var(--frost),
-    radial-gradient(120% 120% at 32% 20%, var(--dial-1), transparent 62%),
-    linear-gradient(158deg, transparent 54%, var(--dial-3));
-  box-shadow:
-    inset 0 0 0 1px var(--metal-3),
-    inset 0 1px 0 rgb(255 255 255 / 26%),
-    0 0 0 1px color-mix(in srgb, var(--metal-2) 55%, transparent),
-    0 18px 46px -32px rgb(22 16 15 / 42%);
-}
-
-// The parallel hatch of a manga panel — "Araki lines". It is placed only where a surface has
-// nothing else to say, and it always fades out before it reaches the type. A 0.7px line at a 7px
-// interval reads as a printing screen, never as a pattern wallpaper.
-.araki(@alpha: 7%, @gap: 7px, @angle: 135deg) {
-  background-image: repeating-linear-gradient(
-    @angle,
-    color-mix(in srgb, var(--ink) @alpha, transparent) 0 0.7px,
-    transparent 0.7px @gap
-  );
-}
-
-// One pressed-metal button for the whole site. Every primary action — hero CTAs and the star's
-// Send — is the same rose-gold part, with the same hatch pressed into it.
-.metal-button() {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--metal-3) 72%, transparent);
-  border-radius: 2px;
-  background-color: var(--metal-2);
-  background-image: linear-gradient(
-    168deg,
-    var(--metal-1),
-    var(--metal-2) 42%,
-    var(--metal-3) 60%,
-    var(--metal-4)
-  );
-  color: #1a1113;
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 55%), 0 1px 0 var(--edge);
-  font-family: var(--mono);
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-decoration: none;
-  .no-pick();
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    .araki(13%, 6px, 135deg);
-    mask-image: linear-gradient(100deg, #000, transparent 78%);
-    pointer-events: none;
-  }
-}
-
-.star-stroke() {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.15;
-  stroke-linejoin: round;
-}
-
-/* ------------------------------------------------------------------ tokens */
-
-.dark-tokens() {
-  --paper: #0d0a0b;
-  --paper-2: #15100f;
-  --card: #130f0e;
-  --ink: #f4ebe7;
-  --ink-soft: #bba9a5;
-  --ink-faint: #8a7874;
-  --line: rgb(244 235 231 / 15%);
-  --line-soft: rgb(244 235 231 / 8%);
-  --rose: #e7aab3;
-  --rose-lit: #f8ccd1;
-  --rose-wash: rgb(217 154 163 / 12%);
-  --blue: #aabde6;
-  --blue-wash: rgb(147 166 204 / 10%);
-  --aura: rgb(170 189 230 / 17%);
-  --shadow: 0 24px 60px -42px #000;
-  --sheen: rgb(255 255 255 / 7%);
-  --sheen-soft: rgb(255 255 255 / 4%);
-  --edge: rgb(0 0 0 / 45%);
-  --grain-opacity: 0.2;
-  // In the dark, a flat black sheet reads as an absence. Two very soft washes — one rose blue,
-  // one rose gold — plus a barely-there hatch give the paper the same finish as the light sheet.
-  --paper-glow: radial-gradient(125% 95% at 72% 6%, rgb(170 189 230 / 7%), transparent 62%),
-    radial-gradient(95% 75% at 8% 92%, rgb(231 170 179 / 4%), transparent 70%),
-    repeating-linear-gradient(135deg, rgb(244 235 231 / 2%) 0 0.7px, transparent 0.7px 11px);
-  --dial-1: #3a4e77;
-  --dial-2: #22314f;
-  --dial-3: #141f33;
-  --metal-1: #f9d8d3;
-  --metal-2: #e8b4b8;
-  --metal-3: #c2868e;
-  --metal-4: #f4cfc9;
-  --frost: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23f)' opacity='0.16'/%3E%3C/svg%3E");
-}
+/* ------------------------------------------------------------------- tokens */
 
 :root {
-  --body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
-  // One family for the whole page. A display serif with an italic accent in every heading was
-  // the sort of decoration that wears off after the second screen; a single grotesque, set tight,
-  // keeps the document legible and the tone even.
-  --display: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial,
+    sans-serif;
+  --serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+    Georgia, ui-serif, serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
 
-  --paper: #f7f1ec;
-  --paper-2: #efe5df;
-  --card: #fcf8f5;
-  --ink: #16100f;
-  --ink-soft: #4c403c;
-  --ink-faint: #7d6f6a;
-  --line: rgb(22 16 15 / 13%);
-  --line-soft: rgb(22 16 15 / 7%);
-  // Rose gold for the mark, the rules that matter and the hand-written moments; rose blue for
-  // the light behind the star and the second voice in a diagram. Nothing else carries colour.
-  --rose: #a2525e;
-  --rose-lit: #cf8792;
-  --rose-wash: rgb(199 126 137 / 12%);
-  --blue: #55688f;
-  --blue-wash: rgb(94 111 153 / 9%);
-  --aura: rgb(94 111 153 / 9%);
-  --shadow: 0 22px 60px -46px rgb(22 16 15 / 46%);
-  // The finish: a chalky ground, lacquered panels. `--sheen` is the highlight along a top edge,
-  // `--edge` the shadow that keeps a panel off the paper.
-  --sheen: rgb(255 255 255 / 72%);
-  --sheen-soft: rgb(255 255 255 / 34%);
-  --edge: rgb(22 16 15 / 7%);
-  --grain-opacity: 0.34;
-  --paper-glow: none;
-  // The dial, taken from the rose-gold watch: a sandblasted blue face under a metal bezel.
-  --dial-1: #dfe8f8;
-  --dial-2: #b9cbe9;
-  --dial-3: #8fa8d1;
-  --metal-1: #f8dcd4;
-  --metal-2: #e2adb0;
-  --metal-3: #b8777f;
-  --metal-4: #f0cdc4;
-  --frost: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23f)' opacity='0.16'/%3E%3C/svg%3E");
+  --paper: #fbfaf6;
+  --paper-2: #f4f1e9;
+  --paper-3: #eae6db;
+  --code: #f6f3eb;
 
-  --wrap: 1160px;
-  --gutter: clamp(1.25rem, 4.4vw, 3.75rem);
-  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ink: #171310;
+  --ink-2: #4e463d;
+  --ink-3: #7d746a;
+
+  --rose: #9c4a57;
+  --rose-2: #b76a76;
+  --on-rose: #fff8f2;
+  --blue: #3f5b7f;
+
+  --hair: color-mix(in srgb, var(--ink) 16%, transparent);
+  --hair-2: color-mix(in srgb, var(--ink) 8%, transparent);
+  --wash: color-mix(in srgb, var(--ink) 4%, transparent);
+  --rose-wash: color-mix(in srgb, var(--rose) 10%, transparent);
+  --blue-wash: color-mix(in srgb, var(--blue) 9%, transparent);
+  --select: color-mix(in srgb, var(--rose) 22%, transparent);
+
+  --wrap: 1128px;
+  --gutter: clamp(1.25rem, 4.2vw, 3.25rem);
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
 [data-theme="dark"] {
-  .dark-tokens();
+  --paper: #12100d;
+  --paper-2: #1a1713;
+  --paper-3: #221e19;
+  --code: #18150f;
+
+  --ink: #f3ede4;
+  --ink-2: #bcb3a6;
+  --ink-3: #8b8275;
+
+  --rose: #e2a0ab;
+  --rose-2: #efb9c1;
+  --on-rose: #1a1113;
+  --blue: #a8bedb;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    .dark-tokens();
+    --paper: #12100d;
+    --paper-2: #1a1713;
+    --paper-3: #221e19;
+    --code: #18150f;
+
+    --ink: #f3ede4;
+    --ink-2: #bcb3a6;
+    --ink-3: #8b8275;
+
+    --rose: #e2a0ab;
+    --rose-2: #efb9c1;
+    --on-rose: #1a1113;
+    --blue: #a8bedb;
   }
 }
 
-/* -------------------------------------------------------------------- base */
+/* --------------------------------------------------------------------- base */
 
 *,
 *::before,
@@ -217,8 +87,11 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  text-underline-offset: 0.22em;
+  text-underline-offset: 0.24em;
+  text-decoration-thickness: 1px;
   scroll-behavior: smooth;
+  // Anchors have to clear the sticky header, not land under it.
+  scroll-padding-top: 78px;
 
   @media (prefers-reduced-motion: reduce) {
     scroll-behavior: auto;
@@ -227,24 +100,19 @@ html {
 
 body {
   margin: 0;
-  min-height: 100svh;
   background-color: var(--paper);
-  background-image: var(--paper-glow);
-  background-attachment: fixed;
   color: var(--ink);
-  font-family: var(--body);
+  font-family: var(--sans);
   font-size: 16.5px;
   line-height: 1.62;
+  letter-spacing: -0.004em;
   font-variant-ligatures: no-contextual;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  .no-pick();
 }
 
-// An instrument, not a document: every node starts as "not text". A stray drag across the star
-// used to leave a blue selection over the diagram, and a long press on iOS raised a callout.
-// Stating the default on every descendant also catches SVG labels and native controls, which can
-// otherwise opt themselves back into text selection.
+// The page is an instrument, not a document: nothing is text to be dragged. Reading surfaces —
+// code, fields, the frames a reader may want to copy — take selection back below.
 body,
 body * {
   -webkit-user-select: none;
@@ -254,32 +122,50 @@ body * {
   -webkit-touch-callout: none;
 }
 
-// These are the reading surfaces: fields, code, frames, signatures and anything explicitly
-// marked `.pick`. Nothing else can be selected.
-input,
-textarea,
-select,
-[contenteditable="true"],
 pre,
 code,
-.pick,
-pre *,
-code *,
-.pick * {
+kbd,
+samp,
+input,
+textarea,
+.pick {
   -webkit-user-select: text;
   -moz-user-select: text;
   user-select: text;
-  -webkit-user-drag: auto;
-  -webkit-touch-callout: default;
 }
 
-button,
-input,
-textarea,
-select {
-  font: inherit;
-  font-variant-ligatures: no-contextual;
+::selection {
+  background: var(--select);
+  color: var(--ink);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+a {
   color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 img,
@@ -288,117 +174,129 @@ svg {
   max-width: 100%;
 }
 
-a {
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+input {
+  font: inherit;
   color: inherit;
 }
 
-// Selection is the one moment the page is marked up by hand, so it is a block of rose gold with ink
-// knocked out of it — the same ink-on-metal the buttons use, rather than a wash of tint.
-// Limewash: a fixed, very fine grain over the paper. It does not scroll, so the page reads as one
-// surface rather than as a texture that follows the reader.
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: var(--grain-opacity);
-  mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E");
-  background-size: 140px 140px;
-}
-
-::selection {
-  background: var(--rose-lit);
-  color: #16100f;
-  text-shadow: none;
-}
-
-::-moz-selection {
-  background: var(--rose-lit);
-  color: #16100f;
-  text-shadow: none;
-}
-
-::marker {
-  color: var(--rose);
-}
-
-/* -------------------------------------------------------------- typography */
-
-h1,
-h2,
-h3,
-h4 {
-  margin: 0;
-  font-family: var(--display);
-  font-weight: 600;
-  line-height: 1.08;
-  letter-spacing: -0.022em;
-  font-variant-numeric: lining-nums;
-  color: var(--ink);
-}
-
-// Emphasis stays inside the sentence: same colour, same family, no second voice.
-h1 em,
-h2 em,
-h3 em {
-  font-style: normal;
-  color: inherit;
-}
-
-p {
-  margin: 0;
-}
-
-.lede {
-  font-size: clamp(1rem, 0.55vw + 0.92rem, 1.14rem);
-  line-height: 1.66;
-  color: var(--ink-soft);
-  max-width: 48ch;
-}
-
-.mono,
 code,
 kbd,
-pre {
+samp {
   font-family: var(--mono);
-  font-size: 0.875em;
-  font-variant-ligatures: none;
-}
-
-code {
-  background: var(--rose-wash);
-  border-radius: 2px;
-  padding: 0.1em 0.34em;
+  font-size: 0.88em;
   overflow-wrap: anywhere;
 }
 
-a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
-  text-decoration-color: color-mix(in srgb, var(--rose) 45%, transparent);
-  text-decoration-thickness: 1px;
-  transition: color 0.2s;
+hr {
+  border: 0;
+  border-top: 1px solid var(--hair);
+  margin: 0;
+}
 
-  &:hover {
-    color: var(--rose);
+:focus-visible {
+  outline: 1px solid var(--rose);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+/* ---------------------------------------------------------------- scrollbar */
+
+// Chrome drops the ::-webkit- rules as soon as the standard properties are set on the same element,
+// so the two sets never meet: the standard ones live only inside the fallback query.
+@supports selector(::-webkit-scrollbar) {
+  html::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+  }
+
+  html::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 99px;
+    background-color: color-mix(in srgb, var(--ink) 26%, transparent);
+    background-clip: content-box;
+  }
+
+  html::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in srgb, var(--ink) 40%, transparent);
+  }
+
+  html.at-top::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+
+:is(.scroll, pre, .toc, .api-nav)::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+
+  :is(.scroll, pre, .toc, .api-nav)::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  :is(.scroll, pre, .toc, .api-nav)::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 99px;
+    background-color: color-mix(in srgb, var(--ink) 14%, transparent);
+    background-clip: content-box;
+  }
+
+  :is(.scroll, pre, .toc, .api-nav):hover::-webkit-scrollbar-thumb {
+    background-color: color-mix(in srgb, var(--ink) 32%, transparent);
   }
 }
 
-/* ------------------------------------------------------------------ layout */
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--ink) 26%, transparent) transparent;
+  }
+
+  html.at-top {
+    scrollbar-color: transparent transparent;
+  }
+
+  :is(.scroll, pre, .toc, .api-nav) {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--ink) 16%, transparent) transparent;
+  }
+
+  :is(.scroll, pre, .toc, .api-nav):hover {
+    scrollbar-color: color-mix(in srgb, var(--ink) 32%, transparent) transparent;
+  }
+}
+
+/* ------------------------------------------------------------------- layout */
 
 .wrap {
-  width: ~"min(100% - var(--gutter) * 2, var(--wrap))";
+  width: 100%;
+  max-width: var(--wrap);
   margin-inline: auto;
+  padding-inline: var(--gutter);
 }
 
 .skip {
   position: absolute;
   left: -9999px;
   top: 0;
+  padding: 0.6rem 1rem;
   background: var(--ink);
   color: var(--paper);
-  padding: 0.6rem 1rem;
-  z-index: 60;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  z-index: 100;
 
   &:focus {
     left: 1rem;
@@ -406,85 +304,226 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
   }
 }
 
-/* ------------------------------------------------------------------ topbar */
+.mono {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  letter-spacing: -0.01em;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.kicker {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rose);
+}
+
+.lede {
+  max-width: 54ch;
+  font-size: 1.06rem;
+  line-height: 1.62;
+  color: var(--ink-2);
+}
+
+.section {
+  padding-block: clamp(3.6rem, 7vw, 5.6rem);
+  border-top: 1px solid var(--hair);
+}
+
+.section-head {
+  display: grid;
+  grid-template-columns: 3.6rem minmax(0, 1.02fr) minmax(0, 0.78fr);
+  gap: 0 clamp(1.2rem, 3vw, 2.6rem);
+  align-items: end;
+  padding-bottom: clamp(1.8rem, 3vw, 2.6rem);
+
+  // A folio numeral in the margin: the page numbers itself the way a specification does, in the
+  // lightest ink on the sheet.
+  .num {
+    align-self: start;
+    font-family: var(--serif);
+    font-size: clamp(2.1rem, 3vw, 2.6rem);
+    line-height: 0.86;
+    color: color-mix(in srgb, var(--ink) 22%, transparent);
+    font-variant-numeric: lining-nums;
+  }
+
+  h2 {
+    margin-top: 0.8rem;
+    font-family: var(--serif);
+    font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+    line-height: 1.06;
+  }
+
+  p {
+    justify-self: end;
+    max-width: 34ch;
+    font-size: 0.95rem;
+    line-height: 1.66;
+  }
+}
+
+/* a band of ink, where the page stops and the wire speaks */
+
+.band {
+  background: var(--ink);
+  color: var(--paper);
+  padding-block: clamp(3rem, 6.4vw, 4.8rem);
+  margin-top: -1px;
+
+  .wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.5fr);
+    gap: 0 clamp(2rem, 5vw, 4rem);
+    align-items: end;
+  }
+
+  .band-side {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding-left: 1.2rem;
+    border-left: 1px solid color-mix(in srgb, var(--paper) 20%, transparent);
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    line-height: 1.7;
+    color: color-mix(in srgb, var(--paper) 58%, transparent);
+    white-space: nowrap;
+    overflow: hidden;
+
+    code {
+      background: none;
+      padding: 0;
+      color: inherit;
+      font-size: 1em;
+    }
+  }
+
+  .band-line {
+    font-family: var(--serif);
+    font-size: clamp(2.05rem, 4.4vw, 3.5rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    color: var(--paper);
+    max-width: 20ch;
+  }
+
+  .band-note {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 2rem;
+    margin-top: clamp(1.6rem, 3vw, 2.4rem);
+    padding-top: 1.1rem;
+    border-top: 1px solid color-mix(in srgb, var(--paper) 22%, transparent);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    color: color-mix(in srgb, var(--paper) 62%, transparent);
+
+    code {
+      color: var(--rose);
+      background: none;
+      font-size: 1em;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------- head */
 
 .topbar {
   position: sticky;
   top: 0;
   z-index: 40;
   background: color-mix(in srgb, var(--paper) 86%, transparent);
-  border-bottom: 1px solid var(--line-soft);
-  backdrop-filter: blur(16px) saturate(1.05);
+  backdrop-filter: blur(14px) saturate(1.6);
+  border-bottom: 1px solid var(--hair);
+
+  // The wire runs along the header's lower edge and advances as the page is read.
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: calc(var(--progress, 0) * 100%);
+    height: 1px;
+    background: var(--rose);
+    transform-origin: left;
+    pointer-events: none;
+  }
 }
 
 .bar {
   display: flex;
   align-items: center;
-  gap: clamp(0.9rem, 2vw, 2rem);
-  height: 62px;
+  gap: clamp(1rem, 3vw, 2.4rem);
+  height: 58px;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  text-decoration: none;
-  font-family: var(--display);
+  color: var(--ink);
+  font-size: 0.95rem;
   font-weight: 600;
-  font-size: 1.02rem;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
+  letter-spacing: -0.014em;
 
   .mark {
-    width: 23px;
-    height: 23px;
-    color: var(--rose);
-    overflow: visible;
-    .star-stroke();
-    stroke-width: 1.25;
+    width: 17px;
+    height: 17px;
+    fill: var(--rose);
+    flex: none;
   }
 }
 
 .mainnav {
   display: flex;
-  gap: clamp(0.3rem, 1.5vw, 1.3rem);
-  margin-inline-start: auto;
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  align-items: center;
+  gap: clamp(0.9rem, 2vw, 1.6rem);
+  margin-left: auto;
 
   a {
     position: relative;
-    padding: 0.5rem 0.15rem;
-    text-decoration: none;
-    color: var(--ink-faint);
-    transition: color 0.2s;
+    padding-block: 0.35rem;
+    font-size: 0.86rem;
+    color: var(--ink-3);
+    transition: color 0.2s var(--ease);
 
     &::after {
       content: "";
       position: absolute;
       left: 0;
       right: 0;
-      bottom: 0.15rem;
+      bottom: 0;
       height: 1px;
       background: var(--rose);
       transform: scaleX(0);
       transform-origin: left;
-      transition: transform 0.35s var(--ease);
+      transition: transform 0.28s var(--ease);
     }
 
     &:hover {
       color: var(--ink);
     }
 
-    &:hover::after,
-    &[aria-current="page"]::after {
-      transform: scaleX(1);
-    }
-
     &[aria-current="page"] {
       color: var(--ink);
+
+      &::after {
+        transform: scaleX(1);
+      }
     }
   }
 }
@@ -492,615 +531,806 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
 .tools {
   display: flex;
   align-items: center;
-  gap: 0.1rem;
-  margin-inline-start: 0.5rem;
+  gap: 0.25rem;
 }
 
 .icon-btn {
-  display: inline-grid;
+  display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border: 0;
-  border-radius: 50%;
-  background: none;
-  cursor: pointer;
-  color: var(--ink-faint);
-  transition: color 0.2s, background 0.2s;
+  width: 30px;
+  height: 30px;
+  border-radius: 2px;
+  color: var(--ink-3);
+  transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 
   &:hover {
     color: var(--ink);
-    background: var(--rose-wash);
-  }
-
-  &:focus-visible {
-    .focus-ring();
-  }
-
-  svg {
-    width: 17px;
-    height: 17px;
+    background: var(--wash);
   }
 }
 
 .theme-toggle {
-  .moon {
+  .sun {
     display: none;
   }
 
-  [data-theme="dark"] & {
-    .sun {
-      display: none;
-    }
+  .moon {
+    display: block;
+  }
+}
 
-    .moon {
-      display: block;
-    }
+[data-theme="dark"] .theme-toggle {
+  .sun {
+    display: block;
+  }
+
+  .moon {
+    display: none;
   }
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .theme-toggle {
     .sun {
-      display: none;
+      display: block;
     }
 
     .moon {
-      display: block;
+      display: none;
     }
   }
 }
 
-/* --------------------------------------------------------------------- hero */
+/* ------------------------------------------------------------------ controls */
 
-.hero {
-  position: relative;
-  z-index: 1;
-  padding-block: clamp(2.2rem, 6vh, 3.6rem) 0;
-  overflow: clip;
-  border-bottom: 1px solid var(--line);
-}
-
-// Araki lines, in the one field with nothing to say. They are parallel, one hair wide, and fade
-// out long before they reach the type or the star.
-.hatch {
-  position: absolute;
-  top: clamp(3.2rem, 10vh, 6.4rem);
-  right: clamp(0.5rem, 4vw, 4rem);
-  width: min(30vw, 21rem);
-  height: min(36vh, 16rem);
-  .araki(11%, 8px, 135deg);
-  mask-image: linear-gradient(215deg, #000 8%, transparent 82%);
-  opacity: 0.75;
-  pointer-events: none;
-  z-index: 0;
-}
-
-// Two fields behind the hero: a slanted panel of rose blue on the right, and a corner of screentone.
-// Both are texture, not content: they sit under everything and never take a click.
-.hero::before,
-.hero::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-  z-index: 0;
-}
-
-// The hero is a wrist: one frosted dial, bled off the right edge, with the constellation laid over
-// it. It is cropped, so it reads as a close-up rather than as a picture of a watch.
-.hero::before {
-  top: 50%;
-  right: clamp(-13rem, -6vw, -2rem);
-  width: clamp(22rem, 41vw, 34rem);
-  aspect-ratio: 1;
-  translate: 0 -50%;
-  .dial();
-  opacity: 0.92;
-}
-
-.hero::after {
-  right: 0;
-  bottom: 0;
-  width: 46%;
-  height: 58%;
-  background-image: radial-gradient(
-    circle at 1px 1px,
-    color-mix(in srgb, var(--ink) 55%, transparent) 0.9px,
-    transparent 1.2px
-  );
-  background-size: 6px 6px;
-  mask-image: linear-gradient(to top left, #000, transparent 62%);
-  opacity: 0.07;
-}
-
-.hero-rule {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 0.6rem 1.4rem;
-  position: relative;
-  z-index: 1;
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 0.8rem;
-  margin-bottom: clamp(2.6rem, 8vh, 4.6rem);
-}
-
-.eyebrow {
+.btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  .overline();
-  color: var(--rose);
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.72rem 1.15rem 0.62rem;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: var(--rose);
+  color: var(--on-rose);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background-color 0.22s var(--ease), color 0.22s var(--ease),
+    border-color 0.22s var(--ease);
+  .no-drag();
 
-  &::before {
-    content: "";
-    width: 5px;
-    height: 6px;
-    background: currentColor;
-    .hex-clip();
+  &:hover {
+    background: var(--rose-2);
+  }
+
+  .arrow {
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    letter-spacing: 0;
+    transform: translateY(-0.04em);
+    transition: transform 0.22s var(--ease);
+  }
+
+  &:hover .arrow {
+    transform: translate(2px, -0.04em);
   }
 }
 
 .specimen {
-  .overline();
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: clamp(1.8rem, 3.4vw, 2.6rem);
+  padding-top: 1rem;
+  border-top: 1px solid var(--hair-2);
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  span {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  b {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    font-weight: 400;
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+  }
+}
+
+.btn.ghost {
+  background: transparent;
+  border-color: var(--hair);
+  color: var(--ink-2);
+
+  &:hover {
+    border-color: var(--ink-3);
+    color: var(--ink);
+  }
+}
+
+.no-drag() {
+  -webkit-user-drag: none;
+}
+
+.chip {
+  display: inline-block;
+  padding: 0.16rem 0.42rem 0.1rem;
+  border: 1px solid var(--hair);
+  border-radius: 2px;
+  font-family: var(--mono);
   font-size: 0.62rem;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.chip.stream {
+  border-color: color-mix(in srgb, var(--rose) 42%, transparent);
+  color: var(--rose);
+}
+
+.chip.final {
+  border-color: color-mix(in srgb, var(--ink) 32%, transparent);
+  color: var(--ink-2);
+}
+
+/* --------------------------------------------------------------------- home */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// The hero arrives the way the stream does: one line after another, once.
+.hero-copy > * {
+  animation: rise 0.72s var(--ease) both;
+
+  &:nth-child(1) {
+    animation-delay: 0.04s;
+  }
+
+  &:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 0.18s;
+  }
+
+  &:nth-child(4) {
+    animation-delay: 0.26s;
+  }
+
+  &:nth-child(5) {
+    animation-delay: 0.32s;
+  }
+
+  &:nth-child(6) {
+    animation-delay: 0.38s;
+  }
+}
+
+.transcript {
+  animation: rise 0.8s var(--ease) 0.22s both;
+}
+
+.hero {
+  padding-block: clamp(3rem, 6vw, 5rem) clamp(2.4rem, 4vw, 3.4rem);
 }
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-  align-items: center;
-  gap: clamp(1.4rem, 4vw, 3.4rem);
-  position: relative;
-  z-index: 1;
-  padding-bottom: clamp(2rem, 6vh, 3.4rem);
+  grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.04fr);
+  gap: clamp(2rem, 5vw, 4.2rem);
+  align-items: start;
 }
 
 .hero-copy {
-  position: relative;
-  min-width: 0;
+  padding-top: 0.4rem;
 
-  // The binding rule: one hairline to the left of the measure, the way a specification sheet
-  // keeps its columns. It never touches the type and disappears where the page gets narrow.
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0.35rem;
-    bottom: 0.35rem;
-    left: clamp(-1.8rem, -1.4vw, -1rem);
-    width: 1px;
-    background: var(--line);
+  h1 {
+    margin-top: 1.1rem;
+    font-family: var(--serif);
+    font-size: clamp(2.7rem, 5.4vw, 4.15rem);
+    line-height: 1;
+    letter-spacing: -0.018em;
+
+    em {
+      font-style: italic;
+      color: var(--rose);
+    }
   }
-}
 
-.hero h1 {
-  font-size: clamp(2.85rem, 5vw, 4.3rem);
-  font-weight: 600;
-  line-height: 1.04;
-  letter-spacing: -0.038em;
-  margin: 0;
-
-  .line {
-    display: block;
+  .lede {
+    margin-top: 1.5rem;
   }
-}
-
-// A short cast in rose gold between the statement and the explanation: one measured rule, not a
-// decorative flourish.
-.hero-stroke {
-  display: block;
-  width: 3.4rem;
-  height: 2px;
-  margin-top: clamp(1.5rem, 3.6vh, 2.2rem);
-  background: linear-gradient(90deg, var(--metal-3), color-mix(in srgb, var(--metal-3) 30%, transparent));
-}
-
-.hero-copy .lede {
-  margin-top: clamp(1.1rem, 2.6vh, 1.5rem);
-  max-width: 34rem;
-  font-size: clamp(0.98rem, 0.4vw + 0.9rem, 1.08rem);
-  line-height: 1.72;
-  color: var(--ink-soft);
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.7rem;
-  align-items: center;
-  margin-top: clamp(1.6rem, 4vh, 2.4rem);
+  gap: 0.6rem;
+  margin-top: 2rem;
 }
 
-.btn {
-  .metal-button();
+.install-line {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.7rem;
-  min-height: 2.85rem;
-  padding: 0.85rem 1.45rem;
-  font-size: 0.68rem;
-  line-height: 1;
-  transition: background 0.25s, color 0.25s, border-color 0.25s, filter 0.25s;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+  padding: 0.42rem 0.6rem 0.42rem 0.7rem;
+  border: 1px solid var(--hair-2);
+  border-radius: 2px;
+  background: var(--paper-2);
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  color: var(--ink-2);
 
-  &:hover {
-    background-color: var(--metal-1);
-    border-color: var(--metal-4);
-    color: #1a1113;
-    filter: brightness(1.06);
-  }
-
-  &:focus-visible {
-    .focus-ring();
-  }
-
-  &.ghost {
-    background: none;
-    color: var(--ink-soft);
-    border-color: var(--line);
-
-    &::before {
-      .araki(6%, 7px, 135deg);
-    }
-
-    &:hover {
-      color: var(--rose);
-      border-color: var(--rose);
-    }
-  }
-
-  .arrow {
-    font-size: 0.85rem;
-    transform: translateY(-0.04em);
+  .prompt {
+    color: var(--rose);
+    user-select: none;
   }
 }
 
-// The constellation is the protocol: a hub, five spokes, a pentagram drawn between them. It runs
-// past the measure on the right, so it reads as a crop rather than as an illustration.
-.constellation {
+/* the transcript panel */
+
+.transcript {
+  border: 1px solid var(--hair);
+  border-radius: 3px;
+  background: var(--paper);
+  overflow: hidden;
+}
+
+.t-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.62rem 0.85rem;
+  border-bottom: 1px solid var(--hair-2);
+  background: var(--paper-2);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+
+  .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--rose);
+    flex: none;
+  }
+
+  .t-method {
+    color: var(--ink-2);
+  }
+
+  .t-status {
+    margin-left: auto;
+  }
+}
+
+.t-body {
+  padding: 0.95rem 0.9rem 1.05rem 1.15rem;
+}
+
+.t-frame {
   position: relative;
-  justify-self: end;
-  width: ~"min(44vw, 540px)";
-  margin-inline-end: clamp(-5rem, -3.2vw, 0rem);
-  pointer-events: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 0 0 0.85rem 0;
+  animation: frame-in 0.6s var(--ease) both;
+
+  &:nth-child(2) {
+    animation-delay: 0.12s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 0.24s;
+  }
+
+  &:nth-child(4) {
+    animation-delay: 0.36s;
+  }
+
+  &:nth-child(5) {
+    animation-delay: 0.48s;
+  }
+
+  & + .t-frame {
+    padding-top: 0.85rem;
+    border-top: 1px dashed var(--hair-2);
+  }
 
   &::before {
     content: "";
     position: absolute;
-    inset: -14%;
-    background: repeating-conic-gradient(
-      from 0deg at 50% 50%,
-      var(--aura) 0deg 0.5deg,
-      transparent 0.5deg 7.5deg
-    );
-    mask: radial-gradient(circle at 50% 50%, transparent 33%, #000 46%, transparent 76%);
-    z-index: -1;
+    left: -0.72rem;
+    top: 1.28rem;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid var(--hair);
   }
 
-  svg {
-    width: 100%;
-    height: auto;
-    overflow: visible;
+  &:first-child::before {
+    background: var(--rose);
+    border-color: var(--rose);
   }
 
-  .spokes path {
-    fill: none;
-    stroke: var(--line);
-    stroke-width: 0.7;
-    opacity: 0.45;
+  pre {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.685rem;
+    line-height: 1.62;
+    color: var(--ink-2);
+    white-space: pre;
+    overflow-x: auto;
   }
 
-  .legend {
-    display: block;
-    margin-top: 0.2rem;
-    .overline();
-    font-size: 0.58rem;
-    letter-spacing: 0.2em;
-    color: var(--ink-faint);
-    text-align: end;
-  }
-
-  .penta {
-    fill: none;
-    stroke: var(--ink);
-    stroke-width: 1.05;
-    opacity: 0.5;
-  }
-
-  .cells path {
-    fill: var(--card);
-    stroke: var(--metal-3);
-    stroke-width: 1.35;
-  }
-
-  // The hub is the watch: a sandblasted blue face in a rose-gold bezel. It holds still — a face
-  // that pulses reads as a control blinking, which is exactly the effect we do not want.
-  .hub {
-    fill: var(--dial-2);
-    stroke: var(--metal-3);
-    stroke-width: 1.6;
-  }
-}
-
-// A specimen strip: five figures on one rule, the way a type specimen counts its cuts.
-.figures {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  border-top: 1px solid var(--line);
-}
-
-.figure {
-  padding: 1.1rem 1.1rem 1.2rem;
-  border-right: 1px solid var(--line-soft);
-
-  &:last-child {
-    border-right: 0;
-  }
-
-  b {
-    display: block;
-    font-family: var(--display);
-    font-size: clamp(1.35rem, 2vw, 1.75rem);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1;
-    font-variant-numeric: lining-nums tabular-nums;
-  }
-
-  span {
-    display: block;
-    margin-top: 0.45rem;
-    .overline();
+  .f-label {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+    font-family: var(--mono);
     font-size: 0.6rem;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .f-state {
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    color: var(--rose);
   }
 }
 
-/* ---------------------------------------------------------------- sections */
-
-// A section is a band of the sheet: even padding above and below, and a head that pairs a clause
-// number with the sentence explaining it.
-.section {
-  position: relative;
-  z-index: 1;
-  padding-block: clamp(3.2rem, 9vh, 5.6rem);
-
-  &.alt {
-    background: var(--paper-2);
-    border-block: 1px solid var(--line-soft);
-
-    // The tinted band is the widest empty surface on the page. One corner of Araki lines keeps it
-    // from reading as a flat fill, and fades out long before it reaches the copy.
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 0 auto;
-      width: min(40vw, 26rem);
-      .araki(6%, 9px, 135deg);
-      mask-image: linear-gradient(to left, #000, transparent 88%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    > .wrap {
-      position: relative;
-      z-index: 1;
-    }
-  }
-}
-
-.section-head {
-  display: grid;
-  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
-  gap: clamp(1rem, 4vw, 3.5rem);
-  align-items: end;
-  margin-bottom: clamp(2rem, 5vw, 3rem);
-
-  h2 {
-    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
-    letter-spacing: -0.024em;
-  }
-
-  p {
-    color: var(--ink-soft);
-    font-size: 0.96rem;
-    max-width: 52ch;
-  }
-}
-
-.kicker {
+.t-foot {
   display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  .overline();
-  margin-bottom: 0.85rem;
-  color: var(--rose);
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.85rem;
+  border-top: 1px solid var(--hair-2);
+  background: var(--paper-2);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
 
-  &::after {
+  .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--rose);
+    flex: none;
+  }
+}
+
+.t-body {
+  position: relative;
+
+  &::before {
     content: "";
-    flex: 1;
-    height: 1px;
-    background: var(--line);
-    transform: translateY(-0.18em);
+    position: absolute;
+    left: 0.42rem;
+    top: 1.2rem;
+    bottom: 1.2rem;
+    width: 1px;
+    background: var(--hair-2);
   }
 }
 
-/* -------------------------------------------------------------------- comb */
+/* section 01 — capabilities */
 
-// Six cells on one rule, divided by hairlines: a table of the protocol's parts, not six cards.
-.comb {
+.cards {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
-  background: var(--line-soft);
-  border-block: 1px solid var(--line);
+  margin-top: 0.2rem;
+  background: var(--hair-2);
+  border: 1px solid var(--hair-2);
+  border-radius: 3px;
+  overflow: hidden;
 }
 
-.cell {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  min-height: 11.6rem;
-  padding: 1.5rem 1.45rem 1.35rem;
-  background-color: var(--card);
-  background-image: linear-gradient(180deg, var(--sheen-soft), transparent 38%);
-  transition: background-color 0.3s;
+.card {
+  padding: clamp(1.2rem, 2.4vw, 1.7rem);
+  background: var(--paper);
+  transition: background-color 0.25s var(--ease);
 
   &:hover {
-    background-color: color-mix(in srgb, var(--rose-wash) 45%, var(--card));
+    background: var(--paper-2);
   }
 
-  .index {
+  .num {
     font-family: var(--mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.18em;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
     color: var(--rose);
   }
 
   h3 {
-    font-size: 1.02rem;
+    margin-top: 0.7rem;
+    font-size: 1rem;
     font-weight: 600;
-    margin-top: 0.2rem;
+    letter-spacing: -0.012em;
   }
 
   p {
-    font-size: 0.87rem;
-    line-height: 1.58;
-    color: var(--ink-soft);
+    margin-top: 0.45rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+}
+
+/* section 02 — methods */
+
+.methods {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+
+  thead th {
+    padding: 0 0.75rem 0.6rem;
+    border-bottom: 1px solid var(--hair);
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: left;
+
+    &:first-child {
+      padding-left: 0;
+    }
   }
 
-  .tagline {
-    margin-top: auto;
-    padding-top: 0.85rem;
-    font-family: var(--mono);
-    font-size: 0.63rem;
-    letter-spacing: 0.03em;
-    color: var(--ink-faint);
-    border-top: 1px solid var(--line-soft);
+  tbody tr {
+    transition: background-color 0.18s var(--ease);
+
+    &:hover {
+      background: var(--wash);
+    }
+  }
+
+  td {
+    padding: 0.62rem 0.75rem;
+    border-bottom: 1px solid var(--hair-2);
+    vertical-align: baseline;
     overflow-wrap: anywhere;
+
+    &:first-child {
+      padding-left: 0;
+      font-family: var(--mono);
+      font-size: 0.79rem;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    &:nth-child(2) {
+      width: 6.5rem;
+    }
+
+    &:last-child {
+      color: var(--ink-2);
+    }
+  }
+}
+
+/* section 03 — the task */
+
+.cycle {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--hair-2);
+  border: 1px solid var(--hair-2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.state-cell {
+  min-width: 0;
+  padding: 0.95rem 0.85rem 1rem;
+  background: var(--paper);
+
+  code {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  span {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.76rem;
+    line-height: 1.45;
+    color: var(--ink-3);
+  }
+}
+
+.state-cell.is-final {
+  background: var(--paper-2);
+
+  code {
+    color: var(--rose);
+  }
+}
+
+.cycle-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-top: 0.85rem;
+  font-family: var(--mono);
+  font-size: 0.67rem;
+  color: var(--ink-3);
+
+  i {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin-right: 0.4rem;
+    border: 1px solid var(--hair);
+    border-radius: 1px;
+    vertical-align: -1px;
+  }
+
+  .open i {
+    background: var(--paper);
+  }
+
+  .final i {
+    background: var(--paper-2);
+    border-color: color-mix(in srgb, var(--rose) 45%, transparent);
+  }
+}
+
+/* section 04 — two directions */
+
+.duo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 3.4rem minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0;
+  margin-top: 0.4rem;
+}
+
+.duo-side {
+  padding: clamp(1.1rem, 2.4vw, 1.6rem);
+  border: 1px solid var(--hair);
+  border-radius: 3px;
+  background: var(--paper);
+
+  h3 {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rose);
+  }
+
+  &.client h3 {
+    color: var(--blue);
+  }
+}
+
+.duo-stack {
+  margin-top: 1.1rem;
+
+  li {
+    position: relative;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--hair-2);
+    border-radius: 2px;
+    background: var(--paper-2);
+    font-family: var(--mono);
+    font-size: 0.73rem;
+    color: var(--ink-2);
+
+    b {
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    & + li {
+      margin-top: 1.15rem;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: -1.15rem;
+        height: 1.15rem;
+        width: 1px;
+        background: var(--hair);
+      }
+    }
+  }
+}
+
+.duo-mid {
+  display: grid;
+  place-items: center;
+
+  span {
+    writing-mode: vertical-rl;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+}
+
+/* section 05 — refusals */
+
+.refusals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 2.4rem;
+}
+
+.refusal {
+  display: grid;
+  grid-template-columns: 4.4rem minmax(0, 1fr);
+  gap: 0.2rem 0.9rem;
+  padding: 0.68rem 0;
+  border-bottom: 1px solid var(--hair-2);
+
+  .code {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--rose);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .name {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  .means {
+    grid-column: 2;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+}
+
+/* section 06 — install */
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+  gap: clamp(1.6rem, 4vw, 3.2rem);
+  align-items: start;
+}
+
+.notes {
+  li {
+    position: relative;
+    padding-left: 1.1rem;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--ink-2);
+
+    & + li {
+      margin-top: 0.75rem;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.62em;
+      width: 5px;
+      height: 1px;
+      background: var(--rose);
+    }
+
+    b {
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    a {
+      color: var(--ink);
+      text-decoration: underline;
+      text-decoration-color: var(--hair);
+      transition: text-decoration-color 0.2s var(--ease);
+
+      &:hover {
+        text-decoration-color: var(--rose);
+      }
+    }
   }
 }
 
 /* -------------------------------------------------------------------- code */
 
-.wire {
-  display: grid;
-  grid-template-columns: minmax(0, 0.44fr) minmax(0, 1fr);
-  gap: clamp(1.2rem, 3vw, 3rem);
-  align-items: start;
+.code-block {
+  border: 1px solid var(--hair);
+  border-radius: 3px;
+  background: var(--code);
+  overflow: hidden;
+
+  & + .code-block {
+    margin-top: 1rem;
+  }
 }
 
-// A plate: a sheet with brackets at its corners, the way a drawing is trimmed to size.
-.plate,
-.code-block {
-  position: relative;
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  background-color: var(--card);
-  background-image: linear-gradient(180deg, var(--sheen-soft), transparent 46%);
-  box-shadow: inset 0 1px 0 var(--sheen), 0 1px 0 var(--edge);
+.cap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--hair-2);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
 
-  .tick {
-    position: absolute;
-    width: 7px;
-    height: 7px;
-    pointer-events: none;
-    border: 0 solid var(--rose);
-    opacity: 0.85;
+.copy {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  transition: color 0.2s var(--ease);
 
-    &.tl {
-      top: -1px;
-      left: -1px;
-      border-top-width: 1px;
-      border-left-width: 1px;
-    }
-
-    &.tr {
-      top: -1px;
-      right: -1px;
-      border-top-width: 1px;
-      border-right-width: 1px;
-    }
-
-    &.bl {
-      bottom: -1px;
-      left: -1px;
-      border-bottom-width: 1px;
-      border-left-width: 1px;
-    }
-
-    &.br {
-      bottom: -1px;
-      right: -1px;
-      border-bottom-width: 1px;
-      border-right-width: 1px;
-    }
-  }
-
-  .cap {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.55rem 0.85rem;
-    border-bottom: 1px solid var(--line-soft);
-    font-family: var(--mono);
-    font-size: 0.63rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-
-    &::before {
-      content: "";
-      width: 5px;
-      height: 6px;
-      background: var(--rose);
-      .hex-clip();
-    }
-
-    .copy {
-      margin-inline-start: auto;
-      border: 1px solid transparent;
-      background: none;
-      color: var(--ink-faint);
-      font-family: var(--mono);
-      font-size: 0.62rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.16rem 0.4rem;
-      cursor: pointer;
-      transition: color 0.2s, border-color 0.2s;
-
-      &:hover {
-        color: var(--ink);
-        border-color: var(--line);
-      }
-    }
-  }
-
-  pre {
-    .pick();
+  &:hover {
+    color: var(--rose);
   }
 }
 
 pre {
   margin: 0;
-  padding: 1rem 1.1rem 1.15rem;
+  padding: 0.85rem 0.95rem;
+  font-family: var(--mono);
+  font-size: 0.785rem;
+  line-height: 1.58;
+  color: var(--ink-2);
   overflow-x: auto;
-  font-size: 0.79rem;
-  line-height: 1.72;
   tab-size: 2;
-  .pick();
-
-  code {
-    background: none;
-    padding: 0;
-    font-size: inherit;
-  }
 }
 
 .tok-key {
@@ -1108,15 +1338,19 @@ pre {
 }
 
 .tok-str {
-  color: color-mix(in srgb, var(--ink) 58%, var(--rose));
+  color: var(--ink);
 }
 
 .tok-num {
-  color: color-mix(in srgb, var(--rose) 72%, var(--ink));
+  color: var(--blue);
 }
 
 .tok-bool {
-  color: var(--rose-lit);
+  color: var(--blue);
+}
+
+.tok-comment {
+  color: var(--ink-3);
 }
 
 .tok-kw {
@@ -1127,253 +1361,613 @@ pre {
   color: var(--ink);
 }
 
-.tok-comment {
-  color: var(--ink-faint);
-  // One family, one posture: even a comment stays upright. It recedes by weight and tone, not by
-  // leaning — an italic glyph in the middle of the code was the last stray voice on the page.
-  font-style: normal;
-  opacity: 0.82;
-}
+/* --------------------------------------------------------------- inner pages */
 
-/* ------------------------------------------------------------------ notes */
-
-.notes {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  li {
-    display: grid;
-    grid-template-columns: 16px minmax(0, 1fr);
-    gap: 0.85rem;
-    font-size: 0.91rem;
-    line-height: 1.6;
-    color: var(--ink-soft);
-
-    &::before {
-      content: "";
-      width: 9px;
-      height: 10px;
-      margin-top: 0.42rem;
-      border: 1px solid var(--rose);
-      .hex-clip();
-    }
-  }
-
-  b {
-    color: var(--ink);
-    font-weight: 600;
-  }
-}
-
-/* ------------------------------------------------------------ inner pages */
-
-// Inner pages open on the same sheet as the home hero: a ruled eyebrow, a binding rule at the
-// measure, and one cast of rose gold beneath the title. Four pages, one typographic ceremony.
 .page-hero {
-  position: relative;
-  z-index: 1;
-  padding-block: clamp(2.4rem, 6vh, 3.8rem) clamp(1.6rem, 4vh, 2.4rem);
-  border-bottom: 1px solid var(--line-soft);
-
-  .wrap {
-    position: relative;
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0.2rem;
-      bottom: 0.2rem;
-      left: clamp(-1.8rem, -1.4vw, -1rem);
-      width: 1px;
-      background: var(--line);
-    }
-  }
-
-  .eyebrow {
-    display: flex;
-    width: 100%;
-    margin-bottom: clamp(1.4rem, 3.4vh, 2rem);
-
-    &::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: var(--line);
-      transform: translateY(-0.18em);
-    }
-  }
+  padding-block: clamp(2.6rem, 5vw, 4rem) clamp(1.6rem, 3vw, 2.4rem);
 
   h1 {
-    font-size: clamp(2.2rem, 3.8vw, 3rem);
-    margin-bottom: 0;
-
-    &::after {
-      content: "";
-      display: block;
-      width: 3.4rem;
-      height: 2px;
-      margin-top: clamp(1rem, 2.4vh, 1.4rem);
-      background: linear-gradient(
-        90deg,
-        var(--metal-3),
-        color-mix(in srgb, var(--metal-3) 30%, transparent)
-      );
-    }
+    margin-top: 0.9rem;
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 4.4vw, 3.3rem);
+    line-height: 1.04;
   }
 
   .lede {
-    max-width: 62ch;
-    margin-top: 1rem;
-    line-height: 1.72;
+    margin-top: 1.15rem;
   }
 }
 
+/* guide */
+
 .guide-layout {
   display: grid;
-  grid-template-columns: minmax(0, 200px) minmax(0, 1fr);
-  gap: clamp(1.8rem, 5vw, 4.5rem);
-  align-items: start;
-  padding-block: clamp(2rem, 5vh, 3.2rem);
+  grid-template-columns: 13.5rem minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
 }
 
 .toc {
   position: sticky;
-  top: 88px;
-  font-size: 0.82rem;
+  top: 84px;
+  align-self: start;
+  max-height: calc(100vh - 8rem);
+  overflow-y: auto;
+  padding-right: 0.6rem;
+  border-left: 1px solid var(--hair-2);
+  padding-left: 1rem;
 
   .toc-title {
-    .overline();
+    margin-bottom: 0.8rem;
+    font-family: var(--mono);
     font-size: 0.62rem;
-    margin-bottom: 0.9rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
   }
 
   a {
     display: block;
-    padding: 0.32rem 0 0.32rem 0.9rem;
-    color: var(--ink-faint);
-    text-decoration: none;
-    border-left: 1px solid var(--line);
-    line-height: 1.35;
-    transition: color 0.2s, border-color 0.2s;
+    padding: 0.28rem 0;
+    font-size: 0.83rem;
+    line-height: 1.4;
+    color: var(--ink-3);
+    transition: color 0.18s var(--ease);
 
     &:hover {
       color: var(--ink);
-      border-left-color: var(--rose);
     }
 
     &[aria-current="true"] {
       color: var(--rose);
-      border-left-color: var(--rose);
     }
   }
 }
 
 .prose {
-  max-width: 70ch;
-
-  > * + * {
-    margin-top: 1.1rem;
-  }
+  max-width: 68ch;
 
   h2 {
-    font-size: clamp(1.35rem, 2vw, 1.65rem);
-    margin-top: 2.7rem;
-    scroll-margin-top: 88px;
+    margin-top: 2.8rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--hair-2);
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 2.4vw, 1.85rem);
+    line-height: 1.16;
+
+    &::before {
+      content: "§";
+      margin-right: 0.5rem;
+      font-family: var(--mono);
+      font-size: 0.8em;
+      color: var(--rose);
+      vertical-align: 0.06em;
+    }
   }
 
-  h3 {
-    font-family: var(--body);
-    font-size: 1.08rem;
-    font-weight: 600;
-    letter-spacing: -0.005em;
-    margin-top: 1.9rem;
-    scroll-margin-top: 88px;
+  h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
   }
 
-  p,
-  li {
-    color: var(--ink-soft);
+  p {
+    margin-top: 1rem;
     font-size: 0.97rem;
+    line-height: 1.7;
   }
 
-  ul,
-  ol {
-    padding-left: 1.15rem;
+  > .code-block,
+  > .note {
+    margin-top: 1.3rem;
   }
 
-  li + li {
-    margin-top: 0.35rem;
+  ul {
+    margin-top: 1.1rem;
+
+    li {
+      position: relative;
+      padding-left: 1.1rem;
+      font-size: 0.95rem;
+      line-height: 1.68;
+      color: var(--ink-2);
+
+      & + li {
+        margin-top: 0.8rem;
+      }
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.66em;
+        width: 5px;
+        height: 1px;
+        background: var(--rose);
+      }
+    }
   }
 
-  .code-block {
-    margin-block: 1.35rem;
-  }
-
-  strong,
   b {
+    font-weight: 500;
     color: var(--ink);
+  }
+
+  a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--hair);
+
+    &:hover {
+      text-decoration-color: var(--rose);
+    }
   }
 }
 
 .note {
-  border: 1px solid var(--line);
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--hair-2);
   border-left: 2px solid var(--rose);
-  padding: 0.9rem 1.05rem;
-  background: var(--card);
+  border-radius: 0 3px 3px 0;
+  background: var(--paper-2);
   font-size: 0.9rem;
-  color: var(--ink-soft);
+  line-height: 1.62;
+  color: var(--ink-2);
 
-  b {
+  a {
     color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--hair);
   }
 }
 
-/* --------------------------------------------------------------------- api */
+/* showcase */
+
+.star-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: clamp(1.6rem, 3.4vw, 2.8rem);
+  align-items: start;
+  padding-bottom: clamp(3rem, 6vw, 4.6rem);
+}
+
+.map-panel {
+  border: 1px solid var(--hair);
+  border-radius: 3px;
+  background: var(--paper);
+  overflow: hidden;
+}
+
+.map-figure {
+  padding: 1rem 1rem 0.2rem;
+  background: var(--paper-2);
+  border-bottom: 1px solid var(--hair-2);
+}
+
+.star-map {
+  width: 100%;
+  height: auto;
+
+  .orbit {
+    fill: none;
+    stroke: var(--hair-2);
+    stroke-width: 1;
+    stroke-dasharray: 2 5;
+  }
+
+  .outline {
+    fill: none;
+    stroke: var(--hair);
+    stroke-width: 1;
+    stroke-dasharray: 2 5;
+    stroke-linejoin: round;
+  }
+
+  .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    fill: var(--ink-3);
+  }
+
+  .ref {
+    font-size: 10px;
+  }
+
+  .core {
+    fill: var(--rose);
+  }
+
+  .hub-node .ring {
+    fill: var(--paper);
+    stroke: var(--rose);
+  }
+
+  .hub-ring {
+    fill: var(--rose-wash);
+    stroke: color-mix(in srgb, var(--rose) 45%, transparent);
+  }
+
+  .edge.lit {
+    stroke: var(--rose);
+    opacity: 0.55;
+  }
+
+  .flow {
+    fill: var(--rose);
+  }
+
+  .node {
+    cursor: pointer;
+
+    .ring {
+      fill: var(--paper);
+      stroke: var(--hair);
+      stroke-width: 1;
+      transition: stroke 0.2s var(--ease), fill 0.2s var(--ease);
+    }
+
+    .ref {
+      font-family: var(--mono);
+      font-size: 8px;
+      fill: var(--ink-3);
+      text-anchor: middle;
+    }
+
+    &:hover .ring {
+      stroke: var(--rose);
+    }
+
+    &[aria-pressed="true"] .ring {
+      fill: var(--rose);
+      stroke: var(--rose);
+    }
+
+    // The hub keeps its centre: it is the one node that is never "just a spoke".
+    &.hub-node[aria-pressed="true"] .ring {
+      fill: var(--paper);
+      stroke: var(--rose);
+      stroke-width: 1.4;
+    }
+
+    &[aria-pressed="true"] .ref {
+      fill: var(--paper);
+    }
+
+    &[aria-pressed="true"] .label {
+      fill: var(--ink);
+    }
+  }
+
+  .hub-ring {
+    fill: var(--rose-wash);
+    stroke: color-mix(in srgb, var(--rose) 55%, transparent);
+  }
+}
+
+.node-index {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+
+  th {
+    padding: 0.55rem 1rem 0.4rem;
+    border-bottom: 1px solid var(--hair-2);
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: left;
+  }
+
+  td {
+    padding: 0.42rem 1rem;
+    border-bottom: 1px solid var(--hair-2);
+    color: var(--ink-2);
+
+    &:first-child {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--ink-3);
+      width: 3rem;
+    }
+
+    &:nth-child(2) {
+      color: var(--ink);
+    }
+
+    &:last-child {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--ink-3);
+    }
+  }
+
+  tbody tr {
+    cursor: pointer;
+    transition: background-color 0.18s var(--ease);
+
+    &:hover {
+      background: var(--wash);
+    }
+
+    &.lit {
+      background: var(--rose-wash);
+    }
+
+    &.lit td:first-child {
+      color: var(--rose);
+    }
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+}
+
+.map-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  border-top: 1px solid var(--hair-2);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+
+.exchange {
+  border: 1px solid var(--hair);
+  border-radius: 3px;
+  background: var(--paper);
+  overflow: hidden;
+}
+
+.ex-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  padding: 0.95rem 1.1rem 0.2rem;
+
+  h2 {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    line-height: 1.1;
+  }
+}
+
+.role-tag {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rose);
+}
+
+.ex-desc {
+  padding: 0.4rem 1.1rem 0;
+  font-size: 0.88rem;
+  color: var(--ink-3);
+}
+
+.composer {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.9rem 1.1rem 0;
+  padding-bottom: 0.95rem;
+  border-bottom: 1px solid var(--hair-2);
+
+  input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--hair);
+    border-radius: 2px;
+    background: var(--paper-2);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+
+    &:focus {
+      outline: 1px solid var(--rose);
+      outline-offset: 0;
+      border-color: transparent;
+    }
+  }
+
+  button {
+    padding: 0.55rem 0.95rem 0.45rem;
+    border-radius: 2px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: background-color 0.2s var(--ease);
+
+    &:hover {
+      background: var(--rose);
+      color: var(--on-rose);
+    }
+  }
+}
+
+.frames {
+  max-height: 27rem;
+  overflow-y: auto;
+  padding: 0.6rem 1.1rem 1rem;
+}
+
+.frame {
+  padding: 0.7rem 0 0.75rem;
+  border-bottom: 1px dashed var(--hair-2);
+  animation: frame-in 0.5s var(--ease) both;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  .fhead {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .kind-tag {
+    padding: 0.1rem 0.35rem 0.05rem;
+    border: 1px solid var(--hair);
+    border-radius: 2px;
+    font-size: 0.56rem;
+    color: var(--ink-2);
+  }
+
+  &.request .kind-tag {
+    border-color: color-mix(in srgb, var(--blue) 45%, transparent);
+    color: var(--blue);
+  }
+
+  &.event .kind-tag {
+    border-color: color-mix(in srgb, var(--rose) 45%, transparent);
+    color: var(--rose);
+  }
+
+  &.error .kind-tag {
+    color: var(--ink);
+    border-color: var(--hair);
+  }
+
+  pre {
+    padding: 0;
+    font-size: 0.72rem;
+    line-height: 1.65;
+    background: none;
+  }
+}
+
+@keyframes frame-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.card-panel {
+  border-top: 1px solid var(--hair-2);
+
+  summary {
+    padding: 0.7rem 1.1rem;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    cursor: pointer;
+    transition: color 0.2s var(--ease);
+
+    &:hover {
+      color: var(--rose);
+    }
+  }
+
+  pre {
+    max-height: 20rem;
+    overflow: auto;
+    font-size: 0.7rem;
+  }
+}
+
+.states {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--hair-2);
+  border: 1px solid var(--hair-2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.state {
+  padding: 1rem;
+  background: var(--paper);
+
+  code {
+    display: block;
+    font-size: 0.68rem;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  p {
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+}
+
+.load-note {
+  padding: 1rem 1.1rem;
+  font-size: 0.85rem;
+  color: var(--ink-3);
+}
+
+/* api */
 
 .api-layout {
   display: grid;
-  grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
-  gap: clamp(1.8rem, 5vw, 4rem);
-  align-items: start;
-  padding-block: clamp(2rem, 5vh, 3rem);
+  grid-template-columns: 14.5rem minmax(0, 1fr);
+  gap: clamp(2rem, 4vw, 3.4rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
 }
 
 .api-nav {
   position: sticky;
-  top: 88px;
-  max-height: calc(100svh - 116px);
+  top: 84px;
+  align-self: start;
+  max-height: calc(100vh - 8rem);
   overflow-y: auto;
   padding-right: 0.7rem;
-  font-size: 0.79rem;
+  border-left: 1px solid var(--hair-2);
+  padding-left: 1rem;
 
-  .pkg {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    color: var(--rose);
-    margin: 1.5rem 0 0.45rem;
+  .group + .group {
+    margin-top: 1.4rem;
   }
 
-  .group:first-child .pkg {
-    margin-top: 0;
+  .pkg {
+    margin-bottom: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    color: var(--rose);
   }
 
   a {
     display: block;
-    padding: 0.2rem 0 0.2rem 0.75rem;
-    color: var(--ink-faint);
-    text-decoration: none;
-    border-left: 1px solid var(--line);
+    padding: 0.16rem 0;
+    font-family: var(--mono);
+    font-size: 0.71rem;
+    line-height: 1.45;
+    color: var(--ink-3);
     overflow-wrap: anywhere;
-    transition: color 0.18s, border-color 0.18s;
+    transition: color 0.16s var(--ease);
 
     &:hover {
       color: var(--ink);
-      border-left-color: var(--rose);
     }
   }
 }
@@ -1383,50 +1977,67 @@ pre {
 }
 
 .api-pkg {
-  + .api-pkg {
-    margin-top: 3.6rem;
+  & + .api-pkg {
+    margin-top: 4rem;
+    padding-top: 2.6rem;
+    border-top: 1px solid var(--hair);
   }
 
-  > header {
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 0.9rem;
-    margin-bottom: 1.8rem;
-  }
+  header {
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid var(--hair);
 
-  h2 {
-    font-size: clamp(1.4rem, 2.2vw, 1.8rem);
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.7rem, 3vw, 2.1rem);
+    }
   }
 
   .imp {
+    margin-top: 0.4rem;
     font-family: var(--mono);
     font-size: 0.72rem;
-    color: var(--ink-faint);
-    margin-top: 0.55rem;
-    overflow-wrap: anywhere;
+    color: var(--ink-3);
   }
 }
 
-.api-cat h3 {
-  font-family: var(--mono);
-  font-size: 0.63rem;
-  font-weight: 400;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  margin: 2.4rem 0 1rem;
+.api-cat {
+  margin-top: 2.6rem;
+
+  h3 {
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--hair-2);
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
 }
 
 .api-type {
-  border-top: 1px solid var(--line-soft);
-  padding-top: 1.2rem;
-  margin-top: 1.5rem;
+  padding-top: 1.9rem;
+
+  & + .api-type {
+    margin-top: 1.6rem;
+    border-top: 1px solid var(--hair-2);
+  }
+}
+
+.api-type > .sig {
+  margin-top: 0.5rem;
+  padding: 0;
+  border-left: 0;
+  background: none;
+  font-size: 0.8rem;
+  color: var(--ink-2);
 }
 
 .type-head {
   display: flex;
   align-items: baseline;
   gap: 0.6rem;
-  margin-bottom: 0.45rem;
 
   h3 {
     font-family: var(--mono);
@@ -1434,30 +2045,28 @@ pre {
     font-weight: 500;
     letter-spacing: -0.01em;
   }
-}
 
-.kind {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  border: 1px solid var(--line);
-  padding: 0.05rem 0.32rem;
+  .kind {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
 }
 
 .sig {
+  margin-top: 0.55rem;
+  padding: 0.5rem 0.7rem;
+  border-left: 2px solid var(--hair);
+  background: var(--code);
+  border-radius: 0 2px 2px 0;
   font-family: var(--mono);
-  font-size: 0.76rem;
-  line-height: 1.7;
-  border-radius: 2px;
-  background-color: var(--paper-2);
-  background-image: linear-gradient(180deg, var(--sheen-soft), transparent 60%);
-  border-left: 2px solid var(--rose);
-  padding: 0.65rem 0.85rem;
+  font-size: 0.73rem;
+  line-height: 1.6;
+  color: var(--ink-2);
   overflow-x: auto;
-  white-space: pre;
-  .pick();
+  overflow-wrap: anywhere;
 
   .kw {
     color: var(--rose);
@@ -1465,62 +2074,112 @@ pre {
 
   .name {
     color: var(--ink);
-    font-weight: 500;
-  }
-}
-
-.api-item {
-  padding: 0.85rem 0 0.15rem;
-
-  + .api-item {
-    border-top: 1px dashed var(--line-soft);
   }
 
-  .sig {
-    margin-top: 0.3rem;
+  .pt {
+    color: var(--blue);
+  }
+
+  .d {
+    color: var(--ink-3);
   }
 }
 
 .doc {
   margin-top: 0.7rem;
-  font-size: 0.9rem;
-  color: var(--ink-soft);
-  max-width: 70ch;
+
+  p {
+    font-size: 0.9rem;
+    line-height: 1.66;
+  }
 
   p + p {
-    margin-top: 0.5rem;
+    margin-top: 0.6rem;
   }
 
   code {
+    padding: 0.05em 0.3em;
+    background: var(--wash);
+    border-radius: 2px;
     font-size: 0.85em;
   }
 
   pre {
-    background: var(--paper-2);
-    border: 1px solid var(--line-soft);
-    font-size: 0.74rem;
-    padding: 0.75rem 0.85rem;
-    margin-top: 0.55rem;
+    margin-top: 0.7rem;
+    border: 1px solid var(--hair-2);
+    border-radius: 2px;
+    background: var(--code);
   }
 
   table {
     width: 100%;
+    margin-top: 0.7rem;
     border-collapse: collapse;
-    margin-top: 0.65rem;
     font-size: 0.84rem;
+
+    th,
+    td {
+      padding: 0.35rem 0.5rem;
+      border-bottom: 1px solid var(--hair-2);
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
+    th {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
   }
 
-  th,
-  td {
-    border: 1px solid var(--line-soft);
-    padding: 0.38rem 0.55rem;
-    text-align: left;
+  ul {
+    margin-top: 0.6rem;
+
+    li {
+      position: relative;
+      padding-left: 0.95rem;
+      font-size: 0.9rem;
+      color: var(--ink-2);
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.66em;
+        width: 4px;
+        height: 1px;
+        background: var(--ink-3);
+      }
+    }
+  }
+}
+
+.members {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
+  gap: 0.15rem 1.6rem;
+  margin-top: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.3rem;
+    min-width: 0;
     overflow-wrap: anywhere;
   }
 
-  th {
-    background: var(--paper-2);
-    font-weight: 600;
+  b {
+    font-weight: 400;
+    color: var(--ink-2);
+  }
+
+  .pt {
+    color: var(--blue);
   }
 }
 
@@ -1529,773 +2188,200 @@ pre {
 }
 
 .mlabel {
-  .overline();
-  font-size: 0.58rem;
-  margin-bottom: 0.25rem;
-}
-
-.members {
-  list-style: none;
-  margin: 0.55rem 0 0;
-  padding: 0;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--hair-2);
   font-family: var(--mono);
-  font-size: 0.75rem;
-  color: var(--ink-soft);
-  columns: 2;
-  column-gap: 1.8rem;
-
-  li {
-    break-inside: avoid;
-    padding: 0.1rem 0;
-  }
-
-  b {
-    color: var(--ink);
-    font-weight: 500;
-  }
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
 }
 
-.pt {
-  color: var(--ink-faint);
+.api-item {
+  padding: 0.75rem 0 0.8rem;
+  border-bottom: 1px solid var(--hair-2);
+
+  .sig {
+    margin-top: 0;
+    background: none;
+    border-left: 0;
+    padding: 0;
+  }
+
+  .doc {
+    margin-top: 0.4rem;
+  }
+
+  &:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
 }
 
 .params {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.28rem 0.9rem;
+  gap: 0.25rem;
   margin-top: 0.55rem;
-  font-family: var(--mono);
-  font-size: 0.71rem;
-  color: var(--ink-soft);
 
-  b {
-    color: var(--ink);
-    font-weight: 500;
-  }
-
-  .d {
-    color: var(--ink-faint);
-  }
-}
-
-/* ---------------------------------------------------------------- showcase */
-
-.star-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: clamp(1.4rem, 4vw, 3.2rem);
-  align-items: start;
-  padding-block: clamp(1.6rem, 4vh, 2.6rem);
-}
-
-.map-panel {
-  position: sticky;
-  top: 88px;
-}
-
-// The dial and its rays belong to the drawing alone. Tying them to the SVG's own box keeps the
-// blue face off the index table below: a plate must never sit under its own parts list. Centred,
-// the whole star falls on the blue face, the way a dial sits inside its rose-gold bezel.
-.map-figure {
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: -6% -4%;
-    background: repeating-conic-gradient(
-      from 0deg at 50% 50%,
-      var(--aura) 0deg 0.5deg,
-      transparent 0.5deg 8deg
-    );
-    mask: radial-gradient(circle at 50% 50%, transparent 30%, #000 44%, transparent 74%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: 48%;
-    left: 50%;
-    width: 82%;
-    aspect-ratio: 1;
-    translate: -50% -50%;
-    .dial();
-    opacity: 0.9;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .star-map {
-    position: relative;
-    z-index: 1;
-  }
-}
-
-.star-map {
-  width: 100%;
-  aspect-ratio: 556 / 452;
-  overflow: visible;
-
-  .edge {
-    stroke: var(--line);
-    stroke-width: 1;
-    transition: stroke 0.35s;
-
-    &.lit {
-      stroke: var(--rose);
-      stroke-dasharray: 3 7;
-      animation: crawl 1.3s linear infinite;
-
-      @media (prefers-reduced-motion: reduce) {
-        animation: none;
-        stroke-dasharray: none;
-      }
-    }
-  }
-
-  .outline {
-    fill: none;
-    stroke: color-mix(in srgb, var(--ink) 34%, transparent);
-    stroke-width: 1.15;
-    stroke-linejoin: round;
-  }
-
-  .hub {
-    // The hub is the watch: sandblasted blue under a rose-gold bezel. Its eyes and the short bar
-    // of its mouth are drawn after it, and none of them ever change.
-    fill: var(--dial-2);
-    stroke: var(--metal-3);
-    stroke-width: 1.6;
-  }
-}
-
-@keyframes crawl {
-  to {
-    stroke-dashoffset: -10;
-  }
-}
-
-.node-btn {
-  cursor: pointer;
-
-  .disc {
-    fill: var(--card);
-    stroke: var(--metal-3);
-    stroke-width: 1.1;
-    transition: stroke 0.25s, fill 0.25s;
-  }
-
-  &:hover .disc {
-    stroke: var(--rose);
-  }
-
-  &[aria-pressed="true"] .disc {
-    fill: var(--rose-wash);
-    stroke: var(--rose);
-    stroke-width: 1.4;
-  }
-
-  &:focus-visible {
-    outline: none;
-
-    .disc {
-      stroke: var(--rose);
-      stroke-width: 2;
-    }
-  }
-
-  // The drawing carries reference numbers only. Names and skills live in the index under the
-  // plate, so a label can never again land on a spoke, an edge or a cell.
-  .ref {
-    rect {
-      fill: var(--card);
-      stroke: var(--metal-3);
-      stroke-width: 0.9;
-    }
-
-    text {
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.08em;
-      fill: var(--rose);
-      text-anchor: middle;
-      dominant-baseline: middle;
-      pointer-events: none;
-    }
-  }
-
-  &[aria-pressed="true"] .ref rect {
-    fill: var(--rose-wash);
-    stroke: var(--rose);
-    stroke-width: 1.3;
-  }
-
-  &[aria-pressed="true"] .ref text {
-    fill: var(--ink);
-  }
-}
-
-// The index is the legend: a parts list under the plate, ruled like a specification table.
-.node-index {
-  width: 100%;
-  margin-top: 0.9rem;
-  border-collapse: collapse;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  font-size: 0.72rem;
-
-  th {
-    .overline();
-    font-size: 0.58rem;
-    font-weight: 400;
-    text-align: left;
-    padding: 0.5rem 0.6rem;
-    border-bottom: 1px solid var(--line-soft);
-  }
-
-  td {
-    padding: 0.42rem 0.6rem;
-    border-bottom: 1px solid var(--line-soft);
-    color: var(--ink-soft);
-  }
-
-  tbody tr {
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-
-    &:last-child td {
-      border-bottom: 0;
-    }
-
-    &:hover td,
-    &.lit td {
-      color: var(--ink);
-      background: var(--rose-wash);
-    }
-  }
-
-  td:first-child {
-    width: 3.4rem;
+  .p {
+    padding: 0.1rem 0.4rem 0.05rem;
+    border: 1px solid var(--hair-2);
+    border-radius: 2px;
     font-family: var(--mono);
     font-size: 0.66rem;
-    letter-spacing: 0.12em;
-    color: var(--rose);
-  }
-
-  td:nth-child(2) {
-    color: var(--ink);
-    font-weight: 500;
-  }
-
-  td:last-child {
-    font-family: var(--mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.06em;
-  }
-}
-
-.map-caption {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  font-family: var(--mono);
-  font-size: 0.66rem;
-  color: var(--ink-faint);
-  border-top: 1px solid var(--line-soft);
-  padding-top: 0.55rem;
-  margin-top: 0.3rem;
-}
-
-.exchange {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-
-  .ex-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-
-    h2 {
-      font-size: clamp(1.3rem, 2vw, 1.6rem);
-    }
-
-    .role-tag {
-      font-family: var(--mono);
-      font-size: 0.62rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--rose);
-    }
-  }
-
-  .ex-desc {
-    font-size: 0.9rem;
-    color: var(--ink-soft);
-  }
-}
-
-.composer {
-  display: flex;
-  gap: 0;
-  align-items: stretch;
-  border: 1px solid var(--line);
-  background: var(--card);
-  padding: 0.25rem;
-
-  input {
-    flex: 1;
-    min-width: 0;
-    border: 1px solid transparent;
-    background: none;
-    padding: 0.5rem 0.6rem;
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    outline: none;
-  }
-
-  button {
-    .metal-button();
-    padding: 0 1.15rem;
-    font-size: 0.66rem;
-    line-height: 1;
-    cursor: pointer;
-    transition: background 0.25s, border-color 0.25s, filter 0.25s;
-
-    &:hover {
-      border-color: var(--metal-4);
-      filter: brightness(1.06);
-    }
-
-    &:focus-visible {
-      .focus-ring();
-    }
-  }
-}
-
-.frames {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.frame {
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  background-color: var(--card);
-  background-image: linear-gradient(180deg, var(--sheen-soft), transparent 40%);
-  box-shadow: inset 0 1px 0 var(--sheen);
-  opacity: 0;
-  transform: translateY(5px);
-  animation: arrive 0.42s var(--ease) forwards;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  .fhead {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-    padding: 0.38rem 0.7rem;
-    border-bottom: 1px solid var(--line-soft);
-    font-family: var(--mono);
-    font-size: 0.61rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-
-    .kind-tag {
-      padding: 0.02rem 0.32rem;
-      border: 1px solid currentColor;
-      color: var(--rose);
-    }
-  }
-
-  pre {
-    max-height: 15rem;
-    overflow-y: auto;
-    font-size: 0.73rem;
-    padding: 0.7rem 0.85rem 0.85rem;
-  }
-
-  &.event .fhead .kind-tag {
-    color: color-mix(in srgb, var(--ink) 50%, var(--rose));
-  }
-
-  &.error .fhead .kind-tag {
-    color: #b8565f;
-  }
-}
-
-@keyframes arrive {
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.card-panel {
-  border-top: 1px solid var(--line);
-  padding-top: 1.3rem;
-  margin-top: 1.6rem;
-
-  summary {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-    cursor: pointer;
-    font-family: var(--mono);
-    font-size: 0.64rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    list-style: none;
-
-    &::-webkit-details-marker {
-      display: none;
-    }
-
-    &::before {
-      content: "";
-      width: 7px;
-      height: 8px;
-      border: 1px solid var(--rose);
-      .hex-clip();
-      transition: background 0.2s;
-    }
-  }
-
-  &[open] summary::before {
-    background: var(--rose);
-  }
-
-  pre {
-    margin-top: 0.85rem;
-    border: 1px solid var(--line);
-    background: var(--card);
-    max-height: 22rem;
-    overflow: auto;
-  }
-}
-
-.states {
-  display: grid;
-  grid-template-columns: ~"repeat(auto-fit, minmax(min(100%, 200px), 1fr))";
-  gap: 1px;
-  background: var(--line-soft);
-  border: 1px solid var(--line-soft);
-  margin-top: 1.4rem;
-}
-
-.state {
-  background-color: var(--card);
-  background-image: linear-gradient(180deg, var(--sheen-soft), transparent 42%);
-  padding: 0.8rem 0.9rem;
-  transition: background 0.25s;
-
-  &:hover {
-    background: color-mix(in srgb, var(--rose-wash) 55%, var(--card));
-  }
-
-  code {
-    background: none;
-    padding: 0;
-    font-size: 0.66rem;
-    letter-spacing: 0.02em;
-    color: var(--rose);
+    color: var(--ink-3);
     overflow-wrap: anywhere;
   }
 
-  p {
-    margin-top: 0.35rem;
-    font-size: 0.8rem;
-    line-height: 1.45;
-    color: var(--ink-soft);
+  b {
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+
+  .pt {
+    color: var(--blue);
+  }
+
+  .d {
+    color: var(--ink-3);
   }
 }
 
-/* ----------------------------------------------------------------- methods */
-
-// The protocol, as a protocol: eleven rows, one per method, on the same hairline the rest of the
-// page is built on.
-.methods-wrap {
-  overflow-x: auto;
-}
-
-.methods {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.88rem;
-  border-top: 1px solid var(--line);
-
-  th {
-    .overline();
-    font-weight: 400;
-    font-size: 0.58rem;
-    text-align: left;
-    padding: 0.5rem 1rem 0.5rem 0;
-    border-bottom: 1px solid var(--line);
-    white-space: nowrap;
-  }
-
-  td {
-    padding: 0.62rem 1rem 0.62rem 0;
-    border-bottom: 1px solid var(--line-soft);
-    vertical-align: baseline;
-    color: var(--ink-soft);
-  }
-
-  td:nth-child(1) {
-    font-family: var(--mono);
-    font-size: 0.76rem;
-    color: var(--ink);
-    white-space: nowrap;
-  }
-
-  td:nth-child(2) {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.04em;
-    color: var(--rose);
-    white-space: nowrap;
-    width: 7.5rem;
-  }
-
-  tbody tr {
-    transition: background 0.2s;
-  }
-
-  tbody tr:hover {
-    background: color-mix(in srgb, var(--rose-wash) 45%, transparent);
-  }
-}
-
-/* ------------------------------------------------------------------ faces */
-
-// An agent is a cell with two eyes; the hub, being larger, has a short mouth as well. The face is
-// constant — no blink, no change on selection, no pulse. A face that lights up is a control, and
-// the expression is the whole character.
-.face line {
-  stroke: var(--ink);
-  stroke-width: 1.2;
-  stroke-linecap: round;
-  opacity: 0.85;
-}
-
-// A message in flight: one dot running out along a spoke. It fades before it touches the cell, so
-// nothing is ever seen sitting inside a face or passing through it.
-.flow {
-  fill: var(--rose);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .flow {
-    display: none;
-  }
-}
-
-/* ------------------------------------------------------------------- gauge */
-
-// The scrollbar is not a bar: it is one cell of the comb, filling with rose gold as the page is read.
-.gauge {
-  position: fixed;
-  right: clamp(0.4rem, 1.4vw, 1.1rem);
-  top: 50%;
-  translate: 0 -50%;
-  z-index: 45;
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 50px;
-  color: var(--ink-faint);
-  cursor: pointer;
-
-  svg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-
-  .cell-line {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1;
-    opacity: 0.45;
-    transition: opacity 0.25s;
-  }
-
-  .fill {
-    fill: var(--rose);
-    opacity: 0.8;
-  }
-
-  .mark {
-    position: relative;
-    width: 15px;
-    height: 15px;
-    color: var(--ink);
-    .star-stroke();
-    stroke-width: 1.3;
-  }
-
-  .pct {
-    position: absolute;
-    right: 50px;
-    top: 50%;
-    translate: 0 -50%;
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.08em;
-    color: var(--ink-faint);
-    background: color-mix(in srgb, var(--paper) 90%, transparent);
-    padding: 0.1rem 0.35rem;
-    opacity: 0;
-    transition: opacity 0.25s;
-    white-space: nowrap;
-  }
-
-  &:hover {
-    .pct {
-      opacity: 1;
-    }
-
-    .cell-line {
-      opacity: 0.85;
-    }
-  }
-
-  &:focus-visible {
-    .focus-ring();
-    border-radius: 2px;
-  }
-
-  @media (width <= 860px) {
-    display: none;
-  }
-}
-
-/* ------------------------------------------------------------------ footer */
+/* --------------------------------------------------------------------- foot */
 
 .foot {
-  position: relative;
-  z-index: 1;
-  border-top: 1px solid var(--line);
-  padding-block: clamp(2rem, 5vh, 2.9rem);
+  border-top: 1px solid var(--hair);
   background: var(--paper-2);
+  padding-block: clamp(2.4rem, 4vw, 3.2rem) 1.4rem;
+}
 
-  .row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1.2rem 2.4rem;
-    justify-content: space-between;
+.foot-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(1.6rem, 4vw, 3rem);
+  padding-bottom: 2.2rem;
+}
+
+.foot-brand {
+  .brand {
+    margin-bottom: 0.7rem;
   }
 
   .tag {
-    flex: 1 1 20ch;
-    font-size: 0.82rem;
-    color: var(--ink-faint);
-    max-width: 32ch;
+    max-width: 30ch;
+    font-size: 0.86rem;
+    line-height: 1.6;
+    color: var(--ink-3);
+  }
+}
+
+.foot-col {
+  h4 {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
   }
 
-  .links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.3rem;
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+  a {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.86rem;
+    color: var(--ink-2);
+    transition: color 0.18s var(--ease);
 
-    a {
-      color: var(--ink-soft);
-      text-decoration: none;
-      transition: color 0.2s;
-
-      &:hover {
-        color: var(--rose);
-      }
+    &:hover {
+      color: var(--rose);
     }
   }
 }
 
 .legal {
   display: flex;
-  gap: 1.4rem;
   justify-content: space-between;
-  flex-wrap: wrap;
-  margin-top: 1.9rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--line-soft);
+  gap: 1rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--hair-2);
   font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
 }
 
-/* ------------------------------------------------------------------ reveal */
+/* ------------------------------------------------------------------- motion */
 
 .reveal {
   opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
+  transform: translateY(8px);
+  transition: opacity 0.65s var(--ease), transform 0.65s var(--ease);
 
   &.in {
     opacity: 1;
     transform: none;
   }
+}
 
-  @media (prefers-reduced-motion: reduce) {
-    opacity: 1;
-    transform: none;
-    transition: none;
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .frame,
+  .t-frame {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  * {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
   }
 }
 
-/* -------------------------------------------------------------- responsive */
+/* --------------------------------------------------------------- responsive */
 
-@media (width <= 1000px) {
-  .hero-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .constellation {
-    display: none;
-  }
-
-  .section-head {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .comb {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .wire {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
+@media (max-width: 1000px) {
+  .hero-grid,
+  .split,
   .star-layout {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .map-panel {
-    position: static;
-    max-width: 440px;
+  .hero-grid {
+    gap: 2.4rem;
   }
-}
 
-@media (width <= 860px) {
+  .band .wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .band-side {
+    display: none;
+  }
+
+  .cycle {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .section-head {
+    grid-template-columns: 2.4rem minmax(0, 1fr);
+    gap: 0 1rem;
+  }
+
+  .section-head p {
+    grid-column: 2;
+    margin-top: 0.9rem;
+    max-width: 52ch;
+  }
+
+  .section-head .num {
+    align-self: start;
+    font-size: 1.7rem;
+    padding-top: 0.1rem;
+  }
+
   .guide-layout,
   .api-layout {
     grid-template-columns: minmax(0, 1fr);
@@ -2305,129 +2391,210 @@ pre {
   .api-nav {
     position: static;
     max-height: none;
+    overflow: visible;
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid var(--hair-2);
+    padding-top: 0.9rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.15rem 0.9rem;
+    gap: 0.35rem 1rem;
+
+    .toc-title {
+      width: 100%;
+    }
 
     a {
-      border-left: 0;
-      padding-left: 0;
+      display: inline-block;
     }
   }
 
-  .api-nav .group {
-    display: contents;
+  .api-nav {
+    .group + .group {
+      margin-top: 1rem;
+    }
+
+    a {
+      padding: 0.12rem 0;
+    }
   }
 
-  .figures {
+  .states {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
-    .figure:nth-child(2n) {
-      border-right: 0;
-    }
+  .foot-main {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
 
-    .figure:nth-child(-n + 2) {
-      border-bottom: 1px solid var(--line-soft);
-    }
+  .foot-brand {
+    grid-column: 1 / -1;
   }
 }
 
-@media (width <= 620px) {
+@media (max-width: 720px) {
   body {
     font-size: 16px;
   }
 
   .bar {
-    height: 56px;
-    gap: 0.5rem;
+    height: 54px;
+    gap: 0.6rem;
   }
 
   .brand span {
-    font-size: 1.1rem;
+    display: none;
   }
 
   .mainnav {
-    margin-inline-start: auto;
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
+    gap: 0.85rem;
+
+    a {
+      font-size: 0.8rem;
+    }
   }
 
-  .comb {
+  .cards {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .members {
-    columns: 1;
+  .refusals {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
   }
 
-  .foot .row {
+  .duo {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .duo-mid {
+    display: none;
+  }
+
+  .methods {
+    thead {
+      display: none;
+    }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.15rem 0.6rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--hair-2);
+    }
+
+    td {
+      padding: 0;
+      border: 0;
+
+      &:first-child {
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      &:nth-child(2) {
+        width: auto;
+        justify-self: end;
+      }
+
+      &:last-child {
+        grid-column: 1 / -1;
+        font-size: 0.84rem;
+      }
+    }
+  }
+
+  .specimen {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem 1rem;
+  }
+
+  .frames {
+    max-height: 22rem;
+    padding-inline: 0.9rem;
+  }
+
+  .ex-head,
+  .ex-desc,
+  .composer {
+    padding-inline: 0.9rem;
+  }
+
+  .composer {
+    margin-inline: 0.9rem;
+  }
+
+  .map-caption {
     flex-direction: column;
-    align-items: flex-start;
+    gap: 0.2rem;
+  }
+
+  .states {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .foot-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .legal {
+    flex-direction: column;
+    gap: 0.3rem;
   }
 }
 
-/* -------------------------------------------------------------- scrollbars */
-
-// Chromium and Safari: the gauge is the pointer, so the native bar keeps its width — the layout
-// must not jump when it appears — and its thumb goes transparent.
-@supports selector(::-webkit-scrollbar) {
-  html::-webkit-scrollbar,
-  body::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+@media (max-width: 560px) {
+  .t-frame pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
 
-  html::-webkit-scrollbar-track,
-  body::-webkit-scrollbar-track {
-    background: transparent;
-  }
+  .specimen {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding-top: 0.2rem;
 
-  html::-webkit-scrollbar-thumb,
-  body::-webkit-scrollbar-thumb {
-    background: transparent;
-  }
+    div {
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.42rem 0;
+      border-bottom: 1px solid var(--hair-2);
+    }
 
-  pre::-webkit-scrollbar,
-  .api-nav::-webkit-scrollbar,
-  .sig::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  pre::-webkit-scrollbar-track,
-  .api-nav::-webkit-scrollbar-track,
-  .sig::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  pre::-webkit-scrollbar-thumb,
-  .api-nav::-webkit-scrollbar-thumb,
-  .sig::-webkit-scrollbar-thumb {
-    border-radius: 99px;
-    border: 2px solid transparent;
-    background-clip: content-box;
-    background-color: color-mix(in srgb, var(--ink) 20%, transparent);
-  }
-
-  pre:hover::-webkit-scrollbar-thumb,
-  .api-nav:hover::-webkit-scrollbar-thumb,
-  .sig:hover::-webkit-scrollbar-thumb {
-    background-color: color-mix(in srgb, var(--ink) 34%, transparent);
+    div:last-child {
+      border-bottom: 0;
+    }
   }
 }
 
-// Firefox has no ::-webkit-scrollbar, so it gets the standard properties — and only there, because
-// setting either of them in Chromium switches the ::-webkit-scrollbar rules off.
-@supports not selector(::-webkit-scrollbar) {
+@media (max-width: 420px) {
+  .mainnav {
+    gap: 0.6rem;
+
+    a {
+      font-size: 0.76rem;
+    }
+  }
+
+  .hero-copy h1 {
+    font-size: 2.35rem;
+  }
+
+  .actions .btn {
+    width: 100%;
+  }
+
+  .t-frame pre {
+    font-size: 0.63rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
   html {
-    scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--ink) 24%, transparent) transparent;
-  }
-
-  pre,
-  .api-nav,
-  .sig {
-    scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--ink) 20%, transparent) transparent;
+    scroll-behavior: auto;
   }
 }

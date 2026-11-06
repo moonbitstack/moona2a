@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MoonA2A — the Agent2Agent protocol for MoonBit</title>
 <meta name="description" content="MoonA2A is the Agent2Agent protocol in MoonBit: an agent card, one JSON-RPC endpoint for the protocol's methods, tasks that stream, push notifications, and a client for calling an agent someone else runs.">
-<meta name="theme-color" content="#f7f1ec">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f7f1ec'/%3E%3Cpath d='M12 2.6 14.4 8.9 21.2 9.2 15.8 13.4 17.7 19.9 12 16.1 6.3 19.9 8.2 13.4 2.8 9.2 9.6 8.9Z' fill='none' stroke='%23a2525e' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#fbfaf6">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23fbfaf6'/%3E%3Cpath d='M12 2.6 14.4 8.9 21.2 9.2 15.8 13.4 17.7 19.9 12 16.1 6.3 19.9 8.2 13.4 2.8 9.2 9.6 8.9Z' fill='none' stroke='%239c4a57' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css">
 <script>try{const t=localStorage.getItem("moona2a-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <script src="assets/site.js" defer></script>
@@ -24,245 +24,284 @@
       <span>MoonA2A</span>
     </a>
     <nav class="mainnav" aria-label="Primary">
+      <a href="index.html" aria-current="page">Home</a>
       <a href="guide.html">Guide</a>
       <a href="api.html">API</a>
-      <a href="showcase.html">The star</a>
+      <a href="showcase.html">Showcase</a>
     </nav>
     <div class="tools">
       <a class="icon-btn" href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener" aria-label="GitHub repository">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
       </a>
       <button class="icon-btn theme-toggle" type="button" aria-label="Switch between light and dark">
-        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.9"/><path d="M12 1.7v2.4M12 19.9v2.4M1.7 12h2.4M19.9 12h2.4M4.75 4.75l1.7 1.7M17.55 17.55l1.7 1.7M19.25 4.75l-1.7 1.7M6.45 17.55l-1.7 1.7"/></svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.6"/><path d="M12 2.2v2.2M12 19.6v2.2M2.2 12h2.2M19.6 12h2.2M5.1 5.1l1.6 1.6M17.3 17.3l1.6 1.6M18.9 5.1l-1.6 1.6M6.7 17.3l-1.6 1.6"/></svg>
         <svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12.88A10 10 0 1 1 11.12 2a7.78 7.78 0 0 0 10.88 10.88z"/></svg>
       </button>
     </div>
   </div>
 </header>
 
-<div class="gauge"><span class="pct">0%</span>
-  <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.8 14.6 8.4 22.2 8.7 16.2 13.4 18.3 20.8 12 16.6 5.7 20.8 7.8 13.4 1.8 8.7 9.4 8.4Z"/></svg>
-</div>
-
 <main id="main">
 
 <section class="hero">
-  <div class="hatch" aria-hidden="true"></div>
   <div class="wrap">
-    <div class="hero-rule">
-      <span class="eyebrow">MoonA2A / Specification</span>
-      <span class="specimen">A2A 1.0 · MoonBit · Apache 2.0</span>
-    </div>
-
     <div class="hero-grid">
       <div class="hero-copy">
-        <h1><span class="line">Agent2Agent 1.0</span><span class="line">for MoonBit.</span></h1>
-        <span class="hero-stroke" aria-hidden="true"></span>
-        <p class="lede">An agent card declares what an agent is. One JSON-RPC endpoint answers the protocol's eleven methods. A stream reports a task while it runs. Serve one from MoonBit, or call one someone else runs.</p>
+        <span class="eyebrow">Agent2Agent · protocol 1.0</span>
+        <h1>Two agents,<br>one <em>transcript</em>.</h1>
+        <p class="lede">A card says what an agent is. One endpoint answers the protocol's eleven methods, and a stream reports the task while it runs. Serve that from MoonBit, or call an agent someone else serves.</p>
         <div class="actions">
           <a class="btn" href="guide.html">Read the guide <span class="arrow">→</span></a>
-          <a class="btn ghost" href="showcase.html">Explore the star</a>
+          <a class="btn ghost" href="showcase.html">Watch a session</a>
+        </div>
+        <div class="install-line"><span class="prompt">$</span>moon add moonbitstack/moona2a</div>
+        <div class="specimen">
+          <div><span>protocol</span><b>1.0</b></div>
+          <div><span>binding</span><b>JSON-RPC 2.0</b></div>
+          <div><span>stream</span><b>text/event-stream</b></div>
         </div>
       </div>
 
-      <div class="constellation" aria-hidden="true">
-        <svg viewBox="0 0 640 640" role="presentation">
-          <g class="spokes">
-            <path d="M320 320 L320 40 M320 320 L586.3 233.5 M320 320 L484.6 546.5 M320 320 L155.4 546.5 M320 320 L53.7 233.5"/>
-          </g>
-          <path class="penta" d="M320 40 L484.6 546.5 L53.7 233.5 L586.3 233.5 L155.4 546.5 Z"/>
-          <g class="flows">
-        <circle class="flow" r="3.4"><animateMotion dur="4.6s" begin="-1.2s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M320 320 L320 72"/></circle><animate attributeName="opacity" dur="4.6s" begin="-1.2s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
-        <circle class="flow" r="3.4"><animateMotion dur="5.2s" begin="-2.9s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M320 320 L561.6 241.5"/></circle><animate attributeName="opacity" dur="5.2s" begin="-2.9s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
-        <circle class="flow" r="3.4"><animateMotion dur="4.1s" begin="-0.6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M320 320 L469.3 525.5"/></circle><animate attributeName="opacity" dur="4.1s" begin="-0.6s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
-        <circle class="flow" r="3.4"><animateMotion dur="4.9s" begin="-3.4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M320 320 L170.7 525.5"/></circle><animate attributeName="opacity" dur="4.9s" begin="-3.4s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
-        <circle class="flow" r="3.4"><animateMotion dur="5.6s" begin="-1.8s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M320 320 L78.4 241.5"/></circle><animate attributeName="opacity" dur="5.6s" begin="-1.8s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/>
-          </g>
-          <g class="cells">
-            <path d="M320 16 L340.8 28 L340.8 52 L320 64 L299.2 52 L299.2 28 Z"/>
-            <path d="M586.3 209.5 L607.1 221.5 L607.1 245.5 L586.3 257.5 L565.5 245.5 L565.5 221.5 Z"/>
-            <path d="M484.6 522.5 L505.4 534.5 L505.4 558.5 L484.6 570.5 L463.8 558.5 L463.8 534.5 Z"/>
-            <path d="M155.4 522.5 L176.2 534.5 L176.2 558.5 L155.4 570.5 L134.6 558.5 L134.6 534.5 Z"/>
-            <path d="M53.7 209.5 L74.5 221.5 L74.5 245.5 L53.7 257.5 L32.9 245.5 L32.9 221.5 Z"/>
-          </g>
-          <path class="hub" d="M320 286 L349.4 303 L349.4 337 L320 354 L290.6 337 L290.6 303 Z"/>
-          <g class="faces">
-        <g class="face"><line x1="311.8" y1="32.8" x2="311.8" y2="43.8"/><line x1="328.2" y1="32.8" x2="328.2" y2="43.8"/></g>
-        <g class="face"><line x1="578.1" y1="226.3" x2="578.1" y2="237.3"/><line x1="594.5" y1="226.3" x2="594.5" y2="237.3"/></g>
-        <g class="face"><line x1="476.4" y1="539.3" x2="476.4" y2="550.3"/><line x1="492.8" y1="539.3" x2="492.8" y2="550.3"/></g>
-        <g class="face"><line x1="147.2" y1="539.3" x2="147.2" y2="550.3"/><line x1="163.6" y1="539.3" x2="163.6" y2="550.3"/></g>
-        <g class="face"><line x1="45.5" y1="226.3" x2="45.5" y2="237.3"/><line x1="61.9" y1="226.3" x2="61.9" y2="237.3"/></g>
-        <g class="face"><line x1="309.4" y1="308.6" x2="309.4" y2="322.4"/><line x1="330.6" y1="308.6" x2="330.6" y2="322.4"/><line x1="311.4" y1="334.4" x2="328.6" y2="334.4"/></g>
-          </g>
-        </svg>
-        <span class="legend">one hub · five agents · one task</span>
+      <div class="transcript" aria-label="A streaming call and the frames it answers with">
+        <div class="t-head">
+          <span class="dot"></span>
+          <span class="t-method">POST /</span>
+          <span class="t-status">200 · text/event-stream</span>
+        </div>
+        <div class="t-body">
+          <div class="t-frame">
+            <div class="f-label">call <span class="f-state">SendStreamingMessage</span></div>
+<pre>{ "jsonrpc": "2.0", "id": 1, "method": "SendStreamingMessage", … }</pre>
+          </div>
+          <div class="t-frame">
+            <div class="f-label">frame 1 <span class="f-state">task</span></div>
+<pre>data: { "jsonrpc": "2.0", "id": 1,
+  "result": { "task": {
+    "id": "t-1", "contextId": "c-1",
+    "status": { "state": "TASK_STATE_SUBMITTED" } } } }</pre>
+          </div>
+          <div class="t-frame">
+            <div class="f-label">frame 2 <span class="f-state">working</span></div>
+<pre>data: { "jsonrpc": "2.0", "id": 1,
+  "result": { "statusUpdate": {
+    "taskId": "t-1", "contextId": "c-1",
+    "status": { "state": "TASK_STATE_WORKING" } } } }</pre>
+          </div>
+          <div class="t-frame">
+            <div class="f-label">frame 3 <span class="f-state">artifact</span></div>
+<pre>data: { "jsonrpc": "2.0", "id": 1,
+  "result": { "artifactUpdate": {
+    "taskId": "t-1", "contextId": "c-1",
+    "artifact": { "artifactId": "a-1",
+      "parts": [ { "text": "a short paragraph" } ] } } } }</pre>
+          </div>
+          <div class="t-frame">
+            <div class="f-label">frame 4 <span class="f-state">completed</span></div>
+<pre>data: { "jsonrpc": "2.0", "id": 1,
+  "result": { "statusUpdate": {
+    "taskId": "t-1", "contextId": "c-1",
+    "status": { "state": "TASK_STATE_COMPLETED" } } } }</pre>
+          </div>
+        </div>
+        <div class="t-foot"><span class="dot"></span>stream closed · one request, four frames</div>
       </div>
-    </div>
-  </div>
-
-  <div class="wrap">
-    <div class="figures">
-      <div class="figure"><b>1.0</b><span>protocol</span></div>
-      <div class="figure"><b>03</b><span>packages</span></div>
-      <div class="figure"><b>11</b><span>methods</span></div>
-      <div class="figure"><b>01</b><span>endpoint</span></div>
-      <div class="figure"><b>09</b><span>refusals</span></div>
     </div>
   </div>
 </section>
 
-<section class="section">
+<section class="section" id="capabilities">
   <div class="wrap">
-    <div class="section-head reveal">
-      <div>
-        <span class="kicker">§ 01 — The comb</span>
-        <h2>Six cells,<br>one protocol.</h2>
+    <div class="section-head">
+      <span class="num">01</span>
+      <div class="head-text">
+        <span class="kicker">What it is</span>
+        <h2>A protocol, and both of its ends.</h2>
       </div>
-      <p>A task is a cell: it is opened, filled, sealed. What a caller may do to it belongs to the protocol rather than to the agent, so the same six cells answer for every agent built on this library.</p>
+      <p>An agent that other agents can talk to needs a document saying what it is, one endpoint answering a fixed set of methods, and a way to report work that takes longer than a request.</p>
     </div>
 
-    <div class="comb">
-      <article class="cell reveal">
-        <span class="index">01</span>
-        <h3>The card</h3>
-        <p>What the agent is, which interfaces it answers on, what it can be asked to do. Served at a well-known address, before anything else is said.</p>
-        <span class="tagline">GET /.well-known/agent-card.json</span>
+    <div class="cards">
+      <article class="card">
+        <span class="num">01</span>
+        <h3>One address per agent</h3>
+        <p>The card is served at a well-known path and lists the interfaces the agent answers on. Every method is a POST to that one address, so a caller needs nothing else to begin.</p>
       </article>
-      <article class="cell reveal">
-        <span class="index">02</span>
-        <h3>A task</h3>
-        <p>The first thing an agent says about a piece of work opens its task. History, artifacts and the current state live there, not in the agent.</p>
-        <span class="tagline">SendMessage · GetTask · ListTasks</span>
+      <article class="card">
+        <span class="num">02</span>
+        <h3>A task, not a request</h3>
+        <p>The first thing an agent says about a piece of work opens its task. History, artifacts and state live in the task, so a caller that arrives late can read what it missed.</p>
       </article>
-      <article class="cell reveal">
-        <span class="index">03</span>
-        <h3>A stream</h3>
-        <p>Every event as it happens, one frame each, in the order the agent took them. A caller that arrives late starts at the task and follows what comes next.</p>
-        <span class="tagline">SendStreamingMessage · SubscribeToTask</span>
+      <article class="card">
+        <span class="num">03</span>
+        <h3>Streams that can be joined</h3>
+        <p>A streaming call reports every event as it happens. A caller that arrives later subscribes to the running task, is given the task as it stands, then follows what comes next.</p>
       </article>
-      <article class="cell reveal">
-        <span class="index">04</span>
-        <h3>A webhook</h3>
-        <p>A caller leaves a URL and the agent posts each update to it, carrying the token and the credentials that the registration named.</p>
-        <span class="tagline">CreateTaskPushNotificationConfig</span>
-      </article>
-      <article class="cell reveal">
-        <span class="index">05</span>
-        <h3>A stop</h3>
-        <p>A task that has finished takes no more messages, and one that cannot stop says why. Both are refusals with the specification's own codes.</p>
-        <span class="tagline">CancelTask · TaskNotCancelable</span>
-      </article>
-      <article class="cell reveal">
-        <span class="index">06</span>
-        <h3>A refusal</h3>
-        <p>Nine errors, each with the code section 5.4 assigns and a <code>google.rpc.ErrorInfo</code> detail, so a client branches on the reason rather than on the sentence.</p>
-        <span class="tagline">-32001 … -32009</span>
+      <article class="card">
+        <span class="num">04</span>
+        <h3>No socket of its own</h3>
+        <p>The server is an ASGI application, so the HTTP server stays a choice the host makes. The client talks through a transport trait, so a test and a live agent carry the same calls.</p>
       </article>
     </div>
   </div>
 </section>
 
-<section class="section alt">
+<section class="section" id="methods">
   <div class="wrap">
-    <div class="section-head reveal">
-      <div>
-        <span class="kicker">§ 02 — The wire</span>
-        <h2>JSON-RPC,<br>and nothing else.</h2>
+    <div class="section-head">
+      <span class="num">02</span>
+      <div class="head-text">
+        <span class="kicker">The methods</span>
+        <h2>Eleven calls, one path.</h2>
       </div>
-      <p>One POST body carries a call. A streaming method answers with server-sent events, each one a whole JSON-RPC reply. What you see below is what this library writes.</p>
+      <p>Everything an agent can be asked is one of these eleven. Six answer once, two answer with a stream, three keep the bookkeeping for a task someone else is watching.</p>
     </div>
 
-    <div class="wire">
-      <div class="reveal">
-        <ul class="notes">
-          <li><span>Every call is <b>JSON-RPC 2.0</b>: one request, one answer, and for a stream, one answer per event.</span></li>
-          <li><span>The stream opens with <b>the task as it stands</b>, then carries what changed, and closes at a terminal state.</span></li>
-          <li><span>A call refused before the stream opens is a plain <b>error body</b>, not a stream carrying one error.</span></li>
-          <li><span>Several callers can watch one task; each reads the log from <b>its own cursor</b>.</span></li>
+    <table class="methods">
+      <thead>
+        <tr><th scope="col">Method</th><th scope="col">Answer</th><th scope="col">What it does</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>SendMessage</td><td><span class="chip">reply</span></td><td>Send a message; get back the task it opened, or the message the agent answered with</td></tr>
+        <tr><td>SendStreamingMessage</td><td><span class="chip stream">stream</span></td><td>The same, with every event as it happens</td></tr>
+        <tr><td>GetTask</td><td><span class="chip">reply</span></td><td>Read a task, with as much of its history as the caller asks for</td></tr>
+        <tr><td>ListTasks</td><td><span class="chip">reply</span></td><td>A page of the caller's tasks, newest first</td></tr>
+        <tr><td>CancelTask</td><td><span class="chip">reply</span></td><td>Ask a task to stop; a finished one refuses with a code</td></tr>
+        <tr><td>SubscribeToTask</td><td><span class="chip stream">stream</span></td><td>Join a running task, then follow what happens after</td></tr>
+        <tr><td>CreateTaskPushNotificationConfig</td><td><span class="chip">reply</span></td><td>Leave a webhook for a task's updates</td></tr>
+        <tr><td>GetTaskPushNotificationConfig</td><td><span class="chip">reply</span></td><td>Read one registration</td></tr>
+        <tr><td>ListTaskPushNotificationConfigs</td><td><span class="chip">reply</span></td><td>Every registration a task carries</td></tr>
+        <tr><td>DeleteTaskPushNotificationConfig</td><td><span class="chip">reply</span></td><td>Remove a registration, idempotently</td></tr>
+        <tr><td>GetExtendedAgentCard</td><td><span class="chip">reply</span></td><td>The card shown to a caller that authenticated</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="band-line">Every event is a frame.<br>Every frame is a whole reply.</p>
+    <div class="band-side" aria-hidden="true">
+      <code>data: {"jsonrpc":"2.0","id":1,</code>
+      <code>&nbsp;&nbsp;"result":{ "statusUpdate":{ … } }}</code>
+    </div>
+    <div class="band-note">
+      <span>text/event-stream</span>
+      <span>one <code>data:</code> line per event</span>
+      <span>closed at a terminal state</span>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="task">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="num">03</span>
+      <div class="head-text">
+        <span class="kicker">The task</span>
+        <h2>Eight states, four of them final.</h2>
+      </div>
+      <p>Once a task is completed, failed, canceled or rejected, no message, cancellation or transition applies to it again. Up to that point it may wait on the caller as readily as it works.</p>
+    </div>
+
+    <div class="cycle">
+      <div class="state-cell"><code>SUBMITTED</code><span>Accepted, not yet picked up.</span></div>
+      <div class="state-cell"><code>WORKING</code><span>The agent is running it.</span></div>
+      <div class="state-cell"><code>INPUT_REQUIRED</code><span>Waiting on the caller.</span></div>
+      <div class="state-cell"><code>AUTH_REQUIRED</code><span>Waiting on credentials.</span></div>
+      <div class="state-cell is-final"><code>COMPLETED</code><span>Finished, with a result.</span></div>
+      <div class="state-cell is-final"><code>FAILED</code><span>The run raised.</span></div>
+      <div class="state-cell is-final"><code>CANCELED</code><span>Stopped on request.</span></div>
+      <div class="state-cell is-final"><code>REJECTED</code><span>Refused before it ran.</span></div>
+    </div>
+    <div class="cycle-key">
+      <span class="open"><i></i>may still move</span>
+      <span class="final"><i></i>terminal</span>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="directions">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="num">04</span>
+      <div class="head-text">
+        <span class="kicker">Both ends</span>
+        <h2>Write an executor,<br>or call someone else's.</h2>
+      </div>
+      <p>An agent says what happens; the server turns that into a task, keeps its history, answers the methods around it, and hands the same events to every watcher. A client is the same protocol from the other side.</p>
+    </div>
+
+    <div class="duo">
+      <div class="duo-side">
+        <h3>Serve an agent</h3>
+        <ul class="duo-stack">
+          <li><b>Executor</b> — emits status, artifacts, messages</li>
+          <li><b>Server</b> — tasks, history, methods, watchers</li>
+          <li><b>to_asgi</b> — the card and the JSON-RPC path</li>
         </ul>
       </div>
-      <div class="reveal">
-        <div class="plate" data-copy>
-          <span class="tick tl"></span><span class="tick tr"></span><span class="tick bl"></span><span class="tick br"></span>
-          <div class="cap">POST / · SendStreamingMessage</div>
-<pre><code>{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "SendStreamingMessage",
-  "params": {
-    "message": {
-      "messageId": "m-1",
-      "role": "ROLE_USER",
-      "parts": [{ "text": "summarise the report" }]
-    }
-  }
-}</code></pre>
-        </div>
-        <div class="plate" data-copy style="margin-top:0.9rem">
-          <span class="tick tl"></span><span class="tick tr"></span><span class="tick bl"></span><span class="tick br"></span>
-          <div class="cap">the answer · one frame of the stream</div>
-<pre><code>data: {"jsonrpc":"2.0","id":1,"result":{"statusUpdate":{
-  "taskId": "t-1",
-  "contextId": "c-1",
-  "status": { "state": "TASK_STATE_WORKING",
-              "timestamp": "2026-11-06T01:22:12.268Z" }
-}}}</code></pre>
-        </div>
+      <div class="duo-mid"><span>json-rpc 2.0</span></div>
+      <div class="duo-side client">
+        <h3>Call an agent</h3>
+        <ul class="duo-stack">
+          <li><b>Client</b> — the protocol, method by method</li>
+          <li><b>Transport</b> — a trait, not a socket</li>
+          <li><b>HttpTransport</b> — a live agent over HTTP</li>
+        </ul>
       </div>
     </div>
   </div>
 </section>
 
-
-<section class="section alt">
+<section class="section" id="refusals">
   <div class="wrap">
-    <div class="section-head reveal">
-      <div>
-        <span class="kicker">§ 03 — The methods</span>
-        <h2>Eleven calls,<br>one path.</h2>
+    <div class="section-head">
+      <span class="num">05</span>
+      <div class="head-text">
+        <span class="kicker">Refusals</span>
+        <h2>Nine ways to be told no.</h2>
       </div>
-      <p>Everything an agent can be asked is one of these eleven. Six answer once, two answer with a stream, three keep the bookkeeping of a task that someone else is watching.</p>
+      <p>Each refusal carries the code the specification assigns it and an <span class="mono">ErrorInfo</span> detail, so a client branches on the reason rather than on the sentence.</p>
     </div>
 
-    <div class="methods-wrap reveal">
-      <table class="methods">
-        <thead>
-          <tr><th scope="col">Method</th><th scope="col">Answer</th><th scope="col">What it does</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>SendMessage</td><td>reply</td><td>Send a message; get back the task it opened, or the message the agent answered with</td></tr>
-          <tr><td>SendStreamingMessage</td><td>stream</td><td>The same, with every event as it happens</td></tr>
-          <tr><td>GetTask</td><td>reply</td><td>Read a task, with as much of its history as the caller asks for</td></tr>
-          <tr><td>ListTasks</td><td>reply</td><td>A page of the caller's tasks, newest first</td></tr>
-          <tr><td>CancelTask</td><td>reply</td><td>Ask a task to stop; a finished one refuses with a code</td></tr>
-          <tr><td>SubscribeToTask</td><td>stream</td><td>Join a running task, then follow what happens after</td></tr>
-          <tr><td>CreateTaskPushNotificationConfig</td><td>reply</td><td>Leave a webhook for a task's updates</td></tr>
-          <tr><td>GetTaskPushNotificationConfig</td><td>reply</td><td>Read one registration</td></tr>
-          <tr><td>ListTaskPushNotificationConfigs</td><td>reply</td><td>Every registration a task carries</td></tr>
-          <tr><td>DeleteTaskPushNotificationConfig</td><td>reply</td><td>Remove a registration, idempotently</td></tr>
-          <tr><td>GetExtendedAgentCard</td><td>reply</td><td>The card shown to a caller that authenticated</td></tr>
-        </tbody>
-      </table>
+    <div class="refusals">
+      <div class="refusal"><span class="code">-32001</span><span class="name">TaskNotFound</span><span class="means">No task under that id.</span></div>
+      <div class="refusal"><span class="code">-32002</span><span class="name">TaskNotCancelable</span><span class="means">It is finished, or it cannot stop.</span></div>
+      <div class="refusal"><span class="code">-32003</span><span class="name">PushNotificationNotSupported</span><span class="means">The agent takes no webhooks.</span></div>
+      <div class="refusal"><span class="code">-32004</span><span class="name">UnsupportedOperation</span><span class="means">The method, or a task that is over.</span></div>
+      <div class="refusal"><span class="code">-32005</span><span class="name">ContentTypeNotSupported</span><span class="means">A part the agent cannot read.</span></div>
+      <div class="refusal"><span class="code">-32006</span><span class="name">InvalidAgentResponse</span><span class="means">The agent answered with something else.</span></div>
+      <div class="refusal"><span class="code">-32007</span><span class="name">ExtendedAgentCardNotConfigured</span><span class="means">There is no second card.</span></div>
+      <div class="refusal"><span class="code">-32008</span><span class="name">ExtensionSupportRequired</span><span class="means">An extension the caller must honour.</span></div>
+      <div class="refusal"><span class="code">-32009</span><span class="name">VersionNotSupported</span><span class="means">A version this interface does not speak.</span></div>
     </div>
   </div>
 </section>
 
-<section class="section">
+<section class="section" id="install">
   <div class="wrap">
-    <div class="section-head reveal">
-      <div>
-        <span class="kicker">§ 04 — The agent</span>
-        <h2>An agent is<br>an executor.</h2>
+    <div class="section-head">
+      <span class="num">06</span>
+      <div class="head-text">
+        <span class="kicker">Ten lines</span>
+        <h2>An agent, and a server.</h2>
       </div>
-      <p>Say what happens; the server turns it into a task, keeps the history, answers the protocol around it, and hands the same events to every watcher.</p>
+      <p>Three packages arrive together: the wire model and the client, the ASGI endpoint, and the client's HTTP transport with the webhook notifier.</p>
     </div>
 
-    <div class="wire">
-      <div class="reveal">
-        <div class="plate" data-copy>
-          <span class="tick tl"></span><span class="tick tr"></span><span class="tick bl"></span><span class="tick br"></span>
+    <div class="split">
+      <div>
+        <ul class="notes">
+          <li><span>A streaming answer is one JSON-RPC reply per event, written as the event happens.</span></li>
+          <li><span>A task that raises still lands in <b>FAILED</b>, so no watcher is left waiting on a task that will not move.</span></li>
+          <li><span>The next step is the <a href="guide.html">guide</a>: a card, a server, a client, a stream.</span></li>
+          <li><span>Every public type and function is in the <a href="api.html">reference</a>, generated from the sources.</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="code-block" data-copy>
           <div class="cap">hello.mbt</div>
-<pre><code>impl @moona2a.Executor for Echo with fn execute(self, ctx, out) {
+<pre data-lang="moonbit"><code>impl @moona2a.Executor for Echo with fn execute(self, ctx, out) {
   ignore(self)
   out.emit(ctx.status(@moona2a.Working))
   out.emit(ctx.artifact(@moona2a.Artifact::text("a-1", "done")))
@@ -272,21 +311,14 @@
 let server = @moona2a.Server::new(Echo::{ }, card)
 let app = @asgi.to_asgi(server)</code></pre>
         </div>
-      </div>
-      <div class="reveal">
-        <div class="plate" data-copy>
-          <span class="tick tl"></span><span class="tick tr"></span><span class="tick bl"></span><span class="tick br"></span>
+        <div class="code-block" data-copy>
           <div class="cap">install</div>
 <pre><code>moon add moonbitstack/moona2a
 
-#   moonbitstack/moona2a         model · server · client
-#   moonbitstack/moona2a/asgi    the HTTP endpoint
-#   moonbitstack/moona2a/fetch   transport · notifier</code></pre>
+#  moonbitstack/moona2a        model · server · client
+#  moonbitstack/moona2a/asgi   the HTTP endpoint
+#  moonbitstack/moona2a/fetch  transport · notifier</code></pre>
         </div>
-        <ul class="notes" style="margin-top:1.4rem">
-          <li><span>The next step is the <a href="guide.html">guide</a>: a card, a server, a client, a stream.</span></li>
-          <li><span>Every public type and function is in the <a href="api.html">reference</a>, generated from the sources.</span></li>
-        </ul>
       </div>
     </div>
   </div>
@@ -296,21 +328,29 @@ let app = @asgi.to_asgi(server)</code></pre>
 
 <footer class="foot">
   <div class="wrap">
-    <div class="row">
-      <a class="brand" href="index.html">
-        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.8 14.6 8.4 22.2 8.7 16.2 13.4 18.3 20.8 12 16.6 5.7 20.8 7.8 13.4 1.8 8.7 9.4 8.4Z"/></svg>
-        <span>MoonA2A</span>
-      </a>
-      <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams, push. Apache 2.0.</p>
-      <div class="links">
-        <a href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://mooncakes.io/docs/moonbitstack/moona2a" target="_blank" rel="noopener">mooncakes</a>
+    <div class="foot-main">
+      <div class="foot-brand">
+        <a class="brand" href="index.html">
+          <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.8 14.6 8.4 22.2 8.7 16.2 13.4 18.3 20.8 12 16.6 5.7 20.8 7.8 13.4 1.8 8.7 9.4 8.4Z"/></svg>
+          <span>MoonA2A</span>
+        </a>
+        <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams and push, served or called.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Site</h4>
+        <a href="index.html">Home</a>
         <a href="guide.html">Guide</a>
         <a href="api.html">API</a>
-        <a href="showcase.html">The star</a>
+        <a href="showcase.html">Showcase</a>
+      </div>
+      <div class="foot-col">
+        <h4>Elsewhere</h4>
+        <a href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://mooncakes.io/docs/moonbitstack/moona2a" target="_blank" rel="noopener">mooncakes</a>
+        <a href="https://github.com/moonbitstack/moona2a/blob/master/LICENSE" target="_blank" rel="noopener">Apache-2.0</a>
       </div>
     </div>
-    <div class="legal"><span>Apache 2.0</span><span>Built with MoonBit</span></div>
+    <div class="legal"><span>Apache-2.0</span><span>Built with MoonBit</span></div>
   </div>
 </footer>
 </body>
