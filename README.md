@@ -11,7 +11,7 @@ Agent cards, tasks, streaming and push notifications — one JSON-RPC endpoint, 
 &nbsp;
 <a href="https://moonbitstack.github.io/moona2a/api.html"><kbd> &nbsp;api&nbsp; </kbd></a>
 &nbsp;
-<a href="https://mooncakes.io/docs/moonbitstack/moona2a"><kbd> &nbsp;mooncakes&nbsp; </kbd></a>
+<a href="https://mooncakes.io/docs/moonbitstack/moona2a"><kbd> &nbsp;MoonCakes&nbsp; </kbd></a>
 
 </div>
 
@@ -210,4 +210,4 @@ runs there.
 
 ## Licence
 
-Apache-2.0.
+Apache 2.0.

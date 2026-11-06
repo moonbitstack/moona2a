@@ -582,11 +582,11 @@ def footer() -> str:
       <div class="foot-col">
         <h4>Elsewhere</h4>
         <a href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://mooncakes.io/docs/moonbitstack/moona2a" target="_blank" rel="noopener">mooncakes</a>
-        <a href="https://github.com/moonbitstack/moona2a/blob/master/LICENSE" target="_blank" rel="noopener">Apache-2.0</a>
+        <a href="https://mooncakes.io/docs/moonbitstack/moona2a" target="_blank" rel="noopener">MoonCakes</a>
+        <a href="https://github.com/moonbitstack/moona2a/blob/master/LICENSE" target="_blank" rel="noopener">Apache 2.0</a>
       </div>
     </div>
-    <div class="legal"><span>Apache-2.0</span><span>Built with MoonBit</span></div>
+    <div class="legal"><span>Apache 2.0</span><span>Built with MoonBit</span></div>
   </div>
 </footer>"""
 
