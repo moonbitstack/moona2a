@@ -4,58 +4,58 @@
   --body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
   --display: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-  --paper: #f5f0e5;
-  --paper-2: #ede5d3;
-  --card: #fbf8f0;
-  --ink: #131109;
-  --ink-soft: #4b4234;
-  --ink-faint: #7b7060;
-  --line: rgba(19, 17, 9, 0.14);
-  --line-soft: rgba(19, 17, 9, 0.07);
-  --honey: #a8611a;
-  --honey-lit: #dd9b3d;
-  --honey-wash: rgba(221, 155, 61, 0.13);
-  --violet: #5b46a8;
-  --violet-wash: rgba(91, 70, 168, 0.09);
-  --emerald: #146f63;
-  --shadow: 0 22px 60px -46px rgba(19, 17, 9, 0.7);
+  --paper: #f7f1ec;
+  --paper-2: #efe5df;
+  --card: #fcf8f5;
+  --ink: #16100f;
+  --ink-soft: #4c403c;
+  --ink-faint: #7d6f6a;
+  --line: rgba(22, 16, 15, 0.13);
+  --line-soft: rgba(22, 16, 15, 0.07);
+  --rose: #a2525e;
+  --rose-lit: #cf8792;
+  --rose-wash: rgba(199, 126, 137, 0.12);
+  --blue: #55688f;
+  --blue-wash: rgba(94, 111, 153, 0.09);
+  --aura: rgba(94, 111, 153, 0.09);
+  --shadow: 0 22px 60px -46px rgba(22, 16, 15, 0.46);
   --wrap: 1160px;
   --gutter: clamp(1.25rem, 4.4vw, 3.75rem);
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 [data-theme="dark"] {
-  --paper: #0e0c09;
-  --paper-2: #15120d;
-  --card: #14110c;
-  --ink: #f2e9d8;
-  --ink-soft: #b5a992;
-  --ink-faint: #857a67;
-  --line: rgba(242, 233, 216, 0.16);
-  --line-soft: rgba(242, 233, 216, 0.08);
-  --honey: #e2a24a;
-  --honey-lit: #f6cd8b;
-  --honey-wash: rgba(226, 162, 74, 0.12);
-  --violet: #9c86f0;
-  --violet-wash: rgba(156, 134, 240, 0.1);
-  --emerald: #4ec9b4;
+  --paper: #0d0a0b;
+  --paper-2: #15100f;
+  --card: #130f0e;
+  --ink: #f4ebe7;
+  --ink-soft: #bba9a5;
+  --ink-faint: #8a7874;
+  --line: rgba(244, 235, 231, 0.15);
+  --line-soft: rgba(244, 235, 231, 0.08);
+  --rose: #e7aab3;
+  --rose-lit: #f8ccd1;
+  --rose-wash: rgba(217, 154, 163, 0.12);
+  --blue: #aabde6;
+  --blue-wash: rgba(147, 166, 204, 0.1);
+  --aura: rgba(170, 189, 230, 0.17);
   --shadow: 0 24px 60px -42px #000;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #0e0c09;
-    --paper-2: #15120d;
-    --card: #14110c;
-    --ink: #f2e9d8;
-    --ink-soft: #b5a992;
-    --ink-faint: #857a67;
-    --line: rgba(242, 233, 216, 0.16);
-    --line-soft: rgba(242, 233, 216, 0.08);
-    --honey: #e2a24a;
-    --honey-lit: #f6cd8b;
-    --honey-wash: rgba(226, 162, 74, 0.12);
-    --violet: #9c86f0;
-    --violet-wash: rgba(156, 134, 240, 0.1);
-    --emerald: #4ec9b4;
+    --paper: #0d0a0b;
+    --paper-2: #15100f;
+    --card: #130f0e;
+    --ink: #f4ebe7;
+    --ink-soft: #bba9a5;
+    --ink-faint: #8a7874;
+    --line: rgba(244, 235, 231, 0.15);
+    --line-soft: rgba(244, 235, 231, 0.08);
+    --rose: #e7aab3;
+    --rose-lit: #f8ccd1;
+    --rose-wash: rgba(217, 154, 163, 0.12);
+    --blue: #aabde6;
+    --blue-wash: rgba(147, 166, 204, 0.1);
+    --aura: rgba(170, 189, 230, 0.17);
     --shadow: 0 24px 60px -42px #000;
   }
 }
@@ -115,17 +115,17 @@ a {
   color: inherit;
 }
 ::selection {
-  background: var(--honey-lit);
-  color: #100e0b;
+  background: var(--rose-lit);
+  color: #16100f;
   text-shadow: none;
 }
 ::-moz-selection {
-  background: var(--honey-lit);
-  color: #100e0b;
+  background: var(--rose-lit);
+  color: #16100f;
   text-shadow: none;
 }
 ::marker {
-  color: var(--honey);
+  color: var(--rose);
 }
 /* -------------------------------------------------------------- typography */
 h1,
@@ -164,18 +164,18 @@ pre {
   font-variant-ligatures: none;
 }
 code {
-  background: var(--honey-wash);
+  background: var(--rose-wash);
   border-radius: 2px;
   padding: 0.1em 0.34em;
   overflow-wrap: anywhere;
 }
 a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link) {
-  text-decoration-color: color-mix(in srgb, var(--honey) 45%, transparent);
+  text-decoration-color: color-mix(in srgb, var(--rose) 45%, transparent);
   text-decoration-thickness: 1px;
   transition: color 0.2s;
 }
 a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
-  color: var(--honey);
+  color: var(--rose);
 }
 /* ------------------------------------------------------------------ layout */
 .wrap {
@@ -224,7 +224,7 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
 .brand .mark {
   width: 23px;
   height: 23px;
-  color: var(--honey);
+  color: var(--rose);
   overflow: visible;
   fill: none;
   stroke: currentColor;
@@ -255,7 +255,7 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
   right: 0;
   bottom: 0.15rem;
   height: 1px;
-  background: var(--honey);
+  background: var(--rose);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.35s var(--ease);
@@ -290,10 +290,10 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
 }
 .icon-btn:hover {
   color: var(--ink);
-  background: var(--honey-wash);
+  background: var(--rose-wash);
 }
 .icon-btn:focus-visible {
-  outline: 1px solid var(--honey);
+  outline: 1px solid var(--rose);
   outline-offset: 2px;
 }
 .icon-btn svg {
@@ -334,7 +334,7 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
 }
 .hero::before {
   inset: 5.2rem 0 0 0;
-  background: linear-gradient(190deg, color-mix(in srgb, var(--violet) 11%, transparent), transparent 58%);
+  background: linear-gradient(190deg, color-mix(in srgb, var(--blue) 11%, transparent), transparent 58%);
   mask-image: linear-gradient(72deg, transparent 34%, #000 58%), linear-gradient(to bottom, transparent, #000 16%);
   mask-composite: intersect;
 }
@@ -367,7 +367,7 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ink-faint);
-  color: var(--honey);
+  color: var(--rose);
 }
 .eyebrow::before {
   content: "";
@@ -437,12 +437,12 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
   transition: background 0.25s, color 0.25s, border-color 0.25s;
 }
 .btn:hover {
-  background: var(--honey);
-  border-color: var(--honey);
+  background: var(--rose);
+  border-color: var(--rose);
   color: var(--paper);
 }
 .btn:focus-visible {
-  outline: 1px solid var(--honey);
+  outline: 1px solid var(--rose);
   outline-offset: 2px;
 }
 .btn.ghost {
@@ -451,8 +451,8 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
   border-color: var(--line);
 }
 .btn.ghost:hover {
-  color: var(--honey);
-  border-color: var(--honey);
+  color: var(--rose);
+  border-color: var(--rose);
 }
 .btn .arrow {
   font-size: 0.85rem;
@@ -469,9 +469,8 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
   content: "";
   position: absolute;
   inset: -14%;
-  background: repeating-conic-gradient(from 0deg at 50% 50%, color-mix(in srgb, var(--violet) 22%, transparent) 0deg 0.5deg, transparent 0.5deg 7.5deg);
+  background: repeating-conic-gradient(from 0deg at 50% 50%, var(--aura) 0deg 0.5deg, transparent 0.5deg 7.5deg);
   mask: radial-gradient(circle at 50% 50%, transparent 33%, #000 46%, transparent 76%);
-  opacity: 0.55;
   z-index: -1;
 }
 .constellation svg {
@@ -504,12 +503,12 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
 }
 .constellation .cells path {
   fill: var(--paper);
-  stroke: var(--honey);
-  stroke-width: 1.1;
+  stroke: var(--rose);
+  stroke-width: 1.35;
 }
 .constellation .hub {
   fill: var(--paper-2);
-  stroke: var(--honey);
+  stroke: var(--rose);
   stroke-width: 1.15;
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -597,7 +596,7 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
   text-transform: uppercase;
   color: var(--ink-faint);
   margin-bottom: 0.85rem;
-  color: var(--honey);
+  color: var(--rose);
 }
 .kicker::after {
   content: "";
@@ -625,13 +624,13 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
   transition: background 0.3s;
 }
 .cell:hover {
-  background: color-mix(in srgb, var(--honey-wash) 45%, var(--paper));
+  background: color-mix(in srgb, var(--rose-wash) 45%, var(--paper));
 }
 .cell .index {
   font-family: var(--mono);
   font-size: 0.66rem;
   letter-spacing: 0.18em;
-  color: var(--honey);
+  color: var(--rose);
 }
 .cell h3 {
   font-size: 1.02rem;
@@ -672,7 +671,7 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
   width: 7px;
   height: 7px;
   pointer-events: none;
-  border: 0 solid var(--honey);
+  border: 0 solid var(--rose);
   opacity: 0.85;
 }
 .plate .tick.tl,
@@ -721,7 +720,7 @@ a:not(.btn):not(.brand):not(.icon-btn):not(.cell-link):hover {
   content: "";
   width: 5px;
   height: 6px;
-  background: var(--honey);
+  background: var(--rose);
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
 .plate .cap .copy,
@@ -766,19 +765,19 @@ pre code {
   font-size: inherit;
 }
 .tok-key {
-  color: var(--honey);
+  color: var(--rose);
 }
 .tok-str {
-  color: color-mix(in srgb, var(--ink) 58%, var(--honey));
+  color: color-mix(in srgb, var(--ink) 58%, var(--rose));
 }
 .tok-num {
-  color: color-mix(in srgb, var(--honey) 72%, var(--ink));
+  color: color-mix(in srgb, var(--rose) 72%, var(--ink));
 }
 .tok-bool {
-  color: var(--honey-lit);
+  color: var(--rose-lit);
 }
 .tok-kw {
-  color: var(--honey);
+  color: var(--rose);
 }
 .tok-name {
   color: var(--ink);
@@ -809,7 +808,7 @@ pre code {
   width: 9px;
   height: 10px;
   margin-top: 0.42rem;
-  border: 1px solid var(--honey);
+  border: 1px solid var(--rose);
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
 .notes b {
@@ -862,11 +861,11 @@ pre code {
 }
 .toc a:hover {
   color: var(--ink);
-  border-left-color: var(--honey);
+  border-left-color: var(--rose);
 }
 .toc a[aria-current="true"] {
-  color: var(--honey);
-  border-left-color: var(--honey);
+  color: var(--rose);
+  border-left-color: var(--rose);
 }
 .prose {
   max-width: 70ch;
@@ -908,7 +907,7 @@ pre code {
 }
 .note {
   border: 1px solid var(--line);
-  border-left: 2px solid var(--honey);
+  border-left: 2px solid var(--rose);
   padding: 0.9rem 1.05rem;
   background: var(--card);
   font-size: 0.9rem;
@@ -937,7 +936,7 @@ pre code {
   font-family: var(--mono);
   font-size: 0.68rem;
   letter-spacing: 0.1em;
-  color: var(--honey);
+  color: var(--rose);
   margin: 1.5rem 0 0.45rem;
 }
 .api-nav .group:first-child .pkg {
@@ -954,7 +953,7 @@ pre code {
 }
 .api-nav a:hover {
   color: var(--ink);
-  border-left-color: var(--honey);
+  border-left-color: var(--rose);
 }
 .api-body {
   min-width: 0;
@@ -1017,7 +1016,7 @@ pre code {
   font-size: 0.76rem;
   line-height: 1.7;
   background: var(--paper-2);
-  border-left: 2px solid var(--honey);
+  border-left: 2px solid var(--rose);
   padding: 0.65rem 0.85rem;
   overflow-x: auto;
   white-space: pre;
@@ -1026,7 +1025,7 @@ pre code {
   user-select: text;
 }
 .sig .kw {
-  color: var(--honey);
+  color: var(--rose);
 }
 .sig .name {
   color: var(--ink);
@@ -1142,9 +1141,8 @@ pre code {
   content: "";
   position: absolute;
   inset: -6% -4%;
-  background: repeating-conic-gradient(from 0deg at 50% 50%, color-mix(in srgb, var(--violet) 20%, transparent) 0deg 0.5deg, transparent 0.5deg 8deg);
+  background: repeating-conic-gradient(from 0deg at 50% 50%, var(--aura) 0deg 0.5deg, transparent 0.5deg 8deg);
   mask: radial-gradient(circle at 50% 50%, transparent 30%, #000 44%, transparent 74%);
-  opacity: 0.45;
   pointer-events: none;
   z-index: 0;
 }
@@ -1163,7 +1161,7 @@ pre code {
   transition: stroke 0.35s;
 }
 .star-map .edge.lit {
-  stroke: var(--honey);
+  stroke: var(--rose);
   stroke-dasharray: 3 7;
   animation: crawl 1.3s linear infinite;
 }
@@ -1199,18 +1197,18 @@ pre code {
   transition: stroke 0.25s, fill 0.25s;
 }
 .node-btn:hover .disc {
-  stroke: var(--honey);
+  stroke: var(--rose);
 }
 .node-btn[aria-pressed="true"] .disc {
-  fill: var(--honey-wash);
-  stroke: var(--honey);
+  fill: var(--rose-wash);
+  stroke: var(--rose);
   stroke-width: 1.4;
 }
 .node-btn:focus-visible {
   outline: none;
 }
 .node-btn:focus-visible .disc {
-  stroke: var(--honey);
+  stroke: var(--rose);
   stroke-width: 2;
 }
 .node-btn text {
@@ -1261,7 +1259,7 @@ pre code {
   font-size: 0.62rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--honey);
+  color: var(--rose);
 }
 .exchange .ex-desc {
   font-size: 0.9rem;
@@ -1302,7 +1300,7 @@ pre code {
   transition: background 0.2s;
 }
 .composer button:hover {
-  background: var(--honey);
+  background: var(--rose);
 }
 .frames {
   display: flex;
@@ -1338,7 +1336,7 @@ pre code {
 .frame .fhead .kind-tag {
   padding: 0.02rem 0.32rem;
   border: 1px solid currentColor;
-  color: var(--honey);
+  color: var(--rose);
 }
 .frame pre {
   max-height: 15rem;
@@ -1347,10 +1345,10 @@ pre code {
   padding: 0.7rem 0.85rem 0.85rem;
 }
 .frame.event .fhead .kind-tag {
-  color: color-mix(in srgb, var(--ink) 50%, var(--honey));
+  color: color-mix(in srgb, var(--ink) 50%, var(--rose));
 }
 .frame.error .fhead .kind-tag {
-  color: #b8492f;
+  color: #b8565f;
 }
 @keyframes arrive {
   to {
@@ -1382,12 +1380,12 @@ pre code {
   content: "";
   width: 7px;
   height: 8px;
-  border: 1px solid var(--honey);
+  border: 1px solid var(--rose);
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
   transition: background 0.2s;
 }
 .card-panel[open] summary::before {
-  background: var(--honey);
+  background: var(--rose);
 }
 .card-panel pre {
   margin-top: 0.85rem;
@@ -1410,14 +1408,14 @@ pre code {
   transition: background 0.25s;
 }
 .state:hover {
-  background: color-mix(in srgb, var(--honey-wash) 55%, var(--card));
+  background: color-mix(in srgb, var(--rose-wash) 55%, var(--card));
 }
 .state code {
   background: none;
   padding: 0;
   font-size: 0.66rem;
   letter-spacing: 0.02em;
-  color: var(--honey);
+  color: var(--rose);
   overflow-wrap: anywhere;
 }
 .state p {
@@ -1465,7 +1463,7 @@ pre code {
   font-family: var(--mono);
   font-size: 0.68rem;
   letter-spacing: 0.04em;
-  color: var(--honey);
+  color: var(--rose);
   white-space: nowrap;
   width: 7.5rem;
 }
@@ -1473,7 +1471,7 @@ pre code {
   transition: background 0.2s;
 }
 .methods tbody tr:hover {
-  background: color-mix(in srgb, var(--honey-wash) 45%, transparent);
+  background: color-mix(in srgb, var(--rose-wash) 45%, transparent);
 }
 /* ------------------------------------------------------------------ faces */
 .face line {
@@ -1483,11 +1481,11 @@ pre code {
   opacity: 0.8;
 }
 .node-btn[aria-pressed="true"] .face line {
-  stroke: var(--honey);
+  stroke: var(--rose);
   opacity: 1;
 }
 .flow {
-  fill: var(--honey);
+  fill: var(--rose);
 }
 @media (prefers-reduced-motion: reduce) {
   .flow {
@@ -1523,7 +1521,7 @@ pre code {
   transition: opacity 0.25s;
 }
 .gauge .fill {
-  fill: var(--honey);
+  fill: var(--rose);
   opacity: 0.8;
 }
 .gauge .mark {
@@ -1559,7 +1557,7 @@ pre code {
   opacity: 0.85;
 }
 .gauge:focus-visible {
-  outline: 1px solid var(--honey);
+  outline: 1px solid var(--rose);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -1604,7 +1602,7 @@ pre code {
   transition: color 0.2s;
 }
 .foot .links a:hover {
-  color: var(--honey);
+  color: var(--rose);
 }
 .legal {
   display: flex;
