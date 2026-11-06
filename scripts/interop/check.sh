@@ -6,8 +6,11 @@
 # Direction one: the MoonBit client calls an agent the Python SDK serves.
 # Direction two: the Python SDK's client calls the MoonBit server, and checks what comes back.
 #
-# The Python side needs `a2a-sdk` (1.3 or later), `fastapi`, `uvicorn` and `httpx`. Point A2A_PYTHON
-# at a virtual environment that has them; the default is the interpreter on PATH.
+# The Python side needs `a2a-sdk` (1.3 or later), `fastapi`, `uvicorn`, `httpx` and `sse-starlette`:
+#
+#     uv venv && uv pip install "a2a-sdk>=1.3" fastapi uvicorn httpx sse-starlette
+#
+# Point A2A_PYTHON at that environment's interpreter; the default is the one on PATH.
 
 set -euo pipefail
 

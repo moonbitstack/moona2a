@@ -119,7 +119,7 @@ jobs:
       - name: install the Python SDK
         run: |
           uv venv
-          uv pip install "a2a-sdk>=1.3" fastapi uvicorn httpx
+          uv pip install "a2a-sdk>=1.3" fastapi uvicorn httpx sse-starlette
 
       - name: both directions
         run: A2A_PYTHON="$PWD/.venv/bin/python" scripts/interop/check.sh
