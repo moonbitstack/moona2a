@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>moona2a — the Agent2Agent protocol for MoonBit</title>
+<meta name="description" content="moona2a is the Agent2Agent protocol in MoonBit: an agent card, one JSON-RPC endpoint for the protocol's methods, tasks that stream, push notifications, and a client for calling an agent someone else runs.">
+<meta name="theme-color" content="#f4eee2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f4eee2'/%3E%3Cpath d='M12 2.4 14.5 9 21.4 9.3 15.9 13.7 17.8 20.4 12 16.5 6.2 20.4 8.1 13.7 2.6 9.3 9.5 9Z' fill='none' stroke='%23b8721a' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..500;1,6..96,400..500&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<script>try{const t=localStorage.getItem("moona2a-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+<script src="assets/site.js" defer></script>
+</head>
+<body id="top">
+<a class="skip" href="#main">Skip to content</a>
+
+<svg class="lattice" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="comb" width="34.64" height="60" patternUnits="userSpaceOnUse">
+      <path d="M17.32 -20 L34.64 -10 L34.64 10 L17.32 20 L0 10 L0 -10 Z"
+            fill="none" stroke="currentColor" stroke-width=".7"/>
+      <path d="M0 10 L17.32 20 L17.32 40 L0 50 L-17.32 40 L-17.32 20 Z
+               M34.64 10 L51.96 20 L51.96 40 L34.64 50 L17.32 40 L17.32 20 Z
+               M17.32 40 L34.64 50 L34.64 70 L17.32 80 L0 70 L0 50 Z"
+            fill="none" stroke="currentColor" stroke-width=".7"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#comb)"/>
+</svg>
+
+<header class="topbar">
+  <div class="wrap bar">
+    <a class="brand" href="index.html">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6 14.7 8.28 22.46 8.6 16.38 13.42 18.47 20.9 12 16.6 5.53 20.9 7.62 13.42 1.54 8.6 9.3 8.28Z"/></svg>
+      <span>moona2a</span>
+    </a>
+    <nav class="mainnav" aria-label="Primary">
+      <a href="guide.html">Guide</a>
+      <a href="api.html">API</a>
+      <a href="showcase.html">The star</a>
+    </nav>
+    <div class="tools">
+      <a class="icon-btn" href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
+      </a>
+      <button class="icon-btn theme-toggle" type="button" aria-label="Switch between light and dark">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.9"/><path d="M12 1.7v2.4M12 19.9v2.4M1.7 12h2.4M19.9 12h2.4M4.75 4.75l1.7 1.7M17.55 17.55l1.7 1.7M19.25 4.75l-1.7 1.7M6.45 17.55l-1.7 1.7"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12.88A10 10 0 1 1 11.12 2a7.78 7.78 0 0 0 10.88 10.88z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="gauge" aria-hidden="false"><span class="pct">0%</span>
+  <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6 14.7 8.28 22.46 8.6 16.38 13.42 18.47 20.9 12 16.6 5.53 20.9 7.62 13.42 1.54 8.6 9.3 8.28Z"/></svg>
+</div>
+
+<main id="main">
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Agent2Agent · protocol 1.0</span>
+      <h1><span class="line">The comb</span><span class="line">that <em>speaks</em>.</span></h1>
+      <p class="lede">An agent card that says what an agent is, one JSON-RPC path that answers the protocol's methods, and a stream that reports a task while it runs. Serve one from MoonBit, or call someone else's.</p>
+      <div class="actions">
+        <a class="btn" href="guide.html">Get started <span class="arrow">→</span></a>
+        <a class="btn ghost" href="showcase.html">Watch a task cross the wire</a>
+      </div>
+    </div>
+
+    <div class="star-stage" aria-hidden="true">
+      <svg viewBox="-30 -30 460 460" role="presentation">
+        <g class="rings" fill="none" stroke="currentColor" stroke-width="1">
+          <circle cx="200" cy="200" r="228" stroke-dasharray="1 7" opacity=".7"/>
+          <circle cx="200" cy="200" r="258" stroke-dasharray="14 10" opacity=".45"/>
+          <circle cx="200" cy="200" r="196" stroke-dasharray="24 12" opacity=".3"/>
+        </g>
+        <path class="star-line" d="M200 15 245.8 136.9 375.9 142.8 274.2 224.1 308.8 349.7 200 278 91.2 349.7 125.8 224.1 24.1 142.8 154.2 136.9Z"/>
+        <path class="star-line inner" d="M200 98.25 225.2 165.3 296.8 168.6 240.8 213.3 259.8 282.3 200 242.9 140.2 282.3 159.2 213.3 103.2 168.6 174.8 165.3Z"/>
+        <g>
+          <path class="node" d="M200 168 L211 174.5 L211 187.5 L200 194 L189 187.5 L189 174.5 Z"/>
+          <circle class="node" cx="200" cy="15" r="9"/>
+          <circle class="node" cx="375.9" cy="142.8" r="9"/>
+          <circle class="node" cx="308.8" cy="349.7" r="9"/>
+          <circle class="node" cx="91.2" cy="349.7" r="9"/>
+          <circle class="node" cx="24.1" cy="142.8" r="9"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="figures">
+      <div class="figure"><b>1.0</b><span>protocol version</span></div>
+      <div class="figure"><b>3</b><span>packages</span></div>
+      <div class="figure"><b>11</b><span>methods</span></div>
+      <div class="figure"><b>1</b><span>endpoint</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="kicker">The comb</span>
+        <h2>Six cells, one <em>protocol</em>.</h2>
+      </div>
+      <p>A task is a cell: it is opened, filled, sealed. What a caller may do to it is the protocol's, not the agent's, so the same six cells answer for every agent built on this library.</p>
+    </div>
+
+    <div class="comb">
+      <article class="cell reveal">
+        <div class="hex">01</div>
+        <h3>The card</h3>
+        <p>What the agent is, which interfaces it answers on, what it can be asked to do. Served at a well-known address, before anything else is said.</p>
+        <span class="tagline">GET /.well-known/agent-card.json</span>
+      </article>
+      <article class="cell reveal">
+        <div class="hex">02</div>
+        <h3>A task</h3>
+        <p>The first thing an agent says about a piece of work opens its task. History, artifacts and the current state live there, not in the agent.</p>
+        <span class="tagline">SendMessage · GetTask · ListTasks</span>
+      </article>
+      <article class="cell reveal">
+        <div class="hex">03</div>
+        <h3>A stream</h3>
+        <p>Every event as it happens, one frame each, in the order the agent took them. A caller that arrives late starts at the task and follows what comes next.</p>
+        <span class="tagline">SendStreamingMessage · SubscribeToTask</span>
+      </article>
+      <article class="cell reveal">
+        <div class="hex">04</div>
+        <h3>A webhook</h3>
+        <p>A caller leaves a URL and the agent posts each update to it, carrying the token and the credentials the registration named.</p>
+        <span class="tagline">CreateTaskPushNotificationConfig</span>
+      </article>
+      <article class="cell reveal">
+        <div class="hex">05</div>
+        <h3>A stop</h3>
+        <p>A task that has finished takes no more messages, and one that cannot stop says why. Both are refusals with the specification's own codes.</p>
+        <span class="tagline">CancelTask · TaskNotCancelable</span>
+      </article>
+      <article class="cell reveal">
+        <div class="hex">06</div>
+        <h3>A refusal</h3>
+        <p>Nine errors, each with the code section 5.4 assigns and a <code>google.rpc.ErrorInfo</code> detail, so a client can branch on the reason rather than on the sentence.</p>
+        <span class="tagline">-32001 … -32009</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="wrap">
+    <div class="wire">
+      <div class="reveal">
+        <span class="kicker">The wire</span>
+        <h2>JSON-RPC, and nothing <em>else</em>.</h2>
+        <p class="lede" style="margin-top:1rem">One POST body carries a call; a streaming method answers with server-sent events, each one a whole JSON-RPC reply. What you see below is what this library writes.</p>
+        <ul class="notes" style="margin-top:1.8rem">
+          <li><span>Bodies and the method table come from <b>moonjrpc</b>; the task lifecycle is this library's.</span></li>
+          <li><span>The stream opens with <b>the task as it stands</b>, then carries what changed, and closes at a terminal state.</span></li>
+          <li><span>A call refused before the stream opens is a plain <b>error body</b>, not a stream carrying one error.</span></li>
+        </ul>
+      </div>
+      <div class="reveal">
+        <div class="code-block" data-copy>
+          <div class="cap">POST / · SendStreamingMessage</div>
+<pre><code>{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "SendStreamingMessage",
+  "params": {
+    "message": {
+      "messageId": "m-1",
+      "role": "ROLE_USER",
+      "parts": [{ "text": "summarise the report" }]
+    }
+  }
+}</code></pre>
+        </div>
+        <div class="code-block" data-copy style="margin-top:1rem">
+          <div class="cap">the answer · one frame of the stream</div>
+<pre><code>data: {"jsonrpc":"2.0","id":1,"result":{"statusUpdate":{
+  "taskId": "t-1",
+  "contextId": "c-1",
+  "status": { "state": "TASK_STATE_WORKING",
+              "timestamp": "2026-11-06T01:22:12.268Z" }
+}}}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="kicker">Start</span>
+        <h2>An agent is an <em>executor</em>.</h2>
+      </div>
+      <p>Say what happens; the server turns it into a task, keeps the history, answers the protocol around it, and hands the same events to every watcher.</p>
+    </div>
+
+    <div class="wire">
+      <div class="reveal">
+        <div class="code-block" data-copy>
+          <div class="cap">hello.mbt</div>
+<pre><code>impl @moona2a.Executor for Echo with fn execute(self, ctx, out) {
+  ignore(self)
+  out.emit(ctx.status(@moona2a.Working))
+  out.emit(ctx.artifact(@moona2a.Artifact::text("a-1", "done")))
+  out.emit(ctx.status(@moona2a.Completed))
+}
+
+let server = @moona2a.Server::new(Echo::{ }, card)
+let app = @asgi.to_asgi(server)</code></pre>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="code-block" data-copy>
+          <div class="cap">install</div>
+<pre><code>moon add moonbitstack/moona2a
+
+# three packages
+#   moonbitstack/moona2a         the model, the server, the client
+#   moonbitstack/moona2a/asgi    the HTTP endpoint
+#   moonbitstack/moona2a/fetch   the HTTP transport, the notifier</code></pre>
+        </div>
+        <ul class="notes" style="margin-top:1.6rem">
+          <li><span>The next step is the <a href="guide.html">guide</a>: a card, a server, a client, a stream.</span></li>
+          <li><span>Every public type and function is in the <a href="api.html">reference</a>, generated from the sources.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="row">
+      <a class="brand" href="index.html">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6 14.7 8.28 22.46 8.6 16.38 13.42 18.47 20.9 12 16.6 5.53 20.9 7.62 13.42 1.54 8.6 9.3 8.28Z"/></svg>
+        <span>moona2a</span>
+      </a>
+      <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams, push. Apache-2.0.</p>
+      <div class="links">
+        <a href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://mooncakes.io/docs/moonbitstack/moona2a" target="_blank" rel="noopener">mooncakes</a>
+        <a href="guide.html">Guide</a>
+        <a href="api.html">API</a>
+        <a href="showcase.html">The star</a>
+      </div>
+    </div>
+    <div class="legal"><span>Apache-2.0</span><span>Built with MoonBit</span></div>
+  </div>
+</footer>
+</body>
+</html>

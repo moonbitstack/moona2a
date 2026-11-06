@@ -1,0 +1,11 @@
+// The documentation site's demo engine: the library compiled to JavaScript, so the star page
+// shows what the protocol encodes rather than an imitation of it.
+
+import {
+  "moonbitstack/moona2a",
+  "moonbitstack/moonjrpc",
+}
+
+supported_targets = "js"
+
+pkgtype(kind: "foreign_library")

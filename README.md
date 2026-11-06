@@ -5,11 +5,13 @@
 **The Agent2Agent protocol for MoonBit.**<br>
 Agent cards, tasks, streaming and push notifications — one JSON-RPC endpoint, served or called.
 
+<a href="https://moonbitstack.github.io/moona2a/"><kbd> &nbsp;home&nbsp; </kbd></a>
+&nbsp;
+<a href="https://moonbitstack.github.io/moona2a/guide.html"><kbd> &nbsp;guide&nbsp; </kbd></a>
+&nbsp;
+<a href="https://moonbitstack.github.io/moona2a/api.html"><kbd> &nbsp;api&nbsp; </kbd></a>
+&nbsp;
 <a href="https://mooncakes.io/docs/moonbitstack/moona2a"><kbd> &nbsp;mooncakes&nbsp; </kbd></a>
-&nbsp;
-<a href="src/examples/05-conformance/"><kbd> &nbsp;examples&nbsp; </kbd></a>
-&nbsp;
-<a href="#consistency"><kbd> &nbsp;consistency&nbsp; </kbd></a>
 
 </div>
 

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide — moona2a</title>
+<meta name="description" content="A guide to moona2a: publish an agent card, write an executor, serve the JSON-RPC endpoint as ASGI, call an agent, follow a task's stream, and register a webhook.">
+<meta name="theme-color" content="#f4eee2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f4eee2'/%3E%3Cpath d='M12 2.4 14.5 9 21.4 9.3 15.9 13.7 17.8 20.4 12 16.5 6.2 20.4 8.1 13.7 2.6 9.3 9.5 9Z' fill='none' stroke='%23b8721a' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..500;1,6..96,400..500&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<script>try{const t=localStorage.getItem("moona2a-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+<script src="assets/site.js" defer></script>
+</head>
+<body id="top">
+<a class="skip" href="#main">Skip to content</a>
+
+<svg class="lattice" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="comb" width="34.64" height="60" patternUnits="userSpaceOnUse">
+      <path d="M17.32 -20 L34.64 -10 L34.64 10 L17.32 20 L0 10 L0 -10 Z" fill="none" stroke="currentColor" stroke-width=".7"/>
+      <path d="M0 10 L17.32 20 L17.32 40 L0 50 L-17.32 40 L-17.32 20 Z
+               M34.64 10 L51.96 20 L51.96 40 L34.64 50 L17.32 40 L17.32 20 Z
+               M17.32 40 L34.64 50 L34.64 70 L17.32 80 L0 70 L0 50 Z" fill="none" stroke="currentColor" stroke-width=".7"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#comb)"/>
+</svg>
+
+<header class="topbar">
+  <div class="wrap bar">
+    <a class="brand" href="index.html">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6 14.7 8.28 22.46 8.6 16.38 13.42 18.47 20.9 12 16.6 5.53 20.9 7.62 13.42 1.54 8.6 9.3 8.28Z"/></svg>
+      <span>moona2a</span>
+    </a>
+    <nav class="mainnav" aria-label="Primary">
+      <a href="guide.html" aria-current="page">Guide</a>
+      <a href="api.html">API</a>
+      <a href="showcase.html">The star</a>
+    </nav>
+    <div class="tools">
+      <a class="icon-btn" href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
+      </a>
+      <button class="icon-btn theme-toggle" type="button" aria-label="Switch between light and dark">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.9"/><path d="M12 1.7v2.4M12 19.9v2.4M1.7 12h2.4M19.9 12h2.4M4.75 4.75l1.7 1.7M17.55 17.55l1.7 1.7M19.25 4.75l-1.7 1.7M6.45 17.55l-1.7 1.7"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12.88A10 10 0 1 1 11.12 2a7.78 7.78 0 0 0 10.88 10.88z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="gauge" aria-hidden="false"><span class="pct">0%</span>
+  <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6 14.7 8.28 22.46 8.6 16.38 13.42 18.47 20.9 12 16.6 5.53 20.9 7.62 13.42 1.54 8.6 9.3 8.28Z"/></svg>
+</div>
+
+<main id="main">
+
+<section class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Guide</span>
+    <h1>From a card to a <em>stream</em>.</h1>
+    <p class="lede">Nine steps, in the order a server is built: say what the agent is, say what happens, put it on an endpoint, then call it from the other side. Every block below is code that compiles, and every output is a real one.</p>
+  </div>
+</section>
+
+<div class="wrap guide-layout">
+  <nav class="toc" aria-label="Contents">
+    <div class="toc-title">On this page</div>
+    <a href="#install">Install</a>
+    <a href="#card">The card</a>
+    <a href="#agent">An agent, and a server</a>
+    <a href="#endpoint">Put it on an endpoint</a>
+    <a href="#call">Call an agent</a>
+    <a href="#stream">Follow a task</a>
+    <a href="#push">Leave a webhook</a>
+    <a href="#errors">When a call is refused</a>
+    <a href="#rules">Rules that bite</a>
+  </nav>
+
+  <div class="prose">
+
+    <h2 id="install">Install</h2>
+    <div class="code-block" data-copy>
+      <div class="cap">shell</div>
+<pre><code>moon add moonbitstack/moona2a</code></pre>
+    </div>
+    <p>Three packages arrive together. The root holds the wire model, the task lifecycle and the client; <code>asgi</code> turns a server into an HTTP application; <code>fetch</code> is the client's HTTP transport and the webhook notifier.</p>
+
+    <h2 id="card">The card</h2>
+    <p>A card is what a caller reads before it says anything. It names the agent, lists the interfaces it answers on, and says which capabilities are on.</p>
+    <div class="code-block" data-copy>
+      <div class="cap">card.mbt</div>
+<pre data-lang="moonbit"><code>let skill = @moona2a.AgentSkill::new(
+  "summarise",
+  "Summarise",
+  "condenses a document into a short paragraph",
+  ["text", "summarise"],
+)
+let card = @moona2a.AgentCard::new(
+  "summariser",
+  "An agent that condenses documents",
+  "1.0.0",
+  "https://summariser.example.com",
+  [skill],
+).capable({
+  streaming: true,
+  push_notifications: false,
+  extended_agent_card: false,
+  extensions: [],
+})</code></pre>
+    </div>
+    <p>The fourth argument is where the agent answers; the card writes it as one JSON-RPC interface at protocol 1.0. Printing the card is how most integration bugs are found, so it is the first example in the repository:</p>
+    <div class="code-block">
+      <div class="cap">output of example 01</div>
+<pre><code>{
+  "name": "summariser",
+  "description": "An agent that condenses documents",
+  "supportedInterfaces": [
+    {
+      "url": "https://summariser.example.com",
+      "protocolBinding": "JSONRPC",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "version": "1.0.0",
+  "capabilities": { "streaming": true, "pushNotifications": false },
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/plain"],
+  "skills": [ … ]
+}</code></pre>
+    </div>
+
+    <h2 id="agent">An agent, and a server</h2>
+    <p>An agent is an executor: it is handed the message and a sink, and it says what happens. It does not create tasks, keep history or answer <code>GetTask</code> — the server does that, from the events the executor emits.</p>
+    <div class="code-block" data-copy>
+      <div class="cap">echo.mbt</div>
+<pre data-lang="moonbit"><code>struct Echo { }
+
+impl @moona2a.Executor for Echo with fn execute(self, ctx, out) {
+  ignore(self)
+  out.emit(ctx.status(@moona2a.Working))
+  out.emit(ctx.artifact(@moona2a.Artifact::text("answer", "You said: " + ctx.message.text())))
+  out.emit(ctx.status(@moona2a.Completed))
+}
+
+impl @moona2a.Executor for Echo with fn cancel(self, task_id) {
+  ignore(self)
+  ignore(task_id)
+}
+
+pub extend Echo with @moona2a.Executor::{execute, cancel}</code></pre>
+    </div>
+    <p>The first event an agent emits is what opens the task, so an agent that answers with a message leaves no empty task behind. A run that raises still leaves a task in <code>TASK_STATE_FAILED</code>, which is the state a subscriber needs to stop waiting.</p>
+    <div class="code-block">
+      <div class="cap">output of example 03</div>
+<pre><code>the agent finished task a2a-1793925374888-2: TASK_STATE_COMPLETED
+You said: hello</code></pre>
+    </div>
+
+    <h2 id="endpoint">Put it on an endpoint</h2>
+    <p>The server is an ASGI application, so the HTTP server stays a choice the host makes. <code>to_asgi</code> answers two addresses: the card at its well-known path, and every method on the JSON-RPC path.</p>
+    <div class="code-block" data-copy>
+      <div class="cap">serve.mbt</div>
+<pre data-lang="moonbit"><code>let server = @moona2a.Server::new(Echo::{ }, card)
+let app = @asgi.to_asgi(server)
+
+// app : (scope, receive, send) -> Unit, which is what moonasgi's servers take.</code></pre>
+    </div>
+    <p>A streaming method answers <code>text/event-stream</code> and one <code>data:</code> frame per event, written as the event happens. A call refused before the stream opens — an unknown task, a version the interface does not serve — is an ordinary JSON-RPC error body instead, because a stream carrying one error is worse than no stream.</p>
+
+    <h2 id="call">Call an agent</h2>
+    <p>A client is the same protocol from the other side. <code>Client</code> is the protocol; <code>Transport</code> is how messages travel, which is why a test can answer from a table and production can use HTTP.</p>
+    <div class="code-block" data-copy>
+      <div class="cap">call.mbt</div>
+<pre data-lang="moonbit"><code>let transport = @fetch.HttpTransport::new("https://summariser.example.com")
+let client = @moona2a.Client::new(transport)
+
+let card = client.discover()
+match client.send_message(@moona2a.Message::user("m-1", "summarise this")) {
+  @moona2a.TaskSnapshot(task) =>
+    println("task \{task.id} is \{task.status.state.wire()}")
+  @moona2a.TaskMessage(reply) => println(reply.text())
+  _ => println("the agent answered with something else")
+}</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="cap">output, against the example server</div>
+<pre><code>task t-1 is TASK_STATE_COMPLETED
+A short paragraph.</code></pre>
+    </div>
+    <p><code>send_message</code> returns the event that ended the exchange: a task when the agent worked one, a message when it answered directly.</p>
+
+    <h2 id="stream">Follow a task</h2>
+    <p>A streaming call takes a reply sink instead of returning a value. The sink is called once per event, in the order the agent took them, and the stream ends at a terminal state.</p>
+    <div class="code-block" data-copy>
+      <div class="cap">follow.mbt</div>
+<pre data-lang="moonbit"><code>struct Printer { }
+
+impl @moona2a.ReplySink for Printer with fn reply(self, message) {
+  ignore(self)
+  match message {
+    @moonjrpc.Reply(result~, ..) => {
+      let event : @moona2a.StreamEvent = @json.from_json(result) catch {
+        _ => @moona2a.StreamEvent::TaskMessage(@moona2a.Message::agent("?", "?"))
+      }
+      match event {
+        @moona2a.TaskSnapshot(task) =>
+          println("task \{task.id}: \{task.status.state.wire()}")
+        @moona2a.StatusChange(update) => println("status: \{update.status.state.wire()}")
+        @moona2a.ArtifactChunk(update) => println("artifact: \{update.artifact.text_of()}")
+        @moona2a.TaskMessage(message) => println("message: \{message.text()}")
+      }
+    }
+    @moonjrpc.Refusal(failure~, ..) => println("refused: \{failure.message}")
+    _ => ()
+  }
+}</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="cap">output of example 04</div>
+<pre><code>task a2a-1793925-1: TASK_STATE_SUBMITTED
+status: TASK_STATE_WORKING
+artifact: 1. read the input
+artifact: 2. write the answer
+status: TASK_STATE_COMPLETED</code></pre>
+    </div>
+    <p>A caller that arrives late uses <code>SubscribeToTask</code> instead: it is given the task as it stands, then everything that happens after it joined. Several callers can watch the same task; each reads the log from its own cursor, so one leaving affects no other.</p>
+
+    <h2 id="push">Leave a webhook</h2>
+    <p>For a task that takes minutes, a caller can leave a URL and stop asking. The agent posts each update to it, with the token and the credentials the registration names.</p>
+    <div class="code-block" data-copy>
+      <div class="cap">webhook.mbt</div>
+<pre data-lang="moonbit"><code>let config = @moona2a.TaskPushConfig::new(
+  "cfg-1",
+  task_id,
+  "https://caller.example/hook",
+).with_token("s3cret")
+
+client.create_push_config(config) |> ignore</code></pre>
+    </div>
+    <p>The notifier is a trait, so an agent that keeps its registrations in a database or delivers over something other than HTTP replaces it. <code>@fetch.Webhook</code> is the HTTP one: it posts <code>application/a2a+json</code>, adds <code>x-a2a-notification-token</code> when a token was set, and an <code>authorization</code> header for registered credentials.</p>
+
+    <h2 id="errors">When a call is refused</h2>
+    <p>Refusals are the specification's own, with the code of section 5.4 and a <code>google.rpc.ErrorInfo</code> detail, so a client branches on the reason rather than on the sentence.</p>
+    <div class="code-block">
+      <div class="cap">the refusals</div>
+<pre><code>TaskNotFound                  -32001   no such task
+TaskNotCancelable             -32002   it is finished, or it cannot stop
+PushNotificationNotSupported  -32003   the agent takes no webhooks
+UnsupportedOperation          -32004   the method, or a task that is over
+ContentTypeNotSupported       -32005   a part the agent cannot read
+InvalidAgentResponse          -32006   the agent answered with something else
+ExtendedAgentCardNotConfigured -32007  there is no second card
+ExtensionSupportRequired      -32008   an extension the caller must honour
+VersionNotSupported           -32009   a protocol version this interface does not speak</code></pre>
+    </div>
+    <p>An agent that raises its own error still leaves a task: the server records it as <code>TASK_STATE_FAILED</code> and hands the refusal back, so a watcher is never left waiting on a task that will not move.</p>
+
+    <h2 id="rules">Rules that bite</h2>
+    <ul>
+      <li><b>Send <code>A2A-Version: 1.0</code>.</b> A request that names another version is refused, and so is one that names none: the specification reads a missing header as 0.3, which this interface does not serve. Patch numbers do not count.</li>
+      <li><b>Ids are the server's.</b> The caller chooses <code>messageId</code>; <code>taskId</code> and <code>contextId</code> are minted by the server. A message that names a task continues it; one that names a finished task is refused.</li>
+      <li><b>Media types are the agent's call.</b> Nothing is refused because its media type is missing from the card. Turn on <code>ServerConfig.refuse_unknown_media</code> to make the card's list a hard filter.</li>
+      <li><b>History is not guaranteed.</b> The agent decides what is worth keeping, so a client reads the status message for the agent's own words rather than assuming they are in the history.</li>
+    </ul>
+
+    <div class="note" style="margin-top:2.4rem">
+      <b>Next:</b> the <a href="api.html">reference</a> lists every public type and function, and <a href="showcase.html">the star</a> shows the frames these calls put on the wire.
+    </div>
+
+  </div>
+</div>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="row">
+      <a class="brand" href="index.html">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6 14.7 8.28 22.46 8.6 16.38 13.42 18.47 20.9 12 16.6 5.53 20.9 7.62 13.42 1.54 8.6 9.3 8.28Z"/></svg>
+        <span>moona2a</span>
+      </a>
+      <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams, push. Apache-2.0.</p>
+      <div class="links">
+        <a href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://mooncakes.io/docs/moonbitstack/moona2a" target="_blank" rel="noopener">mooncakes</a>
+        <a href="api.html">API</a>
+        <a href="showcase.html">The star</a>
+        <a href="index.html">Home</a>
+      </div>
+    </div>
+    <div class="legal"><span>Apache-2.0</span><span>Built with MoonBit</span></div>
+  </div>
+</footer>
+</body>
+</html>

@@ -49,10 +49,10 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           for dir in src/examples/*/; do
-            # 05 is a server that runs until it is stopped, and 06 wants one to call: the
-            # conformance and interoperability jobs are what exercise them.
+            # 05 is a server that runs until it is stopped, 06 wants one to call, and the
+            # browser package is a JS foreign library for the docs site rather than a program.
             case "$(basename "$dir")" in
-              05-conformance | 06-interop) continue ;;
+              05-conformance | 06-interop | browser) continue ;;
             esac
             moon run "$dir" --target native > /dev/null
           done

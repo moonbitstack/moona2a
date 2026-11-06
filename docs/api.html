@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API reference — moona2a</title>
+<meta name="description" content="Every public type, function and constant in moona2a, generated from the package interfaces and the sources' documentation comments.">
+<meta name="theme-color" content="#f4eee2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f4eee2'/%3E%3Cpath d='M12 2.4 14.5 9 21.4 9.3 15.9 13.7 17.8 20.4 12 16.5 6.2 20.4 8.1 13.7 2.6 9.3 9.5 9Z' fill='none' stroke='%23b8721a' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..500;1,6..96,400..500&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<script>try{const t=localStorage.getItem("moona2a-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+<script src="assets/site.js" defer></script>
+</head>
+<body id="top">
+<a class="skip" href="#main">Skip to content</a>
+<svg class="lattice" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="comb" width="34.64" height="60" patternUnits="userSpaceOnUse">
+      <path d="M17.32 -20 L34.64 -10 L34.64 10 L17.32 20 L0 10 L0 -10 Z" fill="none" stroke="currentColor" stroke-width=".7"/>
+      <path d="M0 10 L17.32 20 L17.32 40 L0 50 L-17.32 40 L-17.32 20 Z
+               M34.64 10 L51.96 20 L51.96 40 L34.64 50 L17.32 40 L17.32 20 Z
+               M17.32 40 L34.64 50 L34.64 70 L17.32 80 L0 70 L0 50 Z" fill="none" stroke="currentColor" stroke-width=".7"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#comb)"/>
+</svg>
+<header class="topbar">
+  <div class="wrap bar">
+    <a class="brand" href="index.html">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6 14.7 8.28 22.46 8.6 16.38 13.42 18.47 20.9 12 16.6 5.53 20.9 7.62 13.42 1.54 8.6 9.3 8.28Z"/></svg>
+      <span>moona2a</span>
+    </a>
+    <nav class="mainnav" aria-label="Primary">
+      <a href="guide.html">Guide</a>
+      <a href="api.html" aria-current="page">API</a>
+      <a href="showcase.html">The star</a>
+    </nav>
+    <div class="tools">
+      <a class="icon-btn" href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
+      </a>
+      <button class="icon-btn theme-toggle" type="button" aria-label="Switch between light and dark">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.9"/><path d="M12 1.7v2.4M12 19.9v2.4M1.7 12h2.4M19.9 12h2.4M4.75 4.75l1.7 1.7M17.55 17.55l1.7 1.7M19.25 4.75l-1.7 1.7M6.45 17.55l-1.7 1.7"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12.88A10 10 0 1 1 11.12 2a7.78 7.78 0 0 0 10.88 10.88z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="gauge" aria-hidden="false"><span class="pct">0%</span>
+  <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6 14.7 8.28 22.46 8.6 16.38 13.42 18.47 20.9 12 16.6 5.53 20.9 7.62 13.42 1.54 8.6 9.3 8.28Z"/></svg>
+</div>
+<main id="main">
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow">API</span>
+      <h1>The <em>reference</em>.</h1>
+      <p class="lede">Every public type, function and constant, grouped by package. Generated from <span class="mono">pkg.generated.mbti</span> and the sources' own documentation comments, so it says what the code says.</p>
+    </div>
+  </section>
+  <div class="wrap api-layout">
+    <nav class="api-nav" aria-label="API contents">
+<div class="group">
+<div class="pkg">@moona2a</div>
+<a href="#type-moona2a-AgentCapabilities">AgentCapabilities</a>
+<a href="#type-moona2a-AgentCard">AgentCard</a>
+<a href="#type-moona2a-AgentExtension">AgentExtension</a>
+<a href="#type-moona2a-AgentInterface">AgentInterface</a>
+<a href="#type-moona2a-AgentProvider">AgentProvider</a>
+<a href="#type-moona2a-AgentSkill">AgentSkill</a>
+<a href="#type-moona2a-Artifact">Artifact</a>
+<a href="#type-moona2a-AuthenticationInfo">AuthenticationInfo</a>
+<a href="#type-moona2a-CallableExecutor">CallableExecutor</a>
+<a href="#type-moona2a-Client">Client</a>
+<a href="#type-moona2a-Collected">Collected</a>
+<a href="#type-moona2a-Discard">Discard</a>
+<a href="#type-moona2a-ListTasksQuery">ListTasksQuery</a>
+<a href="#type-moona2a-MemoryStore">MemoryStore</a>
+<a href="#type-moona2a-Message">Message</a>
+<a href="#type-moona2a-Method">Method</a>
+<a href="#type-moona2a-Part">Part</a>
+<a href="#type-moona2a-PartContent">PartContent</a>
+<a href="#type-moona2a-PushConfigPage">PushConfigPage</a>
+<a href="#type-moona2a-RequestContext">RequestContext</a>
+<a href="#type-moona2a-Role">Role</a>
+<a href="#type-moona2a-SendMessageConfig">SendMessageConfig</a>
+<a href="#type-moona2a-SendMessageRequest">SendMessageRequest</a>
+<a href="#type-moona2a-Server">Server</a>
+<a href="#type-moona2a-ServerConfig">ServerConfig</a>
+<a href="#type-moona2a-StreamEvent">StreamEvent</a>
+<a href="#type-moona2a-Task">Task</a>
+<a href="#type-moona2a-TaskArtifactUpdate">TaskArtifactUpdate</a>
+<a href="#type-moona2a-TaskLog">TaskLog</a>
+<a href="#type-moona2a-TaskPage">TaskPage</a>
+<a href="#type-moona2a-TaskPushConfig">TaskPushConfig</a>
+<a href="#type-moona2a-TaskState">TaskState</a>
+<a href="#type-moona2a-TaskStatus">TaskStatus</a>
+<a href="#type-moona2a-TaskStatusUpdate">TaskStatusUpdate</a>
+<a href="#type-moona2a-View">View</a>
+<a href="#err-moona2a-Refused">Refused</a>
+<a href="#fn-moona2a">Functions</a>
+<a href="#const-moona2a">Constants</a>
+</div>
+<div class="group">
+<div class="pkg">@asgi</div>
+<a href="#type-asgi-Options">Options</a>
+<a href="#fn-asgi">Functions</a>
+</div>
+<div class="group">
+<div class="pkg">@fetch</div>
+<a href="#type-fetch-HttpTransport">HttpTransport</a>
+<a href="#type-fetch-Webhook">Webhook</a>
+<a href="#err-fetch-Unreachable">Unreachable</a>
+<a href="#err-fetch-WrongShape">WrongShape</a>
+<a href="#fn-fetch">Functions</a>
+<a href="#const-fetch">Constants</a>
+</div>
+</nav>
+    <div class="api-body">
+<section class="api-pkg" id="pkg-moona2a">
+<header>
+<h2><span class="mono">@moona2a</span></h2>
+<div class="imp">import { "moonbitstack/moona2a" }</div>
+</header>
+<div class="api-cat"><h3>Types</h3></div>
+<section class="api-type" id="type-moona2a-AgentCapabilities">
+<div class="type-head"><h3>AgentCapabilities</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">AgentCapabilities</span></div>
+<div class="doc"><p>What optional parts of the protocol an agent does (A2A <code>AgentCapabilities</code>).</p></div>
+<ul class="members"><li><b>streaming</b> : <span class="pt">Bool</span></li><li><b>push_notifications</b> : <span class="pt">Bool</span></li><li><b>extended_agent_card</b> : <span class="pt">Bool</span></li><li><b>extensions</b> : <span class="pt">Array[AgentExtension]</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-AgentCapabilities-plain">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCapabilities::plain</span>() -&gt; Self</div>
+<div class="doc"><p>An agent that answers in a single body and sends nothing out of band.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentCapabilities-streaming_and_push">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCapabilities::streaming_and_push</span>() -&gt; Self</div>
+<div class="doc"><p>An agent that streams, sends push notifications and serves no extended card.</p></div>
+
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-AgentCapabilities-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCapabilities::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentCapabilities-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCapabilities::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-AgentCapabilities-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCapabilities::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentCapabilities-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCapabilities::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-AgentCard">
+<div class="type-head"><h3>AgentCard</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">AgentCard</span></div>
+<div class="doc"><p>An agent's self-description, the document a caller reads before talking to it (A2A <code>AgentCard</code>).</p></div>
+<ul class="members"><li><b>name</b> : <span class="pt">String</span></li><li><b>description</b> : <span class="pt">String</span></li><li><b>supported_interfaces</b> : <span class="pt">Array[AgentInterface]</span></li><li><b>provider</b> : <span class="pt">AgentProvider?</span></li><li><b>version</b> : <span class="pt">String</span></li><li><b>documentation_url</b> : <span class="pt">String?</span></li><li><b>capabilities</b> : <span class="pt">AgentCapabilities</span></li><li><b>security_schemes</b> : <span class="pt">@json.Json?</span></li><li><b>security_requirements</b> : <span class="pt">@json.Json?</span></li><li><b>default_input_modes</b> : <span class="pt">Array[String]</span></li><li><b>default_output_modes</b> : <span class="pt">Array[String]</span></li><li><b>skills</b> : <span class="pt">Array[AgentSkill]</span></li><li><b>signatures</b> : <span class="pt">@json.Json?</span></li><li><b>icon_url</b> : <span class="pt">String?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-AgentCard-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCard::new</span>(String, String, String, String, Array[AgentSkill]) -&gt; Self</div>
+<div class="doc"><p>A card with no provider, no security and no signatures, serving text in and out.</p></div>
+<div class="params"><span class="p"><b>name</b> <span class="pt">String</span></span><span class="p"><b>description</b> <span class="pt">String</span></span><span class="p"><b>version</b> <span class="pt">String</span></span><span class="p"><b>url</b> <span class="pt">String</span></span><span class="p"><b>skills</b> <span class="pt">Array[AgentSkill]</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-AgentCard-capable">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCard::capable</span>(Self, AgentCapabilities) -&gt; Self</div>
+<div class="doc"><p>The same card advertising <code>capabilities</code>.</p></div>
+<div class="params"><span class="p"><b>capabilities</b> <span class="pt">AgentCapabilities</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-AgentCard-input_modes">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCard::input_modes</span>(Self) -&gt; Array[String]</div>
+<div class="doc"><p>The media types the card offers to take, from its defaults and its skills together.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentCard-preferred">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCard::preferred</span>(Self) -&gt; AgentInterface?</div>
+<div class="doc"><p>The interface a client should try first, which is the one the card lists first.</p></div>
+
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-AgentCard-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCard::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentCard-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCard::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-AgentCard-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCard::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentCard-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCard::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-AgentExtension">
+<div class="type-head"><h3>AgentExtension</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">AgentExtension</span></div>
+<div class="doc"><p>A protocol extension an agent speaks (A2A <code>AgentExtension</code>).</p></div>
+<ul class="members"><li><b>uri</b> : <span class="pt">String</span></li><li><b>description</b> : <span class="pt">String?</span></li><li><b>required</b> : <span class="pt">Bool</span></li><li><b>params</b> : <span class="pt">@json.Json?</span></li></ul>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-AgentExtension-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentExtension::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentExtension-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentExtension::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-AgentExtension-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentExtension::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentExtension-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentExtension::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-AgentInterface">
+<div class="type-head"><h3>AgentInterface</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">AgentInterface</span></div>
+<div class="doc"><p>One address an agent answers on (A2A <code>AgentInterface</code>).</p></div>
+<ul class="members"><li><b>url</b> : <span class="pt">String</span></li><li><b>protocol_binding</b> : <span class="pt">String</span></li><li><b>protocol_version</b> : <span class="pt">String</span></li><li><b>tenant</b> : <span class="pt">String?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-AgentInterface-json_rpc">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentInterface::json_rpc</span>(String, protocol_version~ : String) -&gt; Self</div>
+<div class="doc"><p>An interface speaking JSON-RPC at <code>url</code>.</p></div>
+<div class="params"><span class="p"><b>url</b> <span class="pt">String</span></span><span class="p"><b>protocol_version~</b> <span class="pt">String</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-AgentInterface-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentInterface::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentInterface-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentInterface::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-AgentInterface-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentInterface::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentInterface-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentInterface::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-AgentProvider">
+<div class="type-head"><h3>AgentProvider</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">AgentProvider</span></div>
+<div class="doc"><p>The provider of an agent (A2A <code>AgentProvider</code>).</p></div>
+<ul class="members"><li><b>organization</b> : <span class="pt">String</span></li><li><b>url</b> : <span class="pt">String</span></li></ul>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-AgentProvider-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentProvider::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentProvider-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentProvider::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-AgentProvider-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentProvider::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentProvider-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentProvider::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-AgentSkill">
+<div class="type-head"><h3>AgentSkill</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">AgentSkill</span></div>
+<div class="doc"><p>One thing an agent is good at (A2A <code>AgentSkill</code>).</p></div>
+<ul class="members"><li><b>id</b> : <span class="pt">String</span></li><li><b>name</b> : <span class="pt">String</span></li><li><b>description</b> : <span class="pt">String</span></li><li><b>tags</b> : <span class="pt">Array[String]</span></li><li><b>examples</b> : <span class="pt">Array[String]</span></li><li><b>input_modes</b> : <span class="pt">Array[String]</span></li><li><b>output_modes</b> : <span class="pt">Array[String]</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-AgentSkill-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentSkill::new</span>(String, String, String, Array[String]) -&gt; Self</div>
+<div class="doc"><p>A skill named and described, tagged with <code>tags</code>, with no examples or modes of its own.</p></div>
+<div class="params"><span class="p"><b>id</b> <span class="pt">String</span></span><span class="p"><b>name</b> <span class="pt">String</span></span><span class="p"><b>description</b> <span class="pt">String</span></span><span class="p"><b>tags</b> <span class="pt">Array[String]</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-AgentSkill-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentSkill::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentSkill-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentSkill::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-AgentSkill-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentSkill::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AgentSkill-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentSkill::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-Artifact">
+<div class="type-head"><h3>Artifact</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">Artifact</span></div>
+<div class="doc"><p>An output a task produced (A2A <code>Artifact</code>).</p></div>
+<ul class="members"><li><b>artifact_id</b> : <span class="pt">String</span></li><li><b>name</b> : <span class="pt">String?</span></li><li><b>description</b> : <span class="pt">String?</span></li><li><b>parts</b> : <span class="pt">Array[Part]</span></li><li><b>extensions</b> : <span class="pt">Array[String]?</span></li><li><b>metadata</b> : <span class="pt">@json.Json?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-Artifact-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Artifact::new</span>(String, Array[Part]) -&gt; Self</div>
+<div class="doc"><p>An artifact carrying <code>parts</code> under <code>artifact_id</code>.</p></div>
+<div class="params"><span class="p"><b>artifact_id</b> <span class="pt">String</span></span><span class="p"><b>parts</b> <span class="pt">Array[Part]</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Artifact-named">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Artifact::named</span>(Self, String) -&gt; Self</div>
+<div class="doc"><p>The same artifact under <code>name</code>.</p></div>
+<div class="params"><span class="p"><b>name</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Artifact-text">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Artifact::text</span>(String, String) -&gt; Self</div>
+<div class="doc"><p>An artifact carrying one text part.</p></div>
+<div class="params"><span class="p"><b>artifact_id</b> <span class="pt">String</span></span><span class="p"><b>text</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Artifact-text_of">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Artifact::text_of</span>(Self) -&gt; String</div>
+<div class="doc"><p>The text of every text part, in order and with nothing added: a part is content, so joining must not invent characters between them.</p></div>
+
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-Artifact-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Artifact::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Artifact-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Artifact::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Artifact-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Artifact::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Artifact-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Artifact::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-AuthenticationInfo">
+<div class="type-head"><h3>AuthenticationInfo</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">AuthenticationInfo</span></div>
+<div class="doc"><p>How the agent proves itself to the caller's webhook (A2A <code>AuthenticationInfo</code>).</p></div>
+<ul class="members"><li><b>scheme</b> : <span class="pt">String</span></li><li><b>credentials</b> : <span class="pt">String?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-AuthenticationInfo-bearer">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AuthenticationInfo::bearer</span>(String) -&gt; Self</div>
+<div class="doc"><p>A bearer token the agent sends with each notification.</p></div>
+<div class="params"><span class="p"><b>token</b> <span class="pt">String</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-AuthenticationInfo-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AuthenticationInfo::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AuthenticationInfo-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AuthenticationInfo::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-AuthenticationInfo-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AuthenticationInfo::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-AuthenticationInfo-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AuthenticationInfo::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-CallableExecutor">
+<div class="type-head"><h3>CallableExecutor</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">CallableExecutor</span></div>
+<ul class="members"><li><b>run</b> : <span class="pt">async (RequestContext, &amp;EventSink) -&gt; Unit</span></li><li><b>stop</b> : <span class="pt">async (String) -&gt; Unit</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-CallableExecutor-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">CallableExecutor::new</span>(run~ : async (RequestContext, &amp;EventSink) -&gt; Unit, stop~ : async (String) -&gt; Unit) -&gt; Self</div>
+<div class="doc"><p>An executor that works requests with <code>run</code> and stops tasks with <code>stop</code>.</p></div>
+<div class="params"><span class="p"><b>run~</b> <span class="pt">async (RequestContext, &amp;EventSink) -&gt; Unit</span></span><span class="p"><b>stop~</b> <span class="pt">async (String) -&gt; Unit</span></span></div>
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-Client">
+<div class="type-head"><h3>Client</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">Client</span></div>
+<ul class="members"><li><b>transport</b> : <span class="pt">&amp;Transport</span></li><li>mut next : Int64</li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-Client-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Client::new</span>(&amp;Transport) -&gt; Self</div>
+<div class="doc"><p>A client talking to the agent behind <code>transport</code>.</p></div>
+<div class="params"><span class="p"><b>transport</b> <span class="pt">&amp;Transport</span></span></div>
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-Collected">
+<div class="type-head"><h3>Collected</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">Collected</span></div>
+<ul class="members"><li><b>taken</b> : <span class="pt">Array[StreamEvent]</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-Collected-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Collected::new</span>() -&gt; Self</div>
+<div class="doc"><p>An empty collection.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Collected-events">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Collected::events</span>(Self) -&gt; Array[StreamEvent]</div>
+<div class="doc"><p>The events the sink took, in the order they happened.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Collected-message">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Collected::message</span>(Self) -&gt; Message?</div>
+<div class="doc"><p>The message the agent answered with directly, when the run produced one instead of a task.</p></div>
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-Discard">
+<div class="type-head"><h3>Discard</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">Discard</span></div>
+
+</section>
+<section class="api-type" id="type-moona2a-ListTasksQuery">
+<div class="type-head"><h3>ListTasksQuery</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">ListTasksQuery</span></div>
+<div class="doc"><p>The filters a list request carries (A2A <code>ListTasksRequest</code>).</p></div>
+<ul class="members"><li><b>context_id</b> : <span class="pt">String?</span></li><li><b>state</b> : <span class="pt">TaskState?</span></li><li><b>page_size</b> : <span class="pt">Int32?</span></li><li><b>page_token</b> : <span class="pt">String?</span></li><li><b>history_length</b> : <span class="pt">Int32?</span></li><li><b>status_timestamp_after</b> : <span class="pt">String?</span></li><li><b>include_artifacts</b> : <span class="pt">Bool</span></li><li><b>tenant</b> : <span class="pt">String?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-ListTasksQuery-all">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">ListTasksQuery::all</span>() -&gt; Self</div>
+<div class="doc"><p>No filter at all: every task the caller may see.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-ListTasksQuery-in_context">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">ListTasksQuery::in_context</span>(Self, String) -&gt; Self</div>
+<div class="doc"><p>The same query, limited to one conversation.</p></div>
+<div class="params"><span class="p"><b>context_id</b> <span class="pt">String</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-ListTasksQuery-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">ListTasksQuery::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-ListTasksQuery-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">ListTasksQuery::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-ListTasksQuery-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">ListTasksQuery::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-ListTasksQuery-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">ListTasksQuery::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-MemoryStore">
+<div class="type-head"><h3>MemoryStore</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">MemoryStore</span></div>
+<ul class="members"><li><b>tasks</b> : <span class="pt">Map[String, Task]</span></li><li>mut order : Array[String]</li><li><b>capacity</b> : <span class="pt">Int32</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-MemoryStore-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">MemoryStore::new</span>(capacity? : Int32) -&gt; Self</div>
+<div class="doc"><p>An empty store holding up to <code>capacity</code> tasks.</p></div>
+<div class="params"><span class="p"><b>capacity?</b> <span class="pt">Int32</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-MemoryStore-all">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">MemoryStore::all</span>(Self) -&gt; Array[Task]</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-MemoryStore-get">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">MemoryStore::get</span>(Self, String) -&gt; Task?</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-MemoryStore-put">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">MemoryStore::put</span>(Self, Task) -&gt; Unit</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-MemoryStore-remove">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">MemoryStore::remove</span>(Self, String) -&gt; Unit</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-Message">
+<div class="type-head"><h3>Message</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">Message</span></div>
+<div class="doc"><p>One turn of a conversation between a client and an agent (A2A <code>Message</code>).</p></div>
+<ul class="members"><li><b>message_id</b> : <span class="pt">String</span></li><li><b>role</b> : <span class="pt">Role</span></li><li><b>parts</b> : <span class="pt">Array[Part]</span></li><li><b>context_id</b> : <span class="pt">String?</span></li><li><b>task_id</b> : <span class="pt">String?</span></li><li><b>reference_task_ids</b> : <span class="pt">Array[String]?</span></li><li><b>extensions</b> : <span class="pt">Array[String]?</span></li><li><b>metadata</b> : <span class="pt">@json.Json?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-Message-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Message::new</span>(String, Role, Array[Part]) -&gt; Self</div>
+<div class="doc"><p>A message from <code>role</code> carrying <code>parts</code>.</p></div>
+<div class="params"><span class="p"><b>message_id</b> <span class="pt">String</span></span><span class="p"><b>role</b> <span class="pt">Role</span></span><span class="p"><b>parts</b> <span class="pt">Array[Part]</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Message-agent">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Message::agent</span>(String, String) -&gt; Self</div>
+<div class="doc"><p>A message from the agent, carrying one text part.</p></div>
+<div class="params"><span class="p"><b>message_id</b> <span class="pt">String</span></span><span class="p"><b>text</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Message-in_task">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Message::in_task</span>(Self, String, String) -&gt; Self</div>
+<div class="doc"><p>The same message, continuing the task and context given.</p></div>
+<div class="params"><span class="p"><b>task_id</b> <span class="pt">String</span></span><span class="p"><b>context_id</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Message-text">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Message::text</span>(Self) -&gt; String</div>
+<div class="doc"><p>The text of every text part, in order and with nothing added: a part is content, so joining must not invent characters between them.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Message-user">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Message::user</span>(String, String) -&gt; Self</div>
+<div class="doc"><p>A message from the client, carrying one text part.</p></div>
+<div class="params"><span class="p"><b>message_id</b> <span class="pt">String</span></span><span class="p"><b>text</b> <span class="pt">String</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-Message-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Message::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Message-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Message::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Message-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Message::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Message-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Message::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-Method">
+<div class="type-head"><h3>Method</h3><span class="kind">enum</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">enum</span> <span class="name">Method</span></div>
+<div class="doc"><p>Every method of the JSON-RPC binding.</p></div>
+<ul class="members"><li>SendMessage</li><li>SendStreamingMessage</li><li>GetTask</li><li>ListTasks</li><li>CancelTask</li><li>SubscribeToTask</li><li>CreatePushConfig</li><li>GetPushConfig</li><li>ListPushConfigs</li><li>DeletePushConfig</li><li>GetExtendedCard</li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-Method-from_name">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Method::from_name</span>(String) -&gt; Self?</div>
+<div class="doc"><p>The method that goes by <code>name</code>, when it is one of the protocol's.</p></div>
+<div class="params"><span class="p"><b>name</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Method-name">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Method::name</span>(Self) -&gt; String</div>
+<div class="doc"><p>The name the method goes by on the wire: PascalCase, as section 9.1 requires.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Method-streams">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Method::streams</span>(Self) -&gt; Bool</div>
+<div class="doc"><p>Whether the answer to this method is a stream of events rather than a single body.</p></div>
+
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-Method-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Method::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Method-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Method::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-Part">
+<div class="type-head"><h3>Part</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">Part</span></div>
+<div class="doc"><p>One piece of a message or an artifact (A2A <code>Part</code>).</p></div>
+<ul class="members"><li><b>content</b> : <span class="pt">PartContent</span></li><li><b>metadata</b> : <span class="pt">@json.Json?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-Part-bytes">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Part::bytes</span>(Bytes, filename? : String, media_type? : String) -&gt; Self</div>
+<div class="doc"><p>A part carrying bytes inline.</p></div>
+<div class="params"><span class="p"><b>bytes</b> <span class="pt">Bytes</span></span><span class="p"><b>filename?</b> <span class="pt">String</span></span><span class="p"><b>media_type?</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Part-data">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Part::data</span>(@json.Json) -&gt; Self</div>
+<div class="doc"><p>A part carrying a structured JSON value.</p></div>
+<div class="params"><span class="p"><b>data</b> <span class="pt">Json</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Part-media_type">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Part::media_type</span>(Self) -&gt; String?</div>
+<div class="doc"><p>The media type this part declares, when it declares one.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Part-text">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Part::text</span>(String) -&gt; Self</div>
+<div class="doc"><p>A text part.</p></div>
+<div class="params"><span class="p"><b>text</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Part-text_of">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Part::text_of</span>(Self) -&gt; String?</div>
+<div class="doc"><p>The text this part carries, when it is a text part.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Part-uri">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Part::uri</span>(String, filename? : String, media_type? : String) -&gt; Self</div>
+<div class="doc"><p>A part pointing at content by URL.</p></div>
+<div class="params"><span class="p"><b>url</b> <span class="pt">String</span></span><span class="p"><b>filename?</b> <span class="pt">String</span></span><span class="p"><b>media_type?</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Part-with_metadata">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Part::with_metadata</span>(Self, @json.Json) -&gt; Self</div>
+<div class="doc"><p>The same part with metadata attached.</p></div>
+<div class="params"><span class="p"><b>metadata</b> <span class="pt">Json</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-Part-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Part::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Part-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Part::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Part-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Part::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Part-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Part::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-PartContent">
+<div class="type-head"><h3>PartContent</h3><span class="kind">enum</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">enum</span> <span class="name">PartContent</span></div>
+<div class="doc"><p>What a part carries (A2A <code>Part.content</code> oneof).</p></div>
+<ul class="members"><li>Text(String)</li><li>Raw(bytes~ : Bytes, filename~ : String?, media_type~ : String?)</li><li>Url(url~ : String, filename~ : String?, media_type~ : String?)</li><li>Data(@json.Json)</li></ul>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-PartContent-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">PartContent::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-PartContent-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">PartContent::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-PushConfigPage">
+<div class="type-head"><h3>PushConfigPage</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">PushConfigPage</span></div>
+<div class="doc"><p>One page of a task's registrations (A2A <code>ListTaskPushNotificationConfigsResponse</code>).</p></div>
+<ul class="members"><li><b>configs</b> : <span class="pt">Array[TaskPushConfig]</span></li><li><b>next_page_token</b> : <span class="pt">String</span></li></ul>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-PushConfigPage-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">PushConfigPage::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-PushConfigPage-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">PushConfigPage::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-PushConfigPage-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">PushConfigPage::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-PushConfigPage-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">PushConfigPage::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-RequestContext">
+<div class="type-head"><h3>RequestContext</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">RequestContext</span></div>
+<div class="doc"><p>What an executor is given when it is asked to work a request: the message, the ids it belongs to, and the task as it stands when the message continues one.</p></div>
+<ul class="members"><li><b>message</b> : <span class="pt">Message</span></li><li><b>task_id</b> : <span class="pt">String</span></li><li><b>context_id</b> : <span class="pt">String</span></li><li><b>task</b> : <span class="pt">Task?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-RequestContext-artifact">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">RequestContext::artifact</span>(Self, Artifact, append? : Bool, last_chunk? : Bool) -&gt; StreamEvent</div>
+<div class="doc"><p>The event that hands this request's caller <code>artifact</code>, or more of one.</p></div>
+<div class="params"><span class="p"><b>artifact</b> <span class="pt">Artifact</span></span><span class="p"><b>append?</b> <span class="pt">Bool</span></span><span class="p"><b>last_chunk?</b> <span class="pt">Bool</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-RequestContext-replying">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">RequestContext::replying</span>(Self, Array[Part]) -&gt; StreamEvent</div>
+<div class="doc"><p>A message this request's caller receives outside the task. An executor that says only this answers with a message instead of opening a task.</p></div>
+<div class="params"><span class="p"><b>parts</b> <span class="pt">Array[Part]</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-RequestContext-status">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">RequestContext::status</span>(Self, TaskState) -&gt; StreamEvent</div>
+<div class="doc"><p>The event that moves this request's task to <code>state</code>.</p></div>
+<div class="params"><span class="p"><b>state</b> <span class="pt">TaskState</span></span></div>
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-Role">
+<div class="type-head"><h3>Role</h3><span class="kind">enum</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">enum</span> <span class="name">Role</span></div>
+<div class="doc"><p>The sender of a message (A2A <code>Role</code>).</p></div>
+<ul class="members"><li>Unspecified</li><li>User</li><li>Agent</li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-Role-from_wire">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Role::from_wire</span>(String) -&gt; Self</div>
+<div class="doc"><p>The role named by its wire form. Both the proto name and the bare word are read, because clients written against earlier drafts send the bare word.</p></div>
+<div class="params"><span class="p"><b>name</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Role-wire">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Role::wire</span>(Self) -&gt; String</div>
+<div class="doc"><p>The wire name of the role, as ProtoJSON writes an enum.</p></div>
+
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-Role-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Role::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Role-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Role::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Role-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Role::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Role-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Role::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-SendMessageConfig">
+<div class="type-head"><h3>SendMessageConfig</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">SendMessageConfig</span></div>
+<div class="doc"><p>How a send request should be handled: whether to wait, how much history to bring back, and what the caller is willing to receive.</p></div>
+<ul class="members"><li><b>return_immediately</b> : <span class="pt">Bool</span></li><li><b>history_length</b> : <span class="pt">Int32?</span></li><li><b>accepted_output_modes</b> : <span class="pt">Array[String]</span></li><li><b>push</b> : <span class="pt">TaskPushConfig?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-SendMessageConfig-at_most">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">SendMessageConfig::at_most</span>(Self, Int32) -&gt; Self</div>
+<div class="doc"><p>The same configuration, bringing back at most <code>history_length</code> messages.</p></div>
+<div class="params"><span class="p"><b>history_length</b> <span class="pt">Int32</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-SendMessageConfig-immediately">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">SendMessageConfig::immediately</span>(Self) -&gt; Self</div>
+<div class="doc"><p>The same configuration, returning before the task finishes.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-SendMessageConfig-pushing">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">SendMessageConfig::pushing</span>(Self, TaskPushConfig) -&gt; Self</div>
+<div class="doc"><p>The same configuration, registering <code>push</code> for the task it creates.</p></div>
+<div class="params"><span class="p"><b>push</b> <span class="pt">TaskPushConfig</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-SendMessageConfig-waiting">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">SendMessageConfig::waiting</span>() -&gt; Self</div>
+<div class="doc"><p>Wait for the task to finish, and bring back its whole history.</p></div>
+
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-SendMessageConfig-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">SendMessageConfig::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-SendMessageConfig-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">SendMessageConfig::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-SendMessageConfig-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">SendMessageConfig::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-SendMessageConfig-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">SendMessageConfig::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-SendMessageRequest">
+<div class="type-head"><h3>SendMessageRequest</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">SendMessageRequest</span></div>
+<div class="doc"><p>Everything a send request carries (A2A <code>SendMessageRequest</code>).</p></div>
+<ul class="members"><li><b>message</b> : <span class="pt">Message</span></li><li><b>configuration</b> : <span class="pt">SendMessageConfig?</span></li><li><b>metadata</b> : <span class="pt">@json.Json?</span></li><li><b>tenant</b> : <span class="pt">String?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-SendMessageRequest-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">SendMessageRequest::new</span>(Message) -&gt; Self</div>
+<div class="doc"><p>A request to send <code>message</code> with nothing else set.</p></div>
+<div class="params"><span class="p"><b>message</b> <span class="pt">Message</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-SendMessageRequest-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">SendMessageRequest::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-SendMessageRequest-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">SendMessageRequest::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-SendMessageRequest-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">SendMessageRequest::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-SendMessageRequest-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">SendMessageRequest::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-Server">
+<div class="type-head"><h3>Server</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">Server</span></div>
+<ul class="members"><li><b>state</b> : <span class="pt">ServerState</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-Server-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Server::new</span>(&amp;Executor, AgentCard) -&gt; Self</div>
+<div class="doc"><p>A server for <code>executor</code> and <code>card</code>, keeping tasks in its own memory and sending no notifications.</p></div>
+<div class="params"><span class="p"><b>executor</b> <span class="pt">&amp;Executor</span></span><span class="p"><b>card</b> <span class="pt">AgentCard</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Server-attach">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Server::attach</span>(Self, @async.TaskGroup[Unit]) -&gt; Self</div>
+<div class="doc"><p>Let the server start runs in <code>group</code> when a caller asks not to wait. A run started this way outlives the request that asked for it, and stops when the group does.</p></div>
+<div class="params"><span class="p"><b>group</b> <span class="pt">@async.TaskGroup[Unit]</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Server-card">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Server::card</span>(Self) -&gt; AgentCard</div>
+<div class="doc"><p>The card this server publishes.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Server-card_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Server::card_json</span>(Self) -&gt; @json.Json</div>
+<div class="doc"><p>The public card as the well-known document serves it.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Server-configured">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Server::configured</span>(executor~ : &amp;Executor, card~ : AgentCard, store~ : &amp;TaskStore, notifier~ : &amp;Notifier, config~ : ServerConfig) -&gt; Self</div>
+<div class="doc"><p>A server over the given store, notifier and configuration.</p></div>
+<div class="params"><span class="p"><b>executor~</b> <span class="pt">&amp;Executor</span></span><span class="p"><b>card~</b> <span class="pt">AgentCard</span></span><span class="p"><b>store~</b> <span class="pt">&amp;TaskStore</span></span><span class="p"><b>notifier~</b> <span class="pt">&amp;Notifier</span></span><span class="p"><b>config~</b> <span class="pt">ServerConfig</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Server-notifying">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Server::notifying</span>(Self, &amp;Notifier) -&gt; Self</div>
+<div class="doc"><p>The same server, sending its push notifications through <code>notifier</code>.</p></div>
+<div class="params"><span class="p"><b>notifier</b> <span class="pt">&amp;Notifier</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Server-storing">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Server::storing</span>(Self, &amp;TaskStore) -&gt; Self</div>
+<div class="doc"><p>The same server, keeping its tasks in <code>store</code> and sending notifications through <code>notifier</code>.</p></div>
+<div class="params"><span class="p"><b>store</b> <span class="pt">&amp;TaskStore</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Server-under">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Server::under</span>(Self, ServerConfig) -&gt; Self</div>
+<div class="doc"><p>The same server under <code>config</code>.</p></div>
+<div class="params"><span class="p"><b>config</b> <span class="pt">ServerConfig</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Server-with_extended_card">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Server::with_extended_card</span>(Self, AgentCard) -&gt; Self</div>
+<div class="doc"><p>The same server, handing an authenticated caller <code>card</code> instead of the public one.</p></div>
+<div class="params"><span class="p"><b>card</b> <span class="pt">AgentCard</span></span></div>
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-ServerConfig">
+<div class="type-head"><h3>ServerConfig</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">ServerConfig</span></div>
+<div class="doc"><p>The defaults a server runs with.</p></div>
+<ul class="members"><li><b>history_limit</b> : <span class="pt">Int32</span></li><li><b>page_size</b> : <span class="pt">Int32</span></li><li><b>max_page_size</b> : <span class="pt">Int32</span></li><li><b>refuse_unknown_media</b> : <span class="pt">Bool</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-ServerConfig-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">ServerConfig::new</span>() -&gt; Self</div>
+<div class="doc"><p>A server that brings back the whole history, 50 tasks to a page, and no more than 100.</p></div>
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-StreamEvent">
+<div class="type-head"><h3>StreamEvent</h3><span class="kind">enum</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">enum</span> <span class="name">StreamEvent</span></div>
+<div class="doc"><p>One item of a streamed response (A2A <code>StreamResponse.payload</code> oneof).</p></div>
+<ul class="members"><li>TaskSnapshot(Task)</li><li>TaskMessage(Message)</li><li>StatusChange(TaskStatusUpdate)</li><li>ArtifactChunk(TaskArtifactUpdate)</li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-StreamEvent-is_final">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">StreamEvent::is_final</span>(Self) -&gt; Bool</div>
+<div class="doc"><p>Whether the event ends the task for good.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-StreamEvent-state">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">StreamEvent::state</span>(Self) -&gt; TaskState?</div>
+<div class="doc"><p>The state this event reports, when it reports one.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-StreamEvent-task_id">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">StreamEvent::task_id</span>(Self) -&gt; String?</div>
+<div class="doc"><p>The task this event belongs to, when it belongs to one.</p></div>
+
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-StreamEvent-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">StreamEvent::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-StreamEvent-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">StreamEvent::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-StreamEvent-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">StreamEvent::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-StreamEvent-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">StreamEvent::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-Task">
+<div class="type-head"><h3>Task</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">Task</span></div>
+<div class="doc"><p>A unit of work an agent runs on a caller's behalf (A2A <code>Task</code>).</p></div>
+<ul class="members"><li><b>id</b> : <span class="pt">String</span></li><li><b>context_id</b> : <span class="pt">String</span></li><li><b>status</b> : <span class="pt">TaskStatus</span></li><li><b>artifacts</b> : <span class="pt">Array[Artifact]</span></li><li><b>history</b> : <span class="pt">Array[Message]</span></li><li><b>metadata</b> : <span class="pt">@json.Json?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-Task-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Task::new</span>(String, String) -&gt; Self</div>
+<div class="doc"><p>A new task in <code>context_id</code>, submitted and not yet worked on.</p></div>
+<div class="params"><span class="p"><b>id</b> <span class="pt">String</span></span><span class="p"><b>context_id</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Task-artifact">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Task::artifact</span>(Self, String) -&gt; Artifact?</div>
+<div class="doc"><p>The artifact with <code>artifact_id</code>, when the task has one.</p></div>
+<div class="params"><span class="p"><b>artifact_id</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Task-encode">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Task::encode</span>(Self, view? : View) -&gt; @json.Json</div>
+<div class="doc"><p>The task as the wire wants it, cut down to <code>view</code>.</p></div>
+<div class="params"><span class="p"><b>view?</b> <span class="pt">View</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Task-recent">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Task::recent</span>(Self, Int32?) -&gt; Array[Message]</div>
+<div class="doc"><p>The most recent <code>limit</code> messages of the history; all of them when <code>limit</code> is unset.</p></div>
+<div class="params"><span class="p"><b>limit</b> <span class="pt">Int32?</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Task-saying">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Task::saying</span>(Self, Message) -&gt; Self</div>
+<div class="doc"><p>The same task with <code>message</code> appended to its history.</p></div>
+<div class="params"><span class="p"><b>message</b> <span class="pt">Message</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Task-taking">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Task::taking</span>(Self, Artifact, Bool) -&gt; Self</div>
+<div class="doc"><p>The same task with <code>artifact</code> added, or with the parts of an existing artifact of the same id replaced or appended to.</p></div>
+<div class="params"><span class="p"><b>artifact</b> <span class="pt">Artifact</span></span><span class="p"><b>append</b> <span class="pt">Bool</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Task-with_state">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Task::with_state</span>(Self, TaskState) -&gt; Self</div>
+<div class="doc"><p>The same task in <code>state</code>, with the clock stamped.</p></div>
+<div class="params"><span class="p"><b>state</b> <span class="pt">TaskState</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-Task-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Task::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Task-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Task::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Task-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Task::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Task-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Task::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-TaskArtifactUpdate">
+<div class="type-head"><h3>TaskArtifactUpdate</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">TaskArtifactUpdate</span></div>
+<div class="doc"><p>An artifact was produced, or more of it arrived (A2A <code>TaskArtifactUpdateEvent</code>).</p></div>
+<ul class="members"><li><b>task_id</b> : <span class="pt">String</span></li><li><b>context_id</b> : <span class="pt">String</span></li><li><b>artifact</b> : <span class="pt">Artifact</span></li><li><b>append</b> : <span class="pt">Bool</span></li><li><b>last_chunk</b> : <span class="pt">Bool</span></li><li><b>metadata</b> : <span class="pt">@json.Json?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-TaskArtifactUpdate-of">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskArtifactUpdate::of</span>(String, String, Artifact, append? : Bool, last_chunk? : Bool) -&gt; Self</div>
+<div class="doc"><p>An artifact update event carrying <code>artifact</code> for the task with <code>task_id</code>.</p></div>
+<div class="params"><span class="p"><b>task_id</b> <span class="pt">String</span></span><span class="p"><b>context_id</b> <span class="pt">String</span></span><span class="p"><b>artifact</b> <span class="pt">Artifact</span></span><span class="p"><b>append?</b> <span class="pt">Bool</span></span><span class="p"><b>last_chunk?</b> <span class="pt">Bool</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-TaskArtifactUpdate-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskArtifactUpdate::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskArtifactUpdate-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskArtifactUpdate::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-TaskArtifactUpdate-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskArtifactUpdate::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskArtifactUpdate-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskArtifactUpdate::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-TaskLog">
+<div class="type-head"><h3>TaskLog</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">TaskLog</span></div>
+<ul class="members"><li><b>events</b> : <span class="pt">Array[StreamEvent]</span></li><li>mut open : Bool</li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-TaskLog-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskLog::new</span>() -&gt; Self</div>
+<div class="doc"><p>An empty log for a task that has not finished.</p></div>
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-TaskPage">
+<div class="type-head"><h3>TaskPage</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">TaskPage</span></div>
+<div class="doc"><p>One page of tasks (A2A <code>ListTasksResponse</code>).</p></div>
+<ul class="members"><li><b>tasks</b> : <span class="pt">Array[Task]</span></li><li><b>next_page_token</b> : <span class="pt">String</span></li><li><b>page_size</b> : <span class="pt">Int32</span></li><li><b>total_size</b> : <span class="pt">Int32</span></li></ul>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-TaskPage-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskPage::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskPage-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskPage::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-TaskPage-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskPage::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskPage-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskPage::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-TaskPushConfig">
+<div class="type-head"><h3>TaskPushConfig</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">TaskPushConfig</span></div>
+<div class="doc"><p>Where the agent posts a task's updates, and how it authenticates there (A2A <code>TaskPushNotificationConfig</code>).</p></div>
+<ul class="members"><li><b>id</b> : <span class="pt">String</span></li><li><b>task_id</b> : <span class="pt">String</span></li><li><b>url</b> : <span class="pt">String</span></li><li><b>token</b> : <span class="pt">String?</span></li><li><b>authentication</b> : <span class="pt">AuthenticationInfo?</span></li><li><b>tenant</b> : <span class="pt">String?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-TaskPushConfig-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskPushConfig::new</span>(String, String, String) -&gt; Self</div>
+<div class="doc"><p>A registration of <code>url</code> for <code>task_id</code>, under <code>id</code>.</p></div>
+<div class="params"><span class="p"><b>id</b> <span class="pt">String</span></span><span class="p"><b>task_id</b> <span class="pt">String</span></span><span class="p"><b>url</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-TaskPushConfig-authenticating">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskPushConfig::authenticating</span>(Self, AuthenticationInfo) -&gt; Self</div>
+<div class="doc"><p>The same registration, authenticating with <code>authentication</code>.</p></div>
+<div class="params"><span class="p"><b>authentication</b> <span class="pt">AuthenticationInfo</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-TaskPushConfig-with_token">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskPushConfig::with_token</span>(Self, String) -&gt; Self</div>
+<div class="doc"><p>The same registration, carrying the caller's own <code>token</code> in each notification's headers.</p></div>
+<div class="params"><span class="p"><b>token</b> <span class="pt">String</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-TaskPushConfig-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskPushConfig::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskPushConfig-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskPushConfig::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-TaskPushConfig-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskPushConfig::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskPushConfig-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskPushConfig::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-TaskState">
+<div class="type-head"><h3>TaskState</h3><span class="kind">enum</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">enum</span> <span class="name">TaskState</span></div>
+<div class="doc"><p>The lifecycle state of a task (A2A <code>TaskState</code>).</p></div>
+<ul class="members"><li>Unspecified</li><li>Submitted</li><li>Working</li><li>Completed</li><li>Failed</li><li>Canceled</li><li>InputRequired</li><li>Rejected</li><li>AuthRequired</li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-TaskState-from_wire">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskState::from_wire</span>(String) -&gt; Self</div>
+<div class="doc"><p>The state named by its wire form. The proto name, the bare word and the hyphenated draft name are all read: a client written against an earlier draft sends <code>input-required</code>.</p></div>
+<div class="params"><span class="p"><b>name</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-TaskState-interrupted">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskState::interrupted</span>(Self) -&gt; Bool</div>
+<div class="doc"><p>Whether the task is waiting on the caller and processing can resume from here.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskState-terminal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskState::terminal</span>(Self) -&gt; Bool</div>
+<div class="doc"><p>Whether the task has finished for good: no further message, cancel or transition can apply.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskState-wire">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskState::wire</span>(Self) -&gt; String</div>
+<div class="doc"><p>The wire name of the state, as ProtoJSON writes an enum.</p></div>
+
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-TaskState-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskState::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskState-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskState::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-TaskState-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskState::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskState-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskState::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-TaskStatus">
+<div class="type-head"><h3>TaskStatus</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">TaskStatus</span></div>
+<div class="doc"><p>The state of a task, with the message and time that go with it (A2A <code>TaskStatus</code>).</p></div>
+<ul class="members"><li><b>state</b> : <span class="pt">TaskState</span></li><li><b>message</b> : <span class="pt">Message?</span></li><li><b>timestamp</b> : <span class="pt">String?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-TaskStatus-of">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskStatus::of</span>(TaskState) -&gt; Self</div>
+<div class="doc"><p>A status with no message and no timestamp.</p></div>
+<div class="params"><span class="p"><b>state</b> <span class="pt">TaskState</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-TaskStatus-recorded">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskStatus::recorded</span>(TaskState) -&gt; Self</div>
+<div class="doc"><p>The status of <code>state</code>, recorded now.</p></div>
+<div class="params"><span class="p"><b>state</b> <span class="pt">TaskState</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-TaskStatus-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskStatus::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskStatus-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskStatus::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-TaskStatus-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskStatus::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskStatus-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskStatus::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-TaskStatusUpdate">
+<div class="type-head"><h3>TaskStatusUpdate</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">TaskStatusUpdate</span></div>
+<div class="doc"><p>A task changed state (A2A <code>TaskStatusUpdateEvent</code>).</p></div>
+<ul class="members"><li><b>task_id</b> : <span class="pt">String</span></li><li><b>context_id</b> : <span class="pt">String</span></li><li><b>status</b> : <span class="pt">TaskStatus</span></li><li><b>metadata</b> : <span class="pt">@json.Json?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-TaskStatusUpdate-of">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskStatusUpdate::of</span>(String, String, TaskState) -&gt; Self</div>
+<div class="doc"><p>A status update event for the task with <code>task_id</code>, moving it to <code>state</code>.</p></div>
+<div class="params"><span class="p"><b>task_id</b> <span class="pt">String</span></span><span class="p"><b>context_id</b> <span class="pt">String</span></span><span class="p"><b>state</b> <span class="pt">TaskState</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-TaskStatusUpdate-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskStatusUpdate::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskStatusUpdate-from_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskStatusUpdate::from_json</span>(@json.Json, @json.JsonPath) -&gt; Self <span class="kw">raise</span> @json.JsonDecodeError</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-TaskStatusUpdate-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskStatusUpdate::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-TaskStatusUpdate-to_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">TaskStatusUpdate::to_json</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-View">
+<div class="type-head"><h3>View</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">View</span></div>
+<div class="doc"><p>How much of a task a reply carries: whether its artifacts travel with it, and how many of the most recent messages do. <code>None</code> history means all of them.</p></div>
+<ul class="members"><li><b>artifacts</b> : <span class="pt">Bool</span></li><li><b>history</b> : <span class="pt">Int32?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-View-bare">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">View::bare</span>() -&gt; Self</div>
+<div class="doc"><p>The task alone, without what it produced.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-View-full">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">View::full</span>() -&gt; Self</div>
+<div class="doc"><p>Everything the task has.</p></div>
+
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-View-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">View::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-View-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">View::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+</div>
+</section>
+<div class="api-cat"><h3>Errors</h3></div>
+<section class="api-type" id="err-moona2a-Refused">
+<div class="type-head"><h3>Refused</h3><span class="kind">suberror</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">suberror</span> <span class="name">Refused</span></div>
+<div class="doc"><p>A refused operation, named as the specification names it. The string is the server's own note on what the caller did, empty when the name says everything.</p></div>
+<ul class="members"><li>TaskNotFound(String)</li><li>TaskNotCancelable(String)</li><li>PushNotificationNotSupported(String)</li><li>UnsupportedOperation(String)</li><li>ContentTypeNotSupported(String)</li><li>InvalidAgentResponse(String)</li><li>ExtendedAgentCardNotConfigured(String)</li><li>ExtensionSupportRequired(String)</li><li>VersionNotSupported(String)</li><li>InvalidRequest(String)</li><li>InvalidParams(String)</li></ul>
+</section>
+<div class="api-cat" id="fn-moona2a"><h3>Functions</h3></div>
+<article class="api-item" id="fn-moona2a-is_streaming_method">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">is_streaming_method</span>(String) -&gt; Bool</div>
+<div class="doc"><p>Whether <code>name</code> is one of the methods whose answer is a stream, for a transport that has to decide before reading the whole request.</p></div>
+<div class="params"><span class="p"><b>name</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="fn-moona2a-request_method">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">request_method</span>(StringView) -&gt; String?</div>
+<div class="doc"><p>The method this request asks for, so a transport can decide whether its answer is a stream before reading the whole body.</p></div>
+<div class="params"><span class="p"><b>body</b> <span class="pt">StringView</span></span></div>
+</article>
+<article class="api-item" id="fn-moona2a-timestamp_now">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">timestamp_now</span>() -&gt; String</div>
+<div class="doc"><p>The current instant as an ISO 8601 timestamp in UTC, e.g. <code>2026-11-06T02:02:55.123Z</code>.</p>
+<p>Millisecond precision is what the specification asks for and all <code>@env.now</code> offers on every backend; a timestamp that is a few milliseconds coarse still orders correctly.</p></div>
+
+</article>
+<div class="api-cat" id="const-moona2a"><h3>Constants</h3></div>
+<article class="api-item" id="const-moona2a-card_path">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">card_path</span> : String</div>
+<div class="doc"><p>Where the card is served (section 8.2).</p></div>
+
+</article>
+<article class="api-item" id="const-moona2a-default_capacity">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">default_capacity</span> : Int32</div>
+<div class="doc"><p>How many tasks an in-memory store keeps before it starts forgetting the ones that finished. 1024 is enough for a session's worth of work and small enough that a forgotten task cannot grow without bound.</p></div>
+
+</article>
+<article class="api-item" id="const-moona2a-follow_tick_millis">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">follow_tick_millis</span> : Int32</div>
+<div class="doc"><p>How long a follower waits between looks at the log it is watching.</p>
+<p>The log is the ordering guarantee, not the wake-up: a follower reads forward from its own cursor, so it sees every event once, in order, whether it woke on the first tick or the fifth. 25 milliseconds is short enough that a stream feels live and long enough that an idle subscription costs nothing worth measuring.</p></div>
+
+</article>
+<article class="api-item" id="const-moona2a-protocol_version">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">protocol_version</span> : String</div>
+<div class="doc"><p>The protocol version this library speaks, as a client writes it in <code>A2A-Version</code>.</p></div>
+
+</article>
+</section>
+<section class="api-pkg" id="pkg-asgi">
+<header>
+<h2><span class="mono">@asgi</span></h2>
+<div class="imp">import { "moonbitstack/moona2a/asgi" }</div>
+</header>
+<div class="api-cat"><h3>Types</h3></div>
+<section class="api-type" id="type-asgi-Options">
+<div class="type-head"><h3>Options</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">Options</span></div>
+<div class="doc"><p>Where the endpoint answers, and how long a client may cache the card.</p></div>
+<ul class="members"><li><b>rpc_path</b> : <span class="pt">String</span></li><li><b>card_path</b> : <span class="pt">String</span></li><li><b>cache_seconds</b> : <span class="pt">Int32</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-asgi-Options-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Options::new</span>() -&gt; Self</div>
+<div class="doc"><p>The endpoint at <code>/</code>, the card at its well-known address, and a card a client may keep for five minutes.</p></div>
+
+</article>
+</div>
+</section>
+<div class="api-cat" id="fn-asgi"><h3>Functions</h3></div>
+<article class="api-item" id="fn-asgi-to_asgi">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">to_asgi</span>(@moona2a.Server, options? : Options) -&gt; async (@spec.Scope, async () -&gt; @spec.Event, async (@spec.Event) -&gt; Unit) -&gt; Unit</div>
+<div class="doc"><p>The ASGI application for <code>server</code>: a GET of the card's well-known address answers with the card, a POST of a JSON-RPC body answers with a body or, for a streaming method, with a stream of server-sent events.</p>
+<p>The application writes its events as it goes, rather than assembling one <code>Response</code>: a stream answer is only worth having if each event leaves as it happens.</p></div>
+<div class="params"><span class="p"><b>server</b> <span class="pt">@moona2a.Server</span></span><span class="p"><b>options?</b> <span class="pt">Options</span></span></div>
+</article>
+</section>
+<section class="api-pkg" id="pkg-fetch">
+<header>
+<h2><span class="mono">@fetch</span></h2>
+<div class="imp">import { "moonbitstack/moona2a/fetch" }</div>
+</header>
+<div class="api-cat"><h3>Types</h3></div>
+<section class="api-type" id="type-fetch-HttpTransport">
+<div class="type-head"><h3>HttpTransport</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">HttpTransport</span></div>
+<div class="doc"><p>The JSON-RPC endpoint of one agent, reached over HTTP.</p></div>
+<ul class="members"><li><b>client</b> : <span class="pt">@moonfetch.Client</span></li><li><b>path</b> : <span class="pt">String</span></li><li><b>card_path</b> : <span class="pt">String</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-fetch-HttpTransport-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">HttpTransport::new</span>(String, path? : String, card_path? : String) -&gt; Self <span class="kw">raise</span></div>
+<div class="doc"><p>A transport to the agent at <code>url</code>, e.g. <code>https://agent.example.com</code>, answering JSON-RPC on the root path and serving its card at the well-known one.</p></div>
+<div class="params"><span class="p"><b>url</b> <span class="pt">String</span></span><span class="p"><b>path?</b> <span class="pt">String</span></span><span class="p"><b>card_path?</b> <span class="pt">String</span></span></div>
+</article>
+</div>
+</section>
+<section class="api-type" id="type-fetch-Webhook">
+<div class="type-head"><h3>Webhook</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">Webhook</span></div>
+<div class="doc"><p>A notifier that posts to whatever URL a registration names.</p></div>
+
+</section>
+<div class="api-cat"><h3>Errors</h3></div>
+<section class="api-type" id="err-fetch-Unreachable">
+<div class="type-head"><h3>Unreachable</h3><span class="kind">suberror</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">suberror</span> <span class="name">Unreachable</span></div>
+<ul class="members"><li>Unreachable(String)</li></ul>
+</section>
+<section class="api-type" id="err-fetch-WrongShape">
+<div class="type-head"><h3>WrongShape</h3><span class="kind">suberror</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">suberror</span> <span class="name">WrongShape</span></div>
+<ul class="members"><li>WrongShape(String)</li></ul>
+</section>
+<div class="api-cat" id="fn-fetch"><h3>Functions</h3></div>
+<article class="api-item" id="fn-fetch-delivery_headers">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">delivery_headers</span>(@moona2a.TaskPushConfig) -&gt; Array[(String, String)]</div>
+<div class="doc"><p>The headers a delivery goes out under: the payload type, the registration's token, and the credentials it names. Separate from the send so the part a caller cares about can be read without a webhook to read it from.</p></div>
+<div class="params"><span class="p"><b>config</b> <span class="pt">@moona2a.TaskPushConfig</span></span></div>
+</article>
+<div class="api-cat" id="const-fetch"><h3>Constants</h3></div>
+<article class="api-item" id="const-fetch-token_header">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">token_header</span> : String</div>
+<div class="doc"><p>How the token in a registration travels, when the caller set one. The specification names the field but not the header, so this is the name the rest of the ecosystem uses.</p></div>
+
+</article>
+<article class="api-item" id="const-fetch-webhook_timeout_millis">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">webhook_timeout_millis</span> : Int32</div>
+<div class="doc"><p>How long to wait for the caller's webhook before giving up on this delivery. Section 4.3.3 suggests ten to thirty seconds; ten keeps a slow webhook from holding a task's run.</p></div>
+
+</article>
+</section>
+    </div>
+  </div>
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <div class="row">
+      <a class="brand" href="index.html">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6 14.7 8.28 22.46 8.6 16.38 13.42 18.47 20.9 12 16.6 5.53 20.9 7.62 13.42 1.54 8.6 9.3 8.28Z"/></svg>
+        <span>moona2a</span>
+      </a>
+      <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams, push. Apache-2.0.</p>
+      <div class="links">
+        <a href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://mooncakes.io/docs/moonbitstack/moona2a" target="_blank" rel="noopener">mooncakes</a>
+        <a href="guide.html">Guide</a>
+        <a href="showcase.html">The star</a>
+        <a href="index.html">Home</a>
+      </div>
+    </div>
+    <div class="legal"><span>Apache-2.0</span><span>Built with MoonBit</span></div>
+  </div>
+</footer>
+</body>
+</html>

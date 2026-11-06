@@ -1,0 +1,65 @@
+name: Docs
+
+# The site in docs/ is built from three things: the hand-written pages, the API reference that
+# scripts/gen_api.py writes out of the package interfaces, and the library compiled to JavaScript
+# for the star page. The last two are rebuilt here and checked against what is committed, so a page
+# that says something the code no longer says cannot be published.
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "docs/**"
+      - "src/**"
+      - "scripts/**"
+      - ".github/workflows/docs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-26.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: install moon
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: build the site
+        run: |
+          moon update
+          mkdir -p docs/engine
+          moon build --target js --release src/examples/browser
+          cp _build/js/release/build/examples/browser/browser.js docs/engine/a2a.js
+          python3 scripts/gen_api.py
+          git diff --exit-code docs/api.html
+
+      - name: configure pages
+        uses: actions/configure-pages@v6
+        with:
+          enablement: true
+
+      - name: upload the site
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: docs
+
+      - name: deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
