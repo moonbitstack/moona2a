@@ -41,14 +41,21 @@ jobs:
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
 
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+
       - name: build the site
         run: |
           moon update
           mkdir -p docs/engine
           moon build --target js --release src/examples/browser
           cp _build/js/release/build/examples/browser/browser.js docs/engine/a2a.js
+          npx --yes --package less@4.9.1 lessc docs/assets/site.less docs/assets/site.css
           python3 scripts/gen_api.py
-          git diff --exit-code docs/api.html
+          # Both the stylesheet and the reference are generated: what is committed must be what the
+          # sources produce, or the site would publish something nobody can rebuild.
+          git diff --exit-code docs/assets/site.css docs/api.html
 
       - name: configure pages
         uses: actions/configure-pages@v6

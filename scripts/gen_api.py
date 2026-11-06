@@ -532,18 +532,6 @@ MOON = (
     '<svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'
     '<path d="M22 12.88A10 10 0 1 1 11.12 2a7.78 7.78 0 0 0 10.88 10.88z"/></svg>'
 )
-LATTICE = """<svg class="lattice" aria-hidden="true" focusable="false">
-  <defs>
-    <pattern id="comb" width="34.64" height="60" patternUnits="userSpaceOnUse">
-      <path d="M17.32 -20 L34.64 -10 L34.64 10 L17.32 20 L0 10 L0 -10 Z" fill="none" stroke="currentColor" stroke-width=".7"/>
-      <path d="M0 10 L17.32 20 L17.32 40 L0 50 L-17.32 40 L-17.32 20 Z
-               M34.64 10 L51.96 20 L51.96 40 L34.64 50 L17.32 40 L17.32 20 Z
-               M17.32 40 L34.64 50 L34.64 70 L17.32 80 L0 70 L0 50 Z" fill="none" stroke="currentColor" stroke-width=".7"/>
-    </pattern>
-  </defs>
-  <rect width="100%" height="100%" fill="url(#comb)"/>
-</svg>"""
-
 
 def nav(active: str) -> str:
     def link(href: str, key: str, label: str) -> str:
@@ -554,7 +542,7 @@ def nav(active: str) -> str:
   <div class="wrap bar">
     <a class="brand" href="index.html">
       {MARK}
-      <span>moona2a</span>
+      <span>MoonA2A</span>
     </a>
     <nav class="mainnav" aria-label="Primary">
       {link("guide.html", "guide", "Guide")}
@@ -584,7 +572,7 @@ def footer() -> str:
     <div class="row">
       <a class="brand" href="index.html">
         {MARK}
-        <span>moona2a</span>
+        <span>MoonA2A</span>
       </a>
       <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams, push. Apache-2.0.</p>
       <div class="links">
@@ -621,7 +609,6 @@ def render(packages: list[tuple[str, dict]], docs: dict, params: dict) -> str:
 </head>
 <body id="top">
 <a class="skip" href="#main">Skip to content</a>
-{LATTICE}
 {nav("api")}
 <main id="main">
   <section class="page-hero">
