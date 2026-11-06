@@ -23,7 +23,7 @@
       const dark =
         mode === "dark" ||
         (mode !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
-      meta.setAttribute("content", dark ? "#100e0b" : "#f4eee2");
+      meta.setAttribute("content", dark ? "#0d0a0b" : "#f7f1ec");
     }
   };
 
@@ -47,7 +47,7 @@
 
   /* ---------------------------------------------------------------- gauge */
 
-  // A hexagon at the right edge that fills with honey as the page is read. It is the position
+  // A hexagon at the right edge that fills with rose gold as the page is read. It is the position
   // indicator, and it is the way back to the top; the native scrollbar keeps its width but has no
   // thumb, so nothing jumps when it appears.
   const gauge = document.querySelector(".gauge");
