@@ -36,7 +36,7 @@ pub fn HttpTransport::new(
 
 ///|
 /// Send the request and read the answer, which is one JSON-RPC document.
-impl @moona2a.Transport for HttpTransport with fn exchange(self, message) {
+pub impl @moona2a.Transport for HttpTransport with fn exchange(self, message) {
   let body = @moonfetch.Body::Text(message.to_json().stringify())
   let response = self.client.post(self.path, body~, headers=[
     ("content-type", "application/json"),
@@ -58,7 +58,7 @@ impl @moona2a.Transport for HttpTransport with fn exchange(self, message) {
 /// The answer is read to its end before the events are handed over: the HTTP client this library
 /// depends on has no incremental body, so a frame waits for the response to finish. The sink is
 /// still the seam a host with a streaming client delivers into as frames arrive.
-impl @moona2a.Transport for HttpTransport with fn stream(self, message, out) {
+pub impl @moona2a.Transport for HttpTransport with fn stream(self, message, out) {
   let body = @moonfetch.Body::Text(message.to_json().stringify())
   let response = self.client.post(self.path, body~, headers=[
     ("content-type", "application/json"),
@@ -109,7 +109,7 @@ pub suberror WrongShape {
 
 ///|
 /// Read the agent's card from its well-known address.
-impl @moona2a.Transport for HttpTransport with fn discover(self) {
+pub impl @moona2a.Transport for HttpTransport with fn discover(self) {
   let response = self.client.get(self.card_path, headers=[
     ("accept", "application/json"),
   ])

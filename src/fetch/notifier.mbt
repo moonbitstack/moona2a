@@ -16,8 +16,12 @@ pub let token_header : String = "x-a2a-notification-token"
 pub let webhook_timeout_millis : Int32 = 10000
 
 ///|
-pub impl @moona2a.Notifier for Webhook with fn notify(self, config, event) {
-  ignore(self)
+/// The headers a delivery goes out under: the payload type, the registration's token, and the
+/// credentials it names. Separate from the send so the part a caller cares about can be read
+/// without a webhook to read it from.
+pub fn delivery_headers(
+  config : @moona2a.TaskPushConfig,
+) -> Array[(String, String)] {
   let headers : Array[(String, String)] = [
     ("content-type", "application/a2a+json"),
   ]
@@ -36,6 +40,13 @@ pub impl @moona2a.Notifier for Webhook with fn notify(self, config, event) {
       }
     None => ()
   }
+  headers
+}
+
+///|
+pub impl @moona2a.Notifier for Webhook with fn notify(self, config, event) {
+  ignore(self)
+  let headers = delivery_headers(config)
   let response = @moonfetch.post(
     config.url,
     body=@moonfetch.Body::Text(event.to_json().stringify()),

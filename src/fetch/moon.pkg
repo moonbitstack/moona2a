@@ -24,6 +24,7 @@ options(
   targets: {
     "transport.mbt": [ "native", "wasm" ],
     "notifier.mbt": [ "native", "wasm" ],
+    "notifier_test.mbt": [ "native", "wasm" ],
   },
 )
 
