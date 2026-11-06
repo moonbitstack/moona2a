@@ -29,6 +29,11 @@ wait_for_card() {
 
 echo "== building both servers =="
 (cd "$repo_root" && moon build src/examples/05-conformance --target native)
+# Windows names the binary with an extension and the other systems do not.
+server="$repo_root/_build/native/debug/build/examples/05-conformance/05-conformance"
+if [[ -x "$server.exe" ]]; then
+  server="$server.exe"
+fi
 
 echo "== direction one: the MoonBit client calls the Python agent =="
 "$python" "$repo_root/scripts/interop/py_server.py" --port "$python_port" &
@@ -45,7 +50,7 @@ cleanup
 trap - EXIT
 
 echo "== direction two: the Python client calls the MoonBit agent =="
-"$repo_root/_build/native/debug/build/examples/05-conformance/05-conformance.exe" &
+"$server" &
 moon_pid=$!
 cleanup() {
   kill "$moon_pid" 2>/dev/null || true

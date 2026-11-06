@@ -36,6 +36,11 @@ fi
 
 echo "== building the server =="
 (cd "$repo_root" && moon build src/examples/05-conformance --target native)
+# Windows names the binary with an extension and the other systems do not.
+server="$repo_root/_build/native/debug/build/examples/05-conformance/05-conformance"
+if [[ -x "$server.exe" ]]; then
+  server="$server.exe"
+fi
 
 mkdir -p "$workdir"
 if [[ ! -d "$workdir/a2a-tck/.git" ]]; then
@@ -54,7 +59,7 @@ if [[ ! -x "$suite_python" ]]; then
 fi
 
 echo "== starting the server on port $port =="
-"$repo_root/_build/native/debug/build/examples/05-conformance/05-conformance.exe" &
+"$server" &
 server_pid=$!
 cleanup() {
   kill "$server_pid" 2>/dev/null || true
