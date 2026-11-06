@@ -8,43 +8,35 @@
 
   /* ---------------------------------------------------------------- theme */
 
-  const KEY = "moona2a-theme";
+  // The page opens on the system setting, and the toggle is a light/dark switch for this visit
+  // only: nothing is stored, so a reload hands the decision back to the system.
   const PAPER = { light: "#fbfaf6", dark: "#12100d" };
+  const media = matchMedia("(prefers-color-scheme: dark)");
 
-  const apply = (mode) => {
-    if (mode === "system") {
-      root.removeAttribute("data-theme");
-      localStorage.removeItem(KEY);
-    } else {
-      root.setAttribute("data-theme", mode);
-      localStorage.setItem(KEY, mode);
-    }
+  const current = () => root.getAttribute("data-theme") || (media.matches ? "dark" : "light");
+
+  const paint = () => {
+    const dark = current() === "dark";
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) {
-      const dark =
-        mode === "dark" ||
-        (mode !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
-      meta.setAttribute("content", dark ? PAPER.dark : PAPER.light);
+    if (meta) meta.setAttribute("content", dark ? PAPER.dark : PAPER.light);
+    for (const btn of document.querySelectorAll(".theme-toggle")) {
+      btn.setAttribute("aria-label", dark ? "Switch to light" : "Switch to dark");
+      btn.setAttribute("data-tip", dark ? "Light" : "Dark");
     }
   };
 
-  const stored = localStorage.getItem(KEY);
-  if (stored === "light" || stored === "dark") apply(stored);
-
-  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-    if (!localStorage.getItem(KEY)) apply("system");
-  });
-
   for (const btn of document.querySelectorAll(".theme-toggle")) {
     btn.addEventListener("click", () => {
-      const dark =
-        root.getAttribute("data-theme") === "dark" ||
-        (!root.getAttribute("data-theme") &&
-          matchMedia("(prefers-color-scheme: dark)").matches);
-      apply(dark ? "light" : "dark");
-      btn.setAttribute("aria-pressed", String(!dark));
+      root.setAttribute("data-theme", current() === "dark" ? "light" : "dark");
+      paint();
     });
   }
+
+  media.addEventListener("change", () => {
+    if (!root.hasAttribute("data-theme")) paint();
+  });
+
+  paint();
 
   /* ------------------------------------------------------------- scrollbar */
 

@@ -6,12 +6,11 @@
 <title>Showcase — MoonA2A</title>
 <meta name="description" content="Pick an agent, send it a line, and read the JSON-RPC frames this library encodes: the call, the task, and every update after it.">
 <meta name="theme-color" content="#fbfaf6">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23fbfaf6'/%3E%3Cpath d='M12 2.6 14.4 8.9 21.2 9.2 15.8 13.4 17.7 19.9 12 16.1 6.3 19.9 8.2 13.4 2.8 9.2 9.6 8.9Z' fill='none' stroke='%239c4a57' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='3' fill='%23fbfaf6'/%3E%3Cpath fill-rule='evenodd' d='M6.2%202.6H17.8A3.6%203.6%200%200%201%2021.4%206.2V17.8A3.6%203.6%200%200%201%2017.8%2021.4H6.2A3.6%203.6%200%200%201%202.6%2017.8V6.2A3.6%203.6%200%200%201%206.2%202.6ZM0.51%2012.01L12.01%200.51L13.99%202.49L2.49%2013.99ZM10.01%2021.51L21.51%2010.01L23.49%2011.99L11.99%2023.49Z' fill='%239c4a57'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css">
-<script>try{const t=localStorage.getItem("moona2a-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <script src="assets/site.js" defer></script>
 <script src="assets/star.js" defer></script>
 </head>
@@ -21,7 +20,7 @@
 <header class="topbar">
   <div class="wrap bar">
     <a class="brand" href="index.html">
-      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.8 14.6 8.4 22.2 8.7 16.2 13.4 18.3 20.8 12 16.6 5.7 20.8 7.8 13.4 1.8 8.7 9.4 8.4Z"/></svg>
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M6.2 2.6H17.8A3.6 3.6 0 0 1 21.4 6.2V17.8A3.6 3.6 0 0 1 17.8 21.4H6.2A3.6 3.6 0 0 1 2.6 17.8V6.2A3.6 3.6 0 0 1 6.2 2.6ZM0.51 12.01L12.01 0.51L13.99 2.49L2.49 13.99ZM10.01 21.51L21.51 10.01L23.49 11.99L11.99 23.49Z"/></svg>
       <span>MoonA2A</span>
     </a>
     <nav class="mainnav" aria-label="Primary">
@@ -31,10 +30,10 @@
       <a href="showcase.html" aria-current="page">Showcase</a>
     </nav>
     <div class="tools">
-      <a class="icon-btn" href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener" aria-label="GitHub repository">
+      <a class="icon-btn tip" href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener" aria-label="GitHub repository" data-tip="Source">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
       </a>
-      <button class="icon-btn theme-toggle" type="button" aria-label="Switch between light and dark">
+      <button class="icon-btn theme-toggle tip" type="button" aria-label="Switch to dark" data-tip="Dark">
         <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.6"/><path d="M12 2.2v2.2M12 19.6v2.2M2.2 12h2.2M19.6 12h2.2M5.1 5.1l1.6 1.6M17.3 17.3l1.6 1.6M18.9 5.1l-1.6 1.6M6.7 17.3l-1.6 1.6"/></svg>
         <svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12.88A10 10 0 1 1 11.12 2a7.78 7.78 0 0 0 10.88 10.88z"/></svg>
       </button>
@@ -56,61 +55,78 @@
 
   <div class="map-panel">
     <div class="map-figure">
-    <svg class="star-map" viewBox="0 0 420 400" role="group" aria-label="An agent star: a hub with five spokes">
-      <circle class="orbit" cx="210" cy="196" r="148"/>
-      <path class="outline" d="M210 48 L350.8 150.3 L297 315.7 L123 315.7 L69.2 150.3 Z"/>
+    <svg class="star-map" viewBox="0 0 450 410" role="group" aria-label="An agent star: a hub with five spokes">
+      <g class="marks" aria-hidden="true">
+        <path d="M14 24V14h10M426 14h10v10M436 386v10h-10M24 396H14v-10"/>
+      </g>
+
+      <circle class="orbit" cx="220" cy="200" r="148"/>
+      <path class="outline" d="M220 60 L353.1 156.7 L302.3 313.3 L137.7 313.3 L86.9 156.7 Z"/>
 
       <g id="edges">
-        <line class="edge" data-agent="planner" x1="210" y1="196" x2="210" y2="48"/>
-        <line class="edge" data-agent="archivist" x1="210" y1="196" x2="350.8" y2="150.3"/>
-        <line class="edge" data-agent="herald" x1="210" y1="196" x2="297" y2="315.7"/>
-        <line class="edge" data-agent="sentinel" x1="210" y1="196" x2="123" y2="315.7"/>
-        <line class="edge" data-agent="scout" x1="210" y1="196" x2="69.2" y2="150.3"/>
+        <line class="edge" data-agent="planner" x1="220" y1="200" x2="220" y2="60"/>
+        <line class="edge" data-agent="archivist" x1="220" y1="200" x2="353.1" y2="156.7"/>
+        <line class="edge" data-agent="herald" x1="220" y1="200" x2="302.3" y2="313.3"/>
+        <line class="edge" data-agent="sentinel" x1="220" y1="200" x2="137.7" y2="313.3"/>
+        <line class="edge" data-agent="scout" x1="220" y1="200" x2="86.9" y2="156.7"/>
       </g>
 
       <g class="flows">
-        <circle class="flow" r="2.6"><animateMotion dur="4.2s" begin="0s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M210 196 L210 68"/><animate attributeName="opacity" dur="4.2s" begin="0s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/></circle>
-        <circle class="flow" r="2.6"><animateMotion dur="5.1s" begin="-1.7s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M210 196 L338.4 156.6"/><animate attributeName="opacity" dur="5.1s" begin="-1.7s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/></circle>
-        <circle class="flow" r="2.6"><animateMotion dur="3.7s" begin="-0.9s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M210 196 L289.8 306.9"/><animate attributeName="opacity" dur="3.7s" begin="-0.9s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/></circle>
-        <circle class="flow" r="2.6"><animateMotion dur="4.7s" begin="-2.6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M210 196 L130.2 306.9"/><animate attributeName="opacity" dur="4.7s" begin="-2.6s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/></circle>
-        <circle class="flow" r="2.6"><animateMotion dur="5.6s" begin="-3.9s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M210 196 L81.6 156.6"/><animate attributeName="opacity" dur="5.6s" begin="-3.9s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/></circle>
+        <circle class="flow" r="2.6"><animateMotion dur="4.2s" begin="0s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M220 200 L220 80"/><animate attributeName="opacity" dur="4.2s" begin="0s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/></circle>
+        <circle class="flow" r="2.6"><animateMotion dur="5.1s" begin="-1.7s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M220 200 L334.1 162.9"/><animate attributeName="opacity" dur="5.1s" begin="-1.7s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/></circle>
+        <circle class="flow" r="2.6"><animateMotion dur="3.7s" begin="-0.9s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M220 200 L290.5 297.1"/><animate attributeName="opacity" dur="3.7s" begin="-0.9s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/></circle>
+        <circle class="flow" r="2.6"><animateMotion dur="4.7s" begin="-2.6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M220 200 L149.5 297.1"/><animate attributeName="opacity" dur="4.7s" begin="-2.6s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/></circle>
+        <circle class="flow" r="2.6"><animateMotion dur="5.6s" begin="-3.9s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1" keyTimes="0;1" path="M220 200 L105.9 162.9"/><animate attributeName="opacity" dur="5.6s" begin="-3.9s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.12;0.78;0.94;1"/></circle>
       </g>
 
       <g class="node node-btn hub-node" data-agent="convener" role="button" tabindex="0" aria-pressed="true" aria-label="Convener, the hub">
-        <circle class="hub-ring" cx="210" cy="196" r="19"/>
-        <circle class="ring" cx="210" cy="196" r="12"/>
-        <circle class="core" cx="210" cy="196" r="3"/>
+        <circle class="hit" cx="220" cy="200" r="30"/>
+        <circle class="hub-ring" cx="220" cy="200" r="20"/>
+        <circle class="ring" cx="220" cy="200" r="12.5"/>
+        <circle class="core" cx="220" cy="200" r="3"/>
       </g>
 
       <g class="node node-btn" data-agent="planner" role="button" tabindex="0" aria-pressed="false" aria-label="Planner">
-        <circle class="ring" cx="210" cy="48" r="16"/>
-        <text class="ref" x="210" y="51.5">01</text>
-        <text class="label" x="210" y="22">planner</text>
+        <circle class="hit" cx="220" cy="60" r="24"/>
+        <circle class="ring" cx="220" cy="60" r="13"/>
+        <text class="ref" x="220" y="63">01</text>
+        <line class="leader" x1="220" y1="47" x2="220" y2="36"/>
+        <text class="label" x="220" y="29" text-anchor="middle">planner</text>
       </g>
 
       <g class="node node-btn" data-agent="archivist" role="button" tabindex="0" aria-pressed="false" aria-label="Archivist">
-        <circle class="ring" cx="350.8" cy="150.3" r="16"/>
-        <text class="ref" x="350.8" y="153.8">02</text>
-        <text class="label" x="374" y="153.8" text-anchor="start">archivist</text>
+        <circle class="hit" cx="353.1" cy="156.7" r="24"/>
+        <circle class="ring" cx="353.1" cy="156.7" r="13"/>
+        <text class="ref" x="353.1" y="159.7">02</text>
+        <line class="leader" x1="365.5" y1="152.7" x2="378.8" y2="148.4"/>
+        <text class="label" x="383" y="151" text-anchor="start">archivist</text>
       </g>
 
       <g class="node node-btn" data-agent="herald" role="button" tabindex="0" aria-pressed="false" aria-label="Herald">
-        <circle class="ring" cx="297" cy="315.7" r="16"/>
-        <text class="ref" x="297" y="319.2">03</text>
-        <text class="label" x="297" y="349" text-anchor="middle">herald</text>
+        <circle class="hit" cx="302.3" cy="313.3" r="24"/>
+        <circle class="ring" cx="302.3" cy="313.3" r="13"/>
+        <text class="ref" x="302.3" y="316.3">03</text>
+        <line class="leader" x1="309.9" y1="323.8" x2="318.2" y2="335.1"/>
+        <text class="label" x="322" y="338" text-anchor="start">herald</text>
       </g>
 
       <g class="node node-btn" data-agent="sentinel" role="button" tabindex="0" aria-pressed="false" aria-label="Sentinel">
-        <circle class="ring" cx="123" cy="315.7" r="16"/>
-        <text class="ref" x="123" y="319.2">04</text>
-        <text class="label" x="123" y="349" text-anchor="middle">sentinel</text>
+        <circle class="hit" cx="137.7" cy="313.3" r="24"/>
+        <circle class="ring" cx="137.7" cy="313.3" r="13"/>
+        <text class="ref" x="137.7" y="316.3">04</text>
+        <line class="leader" x1="130.1" y1="323.8" x2="121.8" y2="335.1"/>
+        <text class="label" x="118" y="338" text-anchor="end">sentinel</text>
       </g>
 
       <g class="node node-btn" data-agent="scout" role="button" tabindex="0" aria-pressed="false" aria-label="Scout">
-        <circle class="ring" cx="69.2" cy="150.3" r="16"/>
-        <text class="ref" x="69.2" y="153.8">05</text>
-        <text class="label" x="46" y="153.8" text-anchor="end">scout</text>
+        <circle class="hit" cx="86.9" cy="156.7" r="24"/>
+        <circle class="ring" cx="86.9" cy="156.7" r="13"/>
+        <text class="ref" x="86.9" y="159.7">05</text>
+        <line class="leader" x1="74.5" y1="152.7" x2="61.2" y2="148.4"/>
+        <text class="label" x="57" y="151" text-anchor="end">scout</text>
       </g>
+
+      <text class="fig" x="436" y="404" text-anchor="end">Fig. 1 — a hub, five spokes, one card each</text>
     </svg>
     </div>
 
@@ -139,9 +155,11 @@
     <p class="ex-desc" id="ex-desc">Holds the star: takes a goal, hands each part to a spoke, and keeps the task's history in one place.</p>
 
     <form class="composer" id="composer">
-      <label for="say" class="skip">Message</label>
-      <input id="say" type="text" value="summarise the report" autocomplete="off" spellcheck="false">
-      <button type="submit">Send</button>
+      <label class="field" for="say">
+        <span class="field-k">message</span>
+        <input id="say" type="text" value="summarise the report" autocomplete="off" spellcheck="false" placeholder="say something to this agent">
+      </label>
+      <button type="submit"><span>Send</span><span class="arrow" aria-hidden="true">→</span></button>
     </form>
 
     <div class="frames" id="frames" aria-live="polite"></div>
@@ -175,7 +193,7 @@
     <div class="foot-main">
       <div class="foot-brand">
         <a class="brand" href="index.html">
-          <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.8 14.6 8.4 22.2 8.7 16.2 13.4 18.3 20.8 12 16.6 5.7 20.8 7.8 13.4 1.8 8.7 9.4 8.4Z"/></svg>
+          <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M6.2 2.6H17.8A3.6 3.6 0 0 1 21.4 6.2V17.8A3.6 3.6 0 0 1 17.8 21.4H6.2A3.6 3.6 0 0 1 2.6 17.8V6.2A3.6 3.6 0 0 1 6.2 2.6ZM0.51 12.01L12.01 0.51L13.99 2.49L2.49 13.99ZM10.01 21.51L21.51 10.01L23.49 11.99L11.99 23.49Z"/></svg>
           <span>MoonA2A</span>
         </a>
         <p class="tag">The Agent2Agent protocol for MoonBit: cards, tasks, streams and push, served or called.</p>

@@ -41,6 +41,22 @@
   --wrap: 1128px;
   --gutter: clamp(1.25rem, 4.2vw, 3.25rem);
   --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+
+  // Paper is a material, not a colour: a fibre grain under everything, and a hatch angle reserved
+  // for the places that need weight.
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='.07'/%3E%3C/svg%3E");
+  --hatch: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--ink) 14%, transparent) 0 1px,
+    transparent 1px 6px
+  );
+  --hatch-rose: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--rose) 34%, transparent) 0 1px,
+    transparent 1px 5px
+  );
+
+  color-scheme: light;
 }
 
 [data-theme="dark"] {
@@ -57,6 +73,8 @@
   --rose-2: #efb9c1;
   --on-rose: #1a1113;
   --blue: #a8bedb;
+
+  color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -101,6 +119,10 @@ html {
 body {
   margin: 0;
   background-color: var(--paper);
+  background-image: var(--grain);
+  background-size: 160px 160px;
+  background-blend-mode: multiply;
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--sans);
   font-size: 16.5px;
@@ -109,6 +131,17 @@ body {
   font-variant-ligatures: no-contextual;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  caret-color: var(--rose);
+}
+
+[data-theme="dark"] body {
+  background-blend-mode: screen;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body {
+    background-blend-mode: screen;
+  }
 }
 
 // The page is an instrument, not a document: nothing is text to be dragged. Reading surfaces —
@@ -188,6 +221,216 @@ input {
   color: inherit;
 }
 
+/* --------------------------------------------------- no browser defaults left */
+//
+// The page owns every surface it draws on: fields, markers, hovers and the ring that says where the
+// keyboard is. Nothing below leaves an element looking like the user agent rendered it.
+
+::placeholder {
+  color: var(--ink-3);
+  opacity: 1;
+}
+
+::marker {
+  color: var(--ink-3);
+}
+
+button,
+input,
+select,
+textarea,
+summary,
+[tabindex] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+select,
+textarea {
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+  background: none;
+  border: 0;
+}
+
+input::-webkit-search-decoration,
+input::-webkit-search-cancel-button,
+input::-webkit-search-results-button {
+  -webkit-appearance: none;
+  display: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+select {
+  cursor: pointer;
+}
+
+// A select that is never used still has to look like this site if it ever appears.
+select:not([multiple]) {
+  padding: 0.5rem 2rem 0.42rem 0.6rem;
+  border: 1px solid var(--hair);
+  border-radius: 2px;
+  background-color: var(--paper-2);
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-3) 50%),
+    linear-gradient(135deg, var(--ink-3) 50%, transparent 50%);
+  background-position: calc(100% - 14px) 55%, calc(100% - 9px) 55%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 1px solid var(--ink-3);
+  background: var(--paper);
+  cursor: pointer;
+
+  &:checked {
+    border-color: var(--rose);
+    background: var(--rose);
+  }
+}
+
+input[type="radio"] {
+  border-radius: 50%;
+}
+
+input[type="range"] {
+  height: 18px;
+  background: transparent;
+  cursor: pointer;
+
+  &::-webkit-slider-runnable-track {
+    height: 2px;
+    background: var(--hair);
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 11px;
+    height: 11px;
+    margin-top: -4.5px;
+    border-radius: 50%;
+    background: var(--rose);
+  }
+
+  &::-moz-range-track {
+    height: 2px;
+    background: var(--hair);
+  }
+
+  &::-moz-range-thumb {
+    width: 11px;
+    height: 11px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--rose);
+  }
+}
+
+progress {
+  appearance: none;
+  height: 2px;
+  width: 100%;
+  border: 0;
+  background: var(--hair);
+
+  &::-webkit-progress-bar {
+    background: var(--hair);
+  }
+
+  &::-webkit-progress-value {
+    background: var(--rose);
+  }
+
+  &::-moz-progress-bar {
+    background: var(--rose);
+  }
+}
+
+// The ring is drawn, not borrowed: paper gap, then a rose hairline, then a soft halo.
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px var(--rose);
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ------------------------------------------------------------------ tooltips */
+//
+// Hover text is part of the design: a mono caption on an ink ticket, never the platform's yellow
+// rectangle.
+
+.tip {
+  position: relative;
+}
+
+.tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 9px);
+  left: 50%;
+  z-index: 80;
+  padding: 0.3rem 0.45rem 0.24rem;
+  border-radius: 2px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, -3px);
+  pointer-events: none;
+  transition: opacity 0.16s var(--ease), transform 0.16s var(--ease);
+}
+
+.tip::before {
+  content: "";
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  z-index: 81;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  background: var(--ink);
+  transform: rotate(45deg) scale(0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s var(--ease);
+}
+
+.tip:hover::after,
+.tip:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.tip:hover::before,
+.tip:focus-visible::before {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .tip::after,
+  .tip::before {
+    display: none;
+  }
+}
+
 code,
 kbd,
 samp {
@@ -200,12 +443,6 @@ hr {
   border: 0;
   border-top: 1px solid var(--hair);
   margin: 0;
-}
-
-:focus-visible {
-  outline: 1px solid var(--rose);
-  outline-offset: 3px;
-  border-radius: 1px;
 }
 
 /* ---------------------------------------------------------------- scrollbar */
@@ -377,12 +614,47 @@ hr {
 /* a band of ink, where the page stops and the wire speaks */
 
 .band {
+  position: relative;
+  overflow: hidden;
   background: var(--ink);
   color: var(--paper);
   padding-block: clamp(3rem, 6.4vw, 4.8rem);
   margin-top: -1px;
 
+  // Struck from the far right, the rays press against the band's edge and die before the words.
+  &::before {
+    content: "";
+    position: absolute;
+    top: -40%;
+    right: -6%;
+    width: 62%;
+    height: 180%;
+    background-image: repeating-conic-gradient(
+      from 184deg at 100% 50%,
+      color-mix(in srgb, var(--paper) 38%, transparent) 0deg 0.3deg,
+      transparent 0.3deg 3.4deg
+    );
+    mask-image: radial-gradient(62% 74% at 100% 50%, #000, transparent 72%);
+    -webkit-mask-image: radial-gradient(62% 74% at 100% 50%, #000, transparent 72%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--paper) 4%, transparent) 0 1px,
+      transparent 1px 9px
+    );
+    pointer-events: none;
+  }
+
   .wrap {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 0.5fr);
     gap: 0 clamp(2rem, 5vw, 4rem);
@@ -633,35 +905,39 @@ hr {
   }
 }
 
-.specimen {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  margin-top: clamp(1.8rem, 3.4vw, 2.6rem);
-  padding-top: 1rem;
-  border-top: 1px solid var(--hair-2);
+.docket {
+  margin: auto 0 0;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--hair);
 
-  div {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    min-width: 0;
-  }
+  .d-row {
+    display: grid;
+    grid-template-columns: 4.6rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: 0.6rem;
+    padding: 0.58rem 0 0.54rem;
+    border-bottom: 1px solid var(--hair-2);
 
-  span {
-    font-family: var(--mono);
-    font-size: 0.58rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-  }
+    dt {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
 
-  b {
-    font-family: var(--mono);
-    font-size: 0.74rem;
-    font-weight: 400;
-    color: var(--ink-2);
-    overflow-wrap: anywhere;
+    dd {
+      margin: 0;
+      min-width: 0;
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      color: var(--ink-2);
+      overflow-wrap: anywhere;
+    }
+
+    .sep {
+      color: var(--rose);
+    }
   }
 }
 
@@ -751,34 +1027,215 @@ hr {
 }
 
 .hero {
-  padding-block: clamp(3rem, 6vw, 5rem) clamp(2.4rem, 4vw, 3.4rem);
+  position: relative;
+  padding-block: clamp(3rem, 6vw, 5rem) clamp(2rem, 3.6vw, 2.8rem);
+  overflow: hidden;
+}
+
+// Araki rays: fine spokes struck from a source off the left margin. They read as pressure at the
+// edge of the page and are gone before they reach a word.
+.ara {
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 76%;
+  height: 136%;
+  background-image: repeating-conic-gradient(
+    from 176deg at 0% 54%,
+    color-mix(in srgb, var(--ink) 26%, transparent) 0deg 0.18deg,
+    transparent 0.18deg 2.4deg
+  );
+  mask-image: radial-gradient(58% 62% at 4% 54%, #000 0%, transparent 72%);
+  -webkit-mask-image: radial-gradient(58% 62% at 4% 54%, #000 0%, transparent 72%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .ara {
+  opacity: 0.42;
 }
 
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.04fr);
-  gap: clamp(2rem, 5vw, 4.2rem);
-  align-items: start;
+  gap: 0;
+  align-items: stretch;
+  position: relative;
 }
 
+// A column rule, the way a page of set text divides its measures: one hairline, full height, so
+// the air between the two columns is ruled rather than merely empty.
 .hero-copy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   padding-top: 0.4rem;
+  padding-right: clamp(1rem, 2.6vw, 2.2rem);
+  border-right: 1px solid var(--hair-2);
 
-  h1 {
-    margin-top: 1.1rem;
-    font-family: var(--serif);
-    font-size: clamp(2.7rem, 5.4vw, 4.15rem);
-    line-height: 1;
-    letter-spacing: -0.018em;
-
-    em {
-      font-style: italic;
-      color: var(--rose);
-    }
+  // A marginal caption, set up the rule: the air beside the copy carries a line of its own.
+  &::after {
+    content: "agent \2194  agent";
+    position: absolute;
+    right: 0.55rem;
+    bottom: 9.2rem;
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--ink) 26%, transparent);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    pointer-events: none;
   }
 
   .lede {
-    margin-top: 1.5rem;
+    margin-top: 1.6rem;
+    max-width: 38ch;
+    font-size: 1.03rem;
+    line-height: 1.66;
+  }
+}
+
+.hero-grid > .transcript {
+  margin-left: clamp(1rem, 2.6vw, 2.2rem);
+}
+
+.hero-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+
+  .eyebrow {
+    color: var(--rose);
+    letter-spacing: 0.16em;
+  }
+
+  .eyebrow.dim {
+    color: var(--ink-3);
+  }
+
+  .k-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--hair);
+  }
+
+  .folio {
+    font-family: var(--serif);
+    font-size: 0.92rem;
+    line-height: 1;
+    color: var(--ink-3);
+  }
+}
+
+// The headline is set in two registers rather than tinted: a small italic lead-in, a full-size
+// roman word, and one hand-struck line under it. Colour carries the mark, not the vocabulary.
+.hero-title {
+  margin-top: 1.15rem;
+  font-family: var(--serif);
+  font-size: clamp(2.9rem, 5.9vw, 4.75rem);
+  font-weight: 400;
+  line-height: 0.99;
+  letter-spacing: -0.02em;
+  text-wrap: initial;
+
+  .hl {
+    display: block;
+  }
+
+  .one {
+    display: inline-block;
+    margin-right: 0.15em;
+    font-size: 0.42em;
+    font-style: italic;
+    letter-spacing: 0.01em;
+    color: var(--rose);
+    vertical-align: 0.66em;
+  }
+
+  .word {
+    position: relative;
+    display: inline-block;
+    font-style: italic;
+  }
+
+  .strike {
+    position: absolute;
+    left: -0.02em;
+    bottom: -0.07em;
+    width: 104%;
+    height: 0.12em;
+    overflow: visible;
+    fill: none;
+    stroke: var(--rose);
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    opacity: 0.85;
+  }
+
+  .stop {
+    display: inline-block;
+    width: 0.09em;
+    height: 0.09em;
+    margin-left: 0.07em;
+    background: var(--rose);
+    vertical-align: 0.02em;
+    transform: rotate(45deg);
+  }
+}
+
+// A ledger under the fold: the four numbers the rest of the page spends its time explaining.
+.hero-foot {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 0.56fr)) minmax(0, 1.9fr);
+  gap: 1px;
+  margin-top: clamp(2.2rem, 4.4vw, 3.2rem);
+  border-top: 1px solid var(--hair);
+  border-bottom: 1px solid var(--hair);
+  background: var(--hatch);
+  background-size: 6px 6px;
+
+  .hf-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+    padding: 0.9rem 0.2rem 0.8rem 1rem;
+    background: var(--paper);
+
+    span {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    b {
+      font-family: var(--serif);
+      font-size: 1.7rem;
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--ink);
+    }
+  }
+
+  .hf-note {
+    display: flex;
+    align-items: center;
+    padding: 0.9rem 0 0.8rem 1.4rem;
+    background: var(--paper);
+    font-size: 0.9rem;
+    color: var(--ink-2);
+    text-wrap: pretty;
+
+    em {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.12em;
+      color: var(--ink);
+    }
   }
 }
 
@@ -789,26 +1246,31 @@ hr {
   margin-top: 2rem;
 }
 
-.install-line {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 1.5rem;
-  padding: 0.42rem 0.6rem 0.42rem 0.7rem;
-  border: 1px solid var(--hair-2);
-  border-radius: 2px;
-  background: var(--paper-2);
-  font-family: var(--mono);
-  font-size: 0.76rem;
-  color: var(--ink-2);
-
-  .prompt {
-    color: var(--rose);
-    user-select: none;
-  }
-}
 
 /* the transcript panel */
+
+.transcript,
+.map-panel,
+.exchange {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--paper) 70%, transparent),
+    0 22px 44px -34px color-mix(in srgb, var(--ink) 55%, transparent);
+}
+
+[data-theme="dark"] .transcript,
+[data-theme="dark"] .map-panel,
+[data-theme="dark"] .exchange {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink) 12%, transparent),
+    0 22px 44px -30px #000;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .transcript,
+  :root:not([data-theme="light"]) .map-panel,
+  :root:not([data-theme="light"]) .exchange {
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink) 12%, transparent),
+      0 22px 44px -30px #000;
+  }
+}
 
 .transcript {
   border: 1px solid var(--hair);
@@ -1582,7 +2044,7 @@ pre {
 }
 
 .map-figure {
-  padding: 1rem 1rem 0.2rem;
+  padding: 0.5rem 0.5rem 0;
   background: var(--paper-2);
   border-bottom: 1px solid var(--hair-2);
 }
@@ -1606,12 +2068,37 @@ pre {
     stroke-linejoin: round;
   }
 
+  .marks path {
+    fill: none;
+    stroke: var(--hair);
+    stroke-width: 1;
+  }
+
   .label {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 10.2px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     fill: var(--ink-3);
+    transition: fill 0.2s var(--ease);
+  }
+
+  .leader {
+    stroke: var(--hair);
+    stroke-width: 1;
+    transition: stroke 0.2s var(--ease);
+  }
+
+  .fig {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: 0.01em;
+    fill: var(--ink-3);
+  }
+
+  .hit {
+    fill: transparent;
   }
 
   .ref {
@@ -1653,13 +2140,32 @@ pre {
 
     .ref {
       font-family: var(--mono);
-      font-size: 8px;
+      font-size: 9.2px;
       fill: var(--ink-3);
       text-anchor: middle;
     }
 
     &:hover .ring {
       stroke: var(--rose);
+    }
+
+    &:hover .leader,
+    &:focus-visible .leader {
+      stroke: color-mix(in srgb, var(--rose) 60%, transparent);
+    }
+
+    &:hover .label,
+    &:focus-visible .label {
+      fill: var(--ink-2);
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+
+    &:focus-visible .ring {
+      stroke: var(--rose);
+      stroke-width: 1.6;
     }
 
     &[aria-pressed="true"] .ring {
@@ -1799,30 +2305,82 @@ pre {
 
 .composer {
   display: flex;
+  align-items: stretch;
   gap: 0.5rem;
   margin: 0.9rem 1.1rem 0;
   padding-bottom: 0.95rem;
   border-bottom: 1px solid var(--hair-2);
 
-  input {
+  .field {
+    position: relative;
     flex: 1;
     min-width: 0;
-    padding: 0.55rem 0.7rem;
+    display: block;
+    padding: 0.4rem 0.7rem 0.48rem;
     border: 1px solid var(--hair);
     border-radius: 2px;
     background: var(--paper-2);
-    font-family: var(--mono);
-    font-size: 0.78rem;
+    cursor: text;
+    transition: border-color 0.2s var(--ease), background-color 0.2s var(--ease);
 
-    &:focus {
-      outline: 1px solid var(--rose);
-      outline-offset: 0;
-      border-color: transparent;
+    // A rose tick in the margin fills as the field takes the keyboard.
+    &::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      bottom: -1px;
+      left: -1px;
+      width: 2px;
+      background: var(--rose);
+      transform: scaleY(0.24);
+      transform-origin: top;
+      transition: transform 0.24s var(--ease);
+    }
+
+    .field-k {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.52rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      transition: color 0.2s var(--ease);
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      padding: 0.1rem 0 0.02rem;
+      border: 0;
+      background: none;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--ink);
+
+      &:focus-visible {
+        box-shadow: none;
+      }
+    }
+
+    &:focus-within {
+      border-color: color-mix(in srgb, var(--rose) 52%, transparent);
+      background: var(--paper);
+
+      &::before {
+        transform: scaleY(1);
+      }
+
+      .field-k {
+        color: var(--rose);
+      }
     }
   }
 
   button {
-    padding: 0.55rem 0.95rem 0.45rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.9rem 0.45rem;
     border-radius: 2px;
     background: var(--ink);
     color: var(--paper);
@@ -1830,11 +2388,24 @@ pre {
     font-size: 0.68rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    transition: background-color 0.2s var(--ease);
+    transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+
+    .arrow {
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      letter-spacing: 0;
+      line-height: 1;
+      transform: translateY(-0.04em);
+      transition: transform 0.22s var(--ease);
+    }
 
     &:hover {
       background: var(--rose);
       color: var(--on-rose);
+
+      .arrow {
+        transform: translate(2px, -0.04em);
+      }
     }
 
     &:active {
@@ -1917,16 +2488,46 @@ pre {
   border-top: 1px solid var(--hair-2);
 
   summary {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
     padding: 0.7rem 1.1rem;
+    list-style: none;
     font-family: var(--mono);
     font-size: 0.66rem;
     letter-spacing: 0.08em;
     color: var(--ink-3);
     cursor: pointer;
-    transition: color 0.2s var(--ease);
+    transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    // A drawn chevron, not the platform triangle.
+    &::before {
+      content: "";
+      flex: none;
+      width: 6px;
+      height: 6px;
+      margin-top: -2px;
+      border-right: 1px solid currentColor;
+      border-bottom: 1px solid currentColor;
+      transform: rotate(-45deg);
+      transition: transform 0.22s var(--ease);
+    }
 
     &:hover {
       color: var(--rose);
+      background: var(--wash);
+    }
+  }
+
+  &[open] summary {
+    color: var(--ink-2);
+
+    &::before {
+      transform: rotate(45deg);
     }
   }
 
@@ -2400,6 +3001,29 @@ pre {
     gap: 2.4rem;
   }
 
+  .hero-copy {
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  .hero-copy::after {
+    display: none;
+  }
+
+  .hero-grid > .transcript {
+    margin-left: 0;
+  }
+
+  .hero-foot {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    .hf-note {
+      grid-column: 1 / -1;
+      padding-left: 1rem;
+      padding-top: 0.7rem;
+    }
+  }
+
   .band .wrap {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2553,9 +3177,12 @@ pre {
     }
   }
 
-  .specimen {
+  .hero-foot {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem 1rem;
+
+    .hf-note {
+      padding-top: 0.8rem;
+    }
   }
 
   .frames {
@@ -2598,23 +3225,13 @@ pre {
     overflow-wrap: anywhere;
   }
 
-  .specimen {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-    padding-top: 0.2rem;
+  .docket .d-row {
+    grid-template-columns: 3.4rem minmax(0, 1fr);
+    gap: 0.5rem;
+  }
 
-    div {
-      flex-direction: row;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 1rem;
-      padding: 0.42rem 0;
-      border-bottom: 1px solid var(--hair-2);
-    }
-
-    div:last-child {
-      border-bottom: 0;
-    }
+  .hero-foot .hf-cell {
+    padding-left: 0.8rem;
   }
 }
 

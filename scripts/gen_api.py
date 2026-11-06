@@ -510,9 +510,7 @@ def render_sidebar(packages: list[tuple[str, dict]]) -> str:
 # --------------------------------------------------------------------------
 
 MARK = (
-    '<svg class="mark" viewBox="0 0 24 24" aria-hidden="true">'
-    '<path d="M12 1.6 14.7 8.28 22.46 8.6 16.38 13.42 18.47 20.9 12 16.6 5.53 20.9 '
-    '7.62 13.42 1.54 8.6 9.3 8.28Z"/></svg>'
+    '<svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M6.2 2.6H17.8A3.6 3.6 0 0 1 21.4 6.2V17.8A3.6 3.6 0 0 1 17.8 21.4H6.2A3.6 3.6 0 0 1 2.6 17.8V6.2A3.6 3.6 0 0 1 6.2 2.6ZM0.51 12.01L12.01 0.51L13.99 2.49L2.49 13.99ZM10.01 21.51L21.51 10.01L23.49 11.99L11.99 23.49Z"/></svg>'
 )
 GITHUB = (
     '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'
@@ -551,10 +549,10 @@ def nav(active: str) -> str:
       {link("showcase.html", "showcase", "Showcase")}
     </nav>
     <div class="tools">
-      <a class="icon-btn" href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener" aria-label="GitHub repository">
+      <a class="icon-btn tip" href="https://github.com/moonbitstack/moona2a" target="_blank" rel="noopener" aria-label="GitHub repository" data-tip="Source">
         {GITHUB}
       </a>
-      <button class="icon-btn theme-toggle" type="button" aria-label="Switch between light and dark">
+      <button class="icon-btn theme-toggle tip" type="button" aria-label="Switch to dark" data-tip="Dark">
         {SUN}
         {MOON}
       </button>
@@ -604,12 +602,11 @@ def render(packages: list[tuple[str, dict]], docs: dict, params: dict) -> str:
 <title>API reference — moona2a</title>
 <meta name="description" content="Every public type, function and constant in moona2a, generated from the package interfaces and the sources' documentation comments.">
 <meta name="theme-color" content="#fbfaf6">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23fbfaf6'/%3E%3Cpath d='M12 2.6 14.4 8.9 21.2 9.2 15.8 13.4 17.7 19.9 12 16.1 6.3 19.9 8.2 13.4 2.8 9.2 9.6 8.9Z' fill='none' stroke='%239c4a57' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='3' fill='%23fbfaf6'/%3E%3Cpath fill-rule='evenodd' d='M6.2%202.6H17.8A3.6%203.6%200%200%201%2021.4%206.2V17.8A3.6%203.6%200%200%201%2017.8%2021.4H6.2A3.6%203.6%200%200%201%202.6%2017.8V6.2A3.6%203.6%200%200%201%206.2%202.6ZM0.51%2012.01L12.01%200.51L13.99%202.49L2.49%2013.99ZM10.01%2021.51L21.51%2010.01L23.49%2011.99L11.99%2023.49Z' fill='%239c4a57'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css">
-<script>try{{const t=localStorage.getItem("moona2a-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}}catch(e){{}}</script>
 <script src="assets/site.js" defer></script>
 </head>
 <body id="top">
