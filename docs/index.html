@@ -162,7 +162,7 @@
         <h2>JSON-RPC, and nothing <em>else</em>.</h2>
         <p class="lede" style="margin-top:1rem">One POST body carries a call; a streaming method answers with server-sent events, each one a whole JSON-RPC reply. What you see below is what this library writes.</p>
         <ul class="notes" style="margin-top:1.8rem">
-          <li><span>Bodies and the method table come from <b>moonjrpc</b>; the task lifecycle is this library's.</span></li>
+          <li><span>Every call is <b>JSON-RPC 2.0</b>: one request, one answer, and for a stream, one answer per event.</span></li>
           <li><span>The stream opens with <b>the task as it stands</b>, then carries what changed, and closes at a terminal state.</span></li>
           <li><span>A call refused before the stream opens is a plain <b>error body</b>, not a stream carrying one error.</span></li>
         </ul>

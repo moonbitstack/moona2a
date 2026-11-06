@@ -167,7 +167,7 @@ You said: hello</code></pre>
 <pre data-lang="moonbit"><code>let server = @moona2a.Server::new(Echo::{ }, card)
 let app = @asgi.to_asgi(server)
 
-// app : (scope, receive, send) -> Unit, which is what moonasgi's servers take.</code></pre>
+// app : (scope, receive, send) -> Unit, the shape an ASGI server calls.</code></pre>
     </div>
     <p>A streaming method answers <code>text/event-stream</code> and one <code>data:</code> frame per event, written as the event happens. A call refused before the stream opens — an unknown task, a version the interface does not serve — is an ordinary JSON-RPC error body instead, because a stream carrying one error is worse than no stream.</p>
 
