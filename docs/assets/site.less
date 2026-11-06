@@ -26,10 +26,21 @@
   --ink-2: #4e463d;
   --ink-3: #7d746a;
 
-  --rose: #9c4a57;
-  --rose-2: #b76a76;
-  --on-rose: #fff8f2;
-  --blue: #3f5b7f;
+  // Rose gold: an alloy, not a tint. The metal is unreadable as text at full brightness, so the
+  // accent keeps a shadow tone (#9e5f4b clears 4.5:1 on paper) and the bright face is reserved for
+  // rules, marks and fills. The second colour is a matte blue, matte because it never takes a
+  // highlight — it is the colour of the caller, and of the dial the metal sits against.
+  --rose: #b07a5a;
+  --rose-2: #d2a184;
+  --rose-3: #e9c9b4;
+  --rose-ink: #8a5c43;
+  --on-rose: #241309;
+  --blue: #2f4a73;
+  --blue-2: #4a6d9e;
+  --blue-3: #dbe3ef;
+
+  --mark-a: #a86f4f;
+  --mark-b: #3a588a;
 
   --hair: color-mix(in srgb, var(--ink) 16%, transparent);
   --hair-2: color-mix(in srgb, var(--ink) 8%, transparent);
@@ -37,6 +48,13 @@
   --rose-wash: color-mix(in srgb, var(--rose) 10%, transparent);
   --blue-wash: color-mix(in srgb, var(--blue) 9%, transparent);
   --select: color-mix(in srgb, var(--rose) 22%, transparent);
+
+  // The scrollbar is a drawn surface too. In dark the thumb has to carry more of the ink to sit
+  // clear of the page, and a page at rest keeps a trace of it instead of vanishing outright.
+  --sb-track: color-mix(in srgb, var(--ink) 4%, transparent);
+  --sb-thumb: color-mix(in srgb, var(--ink) 30%, transparent);
+  --sb-thumb-dim: color-mix(in srgb, var(--ink) 15%, transparent);
+  --sb-thumb-in: color-mix(in srgb, var(--ink) 19%, transparent);
 
   --wrap: 1128px;
   --gutter: clamp(1.25rem, 4.2vw, 3.25rem);
@@ -59,7 +77,10 @@
   color-scheme: light;
 }
 
-[data-theme="dark"] {
+// One block, applied twice: the explicit attribute the toggle writes, and the platform preference
+// the page follows when nobody has chosen. Keeping them in one place is what stops the two drifting
+// apart — which is how a scrollbar ends up invisible in the theme nobody screenshotted.
+.dark-surface() {
   --paper: #12100d;
   --paper-2: #1a1713;
   --paper-3: #221e19;
@@ -69,29 +90,34 @@
   --ink-2: #bcb3a6;
   --ink-3: #8b8275;
 
-  --rose: #e2a0ab;
-  --rose-2: #efb9c1;
-  --on-rose: #1a1113;
-  --blue: #a8bedb;
+  // On ink the metal turns its own light up and the dial lifts with it, so the pair still separates.
+  --rose: #d9a284;
+  --rose-2: #eec4ac;
+  --rose-3: #f6ddcd;
+  --rose-ink: #e3b096;
+  --on-rose: #120b07;
+  --blue: #9fb9dc;
+  --blue-2: #b7cbe8;
+  --blue-3: #23334b;
+
+  --mark-a: #e0ab8e;
+  --mark-b: #93aed2;
+
+  --sb-track: color-mix(in srgb, var(--ink) 7%, transparent);
+  --sb-thumb: color-mix(in srgb, var(--ink) 42%, transparent);
+  --sb-thumb-dim: color-mix(in srgb, var(--ink) 26%, transparent);
+  --sb-thumb-in: color-mix(in srgb, var(--ink) 34%, transparent);
 
   color-scheme: dark;
 }
 
+[data-theme="dark"] {
+  .dark-surface();
+}
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #12100d;
-    --paper-2: #1a1713;
-    --paper-3: #221e19;
-    --code: #18150f;
-
-    --ink: #f3ede4;
-    --ink-2: #bcb3a6;
-    --ink-3: #8b8275;
-
-    --rose: #e2a0ab;
-    --rose-2: #efb9c1;
-    --on-rose: #1a1113;
-    --blue: #a8bedb;
+    .dark-surface();
   }
 }
 
@@ -131,7 +157,7 @@ body {
   font-variant-ligatures: no-contextual;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  caret-color: var(--rose);
+  caret-color: var(--rose-ink);
 }
 
 [data-theme="dark"] body {
@@ -293,7 +319,7 @@ input[type="radio"] {
   cursor: pointer;
 
   &:checked {
-    border-color: var(--rose);
+    border-color: var(--rose-ink);
     background: var(--rose);
   }
 }
@@ -456,25 +482,25 @@ hr {
   }
 
   html::-webkit-scrollbar-track {
-    background-color: transparent;
+    background-color: var(--sb-track);
   }
 
   html::-webkit-scrollbar-thumb {
     border: 3px solid transparent;
     border-radius: 99px;
-    background-color: color-mix(in srgb, var(--ink) 26%, transparent);
+    background-color: var(--sb-thumb);
     background-clip: content-box;
   }
 
   html::-webkit-scrollbar-thumb:hover {
-    background-color: color-mix(in srgb, var(--ink) 40%, transparent);
+    background-color: var(--rose-ink);
   }
 
   html.at-top::-webkit-scrollbar-thumb {
-    background-color: transparent;
+    background-color: var(--sb-thumb-dim);
   }
 
-:is(.scroll, pre, .toc, .api-nav)::-webkit-scrollbar {
+  :is(.scroll, pre, .toc, .api-nav)::-webkit-scrollbar {
     width: 9px;
     height: 9px;
   }
@@ -486,32 +512,32 @@ hr {
   :is(.scroll, pre, .toc, .api-nav)::-webkit-scrollbar-thumb {
     border: 3px solid transparent;
     border-radius: 99px;
-    background-color: color-mix(in srgb, var(--ink) 14%, transparent);
+    background-color: var(--sb-thumb-in);
     background-clip: content-box;
   }
 
   :is(.scroll, pre, .toc, .api-nav):hover::-webkit-scrollbar-thumb {
-    background-color: color-mix(in srgb, var(--ink) 32%, transparent);
+    background-color: var(--sb-thumb);
   }
 }
 
 @supports not selector(::-webkit-scrollbar) {
   html {
     scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--ink) 26%, transparent) transparent;
+    scrollbar-color: var(--sb-thumb) var(--sb-track);
   }
 
   html.at-top {
-    scrollbar-color: transparent transparent;
+    scrollbar-color: var(--sb-thumb-dim) var(--sb-track);
   }
 
   :is(.scroll, pre, .toc, .api-nav) {
     scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--ink) 16%, transparent) transparent;
+    scrollbar-color: var(--sb-thumb-in) transparent;
   }
 
   :is(.scroll, pre, .toc, .api-nav):hover {
-    scrollbar-color: color-mix(in srgb, var(--ink) 32%, transparent) transparent;
+    scrollbar-color: var(--sb-thumb) transparent;
   }
 }
 
@@ -563,7 +589,7 @@ hr {
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 
 .lede {
@@ -592,7 +618,7 @@ hr {
     font-family: var(--serif);
     font-size: clamp(2.1rem, 3vw, 2.6rem);
     line-height: 0.86;
-    color: color-mix(in srgb, var(--ink) 22%, transparent);
+    color: color-mix(in srgb, var(--rose) 72%, transparent);
     font-variant-numeric: lining-nums;
   }
 
@@ -670,7 +696,7 @@ hr {
     font-family: var(--mono);
     font-size: 0.64rem;
     line-height: 1.7;
-    color: color-mix(in srgb, var(--paper) 58%, transparent);
+    color: color-mix(in srgb, var(--paper) 44%, var(--rose));
     white-space: nowrap;
     overflow: hidden;
 
@@ -705,7 +731,7 @@ hr {
     color: color-mix(in srgb, var(--paper) 62%, transparent);
 
     code {
-      color: var(--rose);
+      color: var(--rose-ink);
       background: none;
       font-size: 1em;
     }
@@ -752,11 +778,20 @@ hr {
   font-weight: 600;
   letter-spacing: -0.014em;
 
+  // Two bars of equal weight on the diagonal, mirrored: the metal and the dial it sits against.
+  // Equal area is the point — the mark is a pair, not a glyph with a highlight on it.
   .mark {
-    width: 17px;
-    height: 17px;
-    fill: var(--rose);
+    width: 18px;
+    height: 18px;
     flex: none;
+
+    .m-a {
+      fill: var(--mark-a);
+    }
+
+    .m-b {
+      fill: var(--mark-b);
+    }
   }
 }
 
@@ -872,7 +907,15 @@ hr {
   padding: 0.72rem 1.15rem 0.62rem;
   border: 1px solid transparent;
   border-radius: 2px;
-  background: var(--rose);
+  // Struck metal rather than flat paint: a lit face, a shadow face, and the type sits on it dark
+  // the way an engraving sits on a case back.
+  background-color: var(--rose);
+  background-image: linear-gradient(
+    168deg,
+    color-mix(in srgb, var(--rose-3) 30%, var(--rose)) 0%,
+    var(--rose) 58%,
+    color-mix(in srgb, var(--ink) 7%, var(--rose)) 100%
+  );
   color: var(--on-rose);
   font-family: var(--mono);
   font-size: 0.72rem;
@@ -885,7 +928,12 @@ hr {
   .no-drag();
 
   &:hover {
-    background: var(--rose-2);
+    background-image: linear-gradient(
+      168deg,
+      color-mix(in srgb, var(--rose-3) 46%, var(--rose-2)) 0%,
+      var(--rose-2) 62%,
+      color-mix(in srgb, var(--ink) 5%, var(--rose-2)) 100%
+    );
   }
 
   &:active {
@@ -936,7 +984,7 @@ hr {
     }
 
     .sep {
-      color: var(--rose);
+      color: var(--rose-ink);
     }
   }
 }
@@ -956,22 +1004,24 @@ hr {
   -webkit-user-drag: none;
 }
 
+// The two answers the protocol can give are the two colours the site is built from: a single
+// reply is metal, a stream is the dial. The column reads as a pattern rather than a grey list.
 .chip {
   display: inline-block;
   padding: 0.16rem 0.42rem 0.1rem;
-  border: 1px solid var(--hair);
+  border: 1px solid color-mix(in srgb, var(--rose) 58%, transparent);
   border-radius: 2px;
   font-family: var(--mono);
   font-size: 0.62rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--rose-ink);
   white-space: nowrap;
 }
 
 .chip.stream {
-  border-color: color-mix(in srgb, var(--rose) 42%, transparent);
-  color: var(--rose);
+  border-color: color-mix(in srgb, var(--blue) 58%, transparent);
+  color: var(--blue);
 }
 
 .chip.final {
@@ -1107,7 +1157,7 @@ hr {
   gap: 0.7rem;
 
   .eyebrow {
-    color: var(--rose);
+    color: var(--rose-ink);
     letter-spacing: 0.16em;
   }
 
@@ -1150,7 +1200,7 @@ hr {
     font-size: 0.42em;
     font-style: italic;
     letter-spacing: 0.01em;
-    color: var(--rose);
+    color: var(--rose-ink);
     vertical-align: 0.66em;
   }
 
@@ -1291,16 +1341,18 @@ hr {
   letter-spacing: 0.04em;
   color: var(--ink-3);
 
+  // The header is the caller's side of the exchange, so it takes the blue. Everything the agent
+  // answers with, below, stays in the metal.
   .dot {
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: var(--rose);
+    background: var(--blue);
     flex: none;
   }
 
   .t-method {
-    color: var(--ink-2);
+    color: var(--blue);
   }
 
   .t-status {
@@ -1352,9 +1404,11 @@ hr {
     border: 1px solid var(--hair);
   }
 
+  // The first frame is the request, so it carries the caller's colour; every frame after it is
+  // the agent answering, and stays in the metal.
   &:first-child::before {
-    background: var(--rose);
-    border-color: var(--rose);
+    background: var(--blue);
+    border-color: var(--blue);
   }
 
   pre {
@@ -1382,7 +1436,7 @@ hr {
   .f-state {
     font-size: 0.58rem;
     letter-spacing: 0.1em;
-    color: var(--rose);
+    color: var(--rose-ink);
   }
 }
 
@@ -1482,7 +1536,7 @@ hr {
     font-family: var(--mono);
     font-size: 0.62rem;
     letter-spacing: 0.14em;
-    color: var(--rose);
+    color: var(--rose-ink);
   }
 
   h3 {
@@ -1591,7 +1645,7 @@ hr {
   background: var(--paper-2);
 
   code {
-    color: var(--rose);
+    color: var(--rose-ink);
   }
 }
 
@@ -1646,11 +1700,15 @@ hr {
     font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--rose);
+    color: var(--rose-ink);
   }
 
   &.client h3 {
     color: var(--blue);
+  }
+
+  &.client .duo-stack li {
+    border-left-color: color-mix(in srgb, var(--blue) 68%, transparent);
   }
 }
 
@@ -1661,6 +1719,9 @@ hr {
     position: relative;
     padding: 0.5rem 0.65rem;
     border: 1px solid var(--hair-2);
+    // A rule down the leading edge keeps the two ends apart at a glance: the agent's side is
+    // struck in metal, the caller's side is the dial.
+    border-left: 2px solid color-mix(in srgb, var(--rose) 68%, transparent);
     border-radius: 2px;
     background: var(--paper-2);
     font-family: var(--mono);
@@ -1720,7 +1781,7 @@ hr {
   .code {
     font-family: var(--mono);
     font-size: 0.74rem;
-    color: var(--rose);
+    color: var(--rose-ink);
     font-variant-numeric: tabular-nums;
   }
 
@@ -1782,7 +1843,7 @@ hr {
       transition: text-decoration-color 0.2s var(--ease);
 
       &:hover {
-        text-decoration-color: var(--rose);
+        text-decoration-color: var(--rose-ink);
       }
     }
   }
@@ -1823,7 +1884,7 @@ hr {
   transition: color 0.2s var(--ease);
 
   &:hover {
-    color: var(--rose);
+    color: var(--rose-ink);
   }
 }
 
@@ -1839,7 +1900,7 @@ pre {
 }
 
 .tok-key {
-  color: var(--rose);
+  color: var(--blue);
 }
 
 .tok-str {
@@ -1847,11 +1908,11 @@ pre {
 }
 
 .tok-num {
-  color: var(--blue);
+  color: var(--rose-ink);
 }
 
 .tok-bool {
-  color: var(--blue);
+  color: var(--rose-ink);
 }
 
 .tok-comment {
@@ -1859,7 +1920,7 @@ pre {
 }
 
 .tok-kw {
-  color: var(--rose);
+  color: var(--blue);
 }
 
 .tok-name {
@@ -1924,7 +1985,7 @@ pre {
     }
 
     &[aria-current="true"] {
-      color: var(--rose);
+      color: var(--rose-ink);
     }
   }
 }
@@ -1945,7 +2006,7 @@ pre {
       margin-right: 0.5rem;
       font-family: var(--mono);
       font-size: 0.8em;
-      color: var(--rose);
+      color: var(--rose-ink);
       vertical-align: 0.06em;
     }
   }
@@ -2004,7 +2065,7 @@ pre {
     text-decoration-color: var(--hair);
 
     &:hover {
-      text-decoration-color: var(--rose);
+      text-decoration-color: var(--rose-ink);
     }
   }
 }
@@ -2079,12 +2140,12 @@ pre {
     font-size: 10.2px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    fill: var(--ink-3);
+    fill: var(--ink-2);
     transition: fill 0.2s var(--ease);
   }
 
   .leader {
-    stroke: var(--hair);
+    stroke: color-mix(in srgb, var(--ink) 26%, transparent);
     stroke-width: 1;
     transition: stroke 0.2s var(--ease);
   }
@@ -2119,9 +2180,15 @@ pre {
     stroke: color-mix(in srgb, var(--rose) 45%, transparent);
   }
 
+  .edge {
+    stroke: var(--rose);
+    opacity: 0.3;
+    transition: opacity 0.2s var(--ease), stroke 0.2s var(--ease);
+  }
+
   .edge.lit {
     stroke: var(--rose);
-    opacity: 0.55;
+    opacity: 0.78;
   }
 
   .flow {
@@ -2133,7 +2200,7 @@ pre {
 
     .ring {
       fill: var(--paper);
-      stroke: var(--hair);
+      stroke: color-mix(in srgb, var(--ink) 34%, transparent);
       stroke-width: 1;
       transition: stroke 0.2s var(--ease), fill 0.2s var(--ease);
     }
@@ -2141,7 +2208,7 @@ pre {
     .ref {
       font-family: var(--mono);
       font-size: 9.2px;
-      fill: var(--ink-3);
+      fill: var(--ink-2);
       text-anchor: middle;
     }
 
@@ -2248,7 +2315,7 @@ pre {
     }
 
     &.lit td:first-child {
-      color: var(--rose);
+      color: var(--rose-ink);
     }
   }
 
@@ -2294,7 +2361,7 @@ pre {
   font-size: 0.62rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 
 .ex-desc {
@@ -2371,7 +2438,7 @@ pre {
       }
 
       .field-k {
-        color: var(--rose);
+        color: var(--rose-ink);
       }
     }
   }
@@ -2456,7 +2523,7 @@ pre {
 
   &.event .kind-tag {
     border-color: color-mix(in srgb, var(--rose) 45%, transparent);
-    color: var(--rose);
+    color: var(--rose-ink);
   }
 
   &.error .kind-tag {
@@ -2518,7 +2585,7 @@ pre {
     }
 
     &:hover {
-      color: var(--rose);
+      color: var(--rose-ink);
       background: var(--wash);
     }
   }
@@ -2601,7 +2668,7 @@ pre {
     font-family: var(--mono);
     font-size: 0.68rem;
     letter-spacing: 0.08em;
-    color: var(--rose);
+    color: var(--rose-ink);
   }
 
   a {
@@ -2717,7 +2784,7 @@ pre {
   overflow-wrap: anywhere;
 
   .kw {
-    color: var(--rose);
+    color: var(--rose-ink);
   }
 
   .name {
@@ -2942,7 +3009,7 @@ pre {
     transition: color 0.18s var(--ease);
 
     &:hover {
-      color: var(--rose);
+      color: var(--rose-ink);
     }
   }
 }

@@ -510,7 +510,7 @@ def render_sidebar(packages: list[tuple[str, dict]]) -> str:
 # --------------------------------------------------------------------------
 
 MARK = (
-    '<svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M6.2 2.6H17.8A3.6 3.6 0 0 1 21.4 6.2V17.8A3.6 3.6 0 0 1 17.8 21.4H6.2A3.6 3.6 0 0 1 2.6 17.8V6.2A3.6 3.6 0 0 1 6.2 2.6ZM0.51 12.01L12.01 0.51L13.99 2.49L2.49 13.99ZM10.01 21.51L21.51 10.01L23.49 11.99L11.99 23.49Z"/></svg>'
+    '<svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path class="m-b" d="M17.844 3.044 20.956 6.156 6.156 20.956 3.044 17.844Z"/><path class="m-a" d="M6.156 3.044 20.956 17.844 17.844 20.956 3.044 6.156Z"/></svg>'
 )
 GITHUB = (
     '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'
@@ -602,7 +602,7 @@ def render(packages: list[tuple[str, dict]], docs: dict, params: dict) -> str:
 <title>API reference — moona2a</title>
 <meta name="description" content="Every public type, function and constant in moona2a, generated from the package interfaces and the sources' documentation comments.">
 <meta name="theme-color" content="#fbfaf6">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='3' fill='%23fbfaf6'/%3E%3Cpath fill-rule='evenodd' d='M6.2%202.6H17.8A3.6%203.6%200%200%201%2021.4%206.2V17.8A3.6%203.6%200%200%201%2017.8%2021.4H6.2A3.6%203.6%200%200%201%202.6%2017.8V6.2A3.6%203.6%200%200%201%206.2%202.6ZM0.51%2012.01L12.01%200.51L13.99%202.49L2.49%2013.99ZM10.01%2021.51L21.51%2010.01L23.49%2011.99L11.99%2023.49Z' fill='%239c4a57'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23fbfaf6'/%3E%3Cpath d='M17.844%203.044%2020.956%206.156%206.156%2020.956%203.044%2017.844Z' fill='%232f4a73'/%3E%3Cpath d='M6.156%203.044%2020.956%2017.844%2017.844%2020.956%203.044%206.156Z' fill='%23a86f4f'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">

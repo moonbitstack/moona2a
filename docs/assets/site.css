@@ -10,16 +10,26 @@
   --ink: #171310;
   --ink-2: #4e463d;
   --ink-3: #7d746a;
-  --rose: #9c4a57;
-  --rose-2: #b76a76;
-  --on-rose: #fff8f2;
-  --blue: #3f5b7f;
+  --rose: #b07a5a;
+  --rose-2: #d2a184;
+  --rose-3: #e9c9b4;
+  --rose-ink: #8a5c43;
+  --on-rose: #241309;
+  --blue: #2f4a73;
+  --blue-2: #4a6d9e;
+  --blue-3: #dbe3ef;
+  --mark-a: #a86f4f;
+  --mark-b: #3a588a;
   --hair: color-mix(in srgb, var(--ink) 16%, transparent);
   --hair-2: color-mix(in srgb, var(--ink) 8%, transparent);
   --wash: color-mix(in srgb, var(--ink) 4%, transparent);
   --rose-wash: color-mix(in srgb, var(--rose) 10%, transparent);
   --blue-wash: color-mix(in srgb, var(--blue) 9%, transparent);
   --select: color-mix(in srgb, var(--rose) 22%, transparent);
+  --sb-track: color-mix(in srgb, var(--ink) 4%, transparent);
+  --sb-thumb: color-mix(in srgb, var(--ink) 30%, transparent);
+  --sb-thumb-dim: color-mix(in srgb, var(--ink) 15%, transparent);
+  --sb-thumb-in: color-mix(in srgb, var(--ink) 19%, transparent);
   --wrap: 1128px;
   --gutter: clamp(1.25rem, 4.2vw, 3.25rem);
   --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
@@ -36,10 +46,20 @@
   --ink: #f3ede4;
   --ink-2: #bcb3a6;
   --ink-3: #8b8275;
-  --rose: #e2a0ab;
-  --rose-2: #efb9c1;
-  --on-rose: #1a1113;
-  --blue: #a8bedb;
+  --rose: #d9a284;
+  --rose-2: #eec4ac;
+  --rose-3: #f6ddcd;
+  --rose-ink: #e3b096;
+  --on-rose: #120b07;
+  --blue: #9fb9dc;
+  --blue-2: #b7cbe8;
+  --blue-3: #23334b;
+  --mark-a: #e0ab8e;
+  --mark-b: #93aed2;
+  --sb-track: color-mix(in srgb, var(--ink) 7%, transparent);
+  --sb-thumb: color-mix(in srgb, var(--ink) 42%, transparent);
+  --sb-thumb-dim: color-mix(in srgb, var(--ink) 26%, transparent);
+  --sb-thumb-in: color-mix(in srgb, var(--ink) 34%, transparent);
   color-scheme: dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -51,10 +71,21 @@
     --ink: #f3ede4;
     --ink-2: #bcb3a6;
     --ink-3: #8b8275;
-    --rose: #e2a0ab;
-    --rose-2: #efb9c1;
-    --on-rose: #1a1113;
-    --blue: #a8bedb;
+    --rose: #d9a284;
+    --rose-2: #eec4ac;
+    --rose-3: #f6ddcd;
+    --rose-ink: #e3b096;
+    --on-rose: #120b07;
+    --blue: #9fb9dc;
+    --blue-2: #b7cbe8;
+    --blue-3: #23334b;
+    --mark-a: #e0ab8e;
+    --mark-b: #93aed2;
+    --sb-track: color-mix(in srgb, var(--ink) 7%, transparent);
+    --sb-thumb: color-mix(in srgb, var(--ink) 42%, transparent);
+    --sb-thumb-dim: color-mix(in srgb, var(--ink) 26%, transparent);
+    --sb-thumb-in: color-mix(in srgb, var(--ink) 34%, transparent);
+    color-scheme: dark;
   }
 }
 /* --------------------------------------------------------------------- base */
@@ -90,7 +121,7 @@ body {
   font-variant-ligatures: no-contextual;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  caret-color: var(--rose);
+  caret-color: var(--rose-ink);
 }
 [data-theme="dark"] body {
   background-blend-mode: screen;
@@ -224,7 +255,7 @@ input[type="radio"] {
 }
 input[type="checkbox"]:checked,
 input[type="radio"]:checked {
-  border-color: var(--rose);
+  border-color: var(--rose-ink);
   background: var(--rose);
 }
 input[type="radio"] {
@@ -356,19 +387,19 @@ hr {
     height: 11px;
   }
   html::-webkit-scrollbar-track {
-    background-color: transparent;
+    background-color: var(--sb-track);
   }
   html::-webkit-scrollbar-thumb {
     border: 3px solid transparent;
     border-radius: 99px;
-    background-color: color-mix(in srgb, var(--ink) 26%, transparent);
+    background-color: var(--sb-thumb);
     background-clip: content-box;
   }
   html::-webkit-scrollbar-thumb:hover {
-    background-color: color-mix(in srgb, var(--ink) 40%, transparent);
+    background-color: var(--rose-ink);
   }
   html.at-top::-webkit-scrollbar-thumb {
-    background-color: transparent;
+    background-color: var(--sb-thumb-dim);
   }
   :is(.scroll, pre, .toc, .api-nav)::-webkit-scrollbar {
     width: 9px;
@@ -380,27 +411,27 @@ hr {
   :is(.scroll, pre, .toc, .api-nav)::-webkit-scrollbar-thumb {
     border: 3px solid transparent;
     border-radius: 99px;
-    background-color: color-mix(in srgb, var(--ink) 14%, transparent);
+    background-color: var(--sb-thumb-in);
     background-clip: content-box;
   }
   :is(.scroll, pre, .toc, .api-nav):hover::-webkit-scrollbar-thumb {
-    background-color: color-mix(in srgb, var(--ink) 32%, transparent);
+    background-color: var(--sb-thumb);
   }
 }
 @supports not selector(::-webkit-scrollbar) {
   html {
     scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--ink) 26%, transparent) transparent;
+    scrollbar-color: var(--sb-thumb) var(--sb-track);
   }
   html.at-top {
-    scrollbar-color: transparent transparent;
+    scrollbar-color: var(--sb-thumb-dim) var(--sb-track);
   }
   :is(.scroll, pre, .toc, .api-nav) {
     scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--ink) 16%, transparent) transparent;
+    scrollbar-color: var(--sb-thumb-in) transparent;
   }
   :is(.scroll, pre, .toc, .api-nav):hover {
-    scrollbar-color: color-mix(in srgb, var(--ink) 32%, transparent) transparent;
+    scrollbar-color: var(--sb-thumb) transparent;
   }
 }
 /* ------------------------------------------------------------------- layout */
@@ -445,7 +476,7 @@ hr {
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .lede {
   max-width: 54ch;
@@ -469,7 +500,7 @@ hr {
   font-family: var(--serif);
   font-size: clamp(2.1rem, 3vw, 2.6rem);
   line-height: 0.86;
-  color: color-mix(in srgb, var(--ink) 22%, transparent);
+  color: color-mix(in srgb, var(--rose) 72%, transparent);
   font-variant-numeric: lining-nums;
 }
 .section-head h2 {
@@ -530,7 +561,7 @@ hr {
   font-family: var(--mono);
   font-size: 0.64rem;
   line-height: 1.7;
-  color: color-mix(in srgb, var(--paper) 58%, transparent);
+  color: color-mix(in srgb, var(--paper) 44%, var(--rose));
   white-space: nowrap;
   overflow: hidden;
 }
@@ -562,7 +593,7 @@ hr {
   color: color-mix(in srgb, var(--paper) 62%, transparent);
 }
 .band .band-note code {
-  color: var(--rose);
+  color: var(--rose-ink);
   background: none;
   font-size: 1em;
 }
@@ -602,10 +633,15 @@ hr {
   letter-spacing: -0.014em;
 }
 .brand .mark {
-  width: 17px;
-  height: 17px;
-  fill: var(--rose);
+  width: 18px;
+  height: 18px;
   flex: none;
+}
+.brand .mark .m-a {
+  fill: var(--mark-a);
+}
+.brand .mark .m-b {
+  fill: var(--mark-b);
 }
 .mainnav {
   display: flex;
@@ -695,7 +731,8 @@ hr {
   padding: 0.72rem 1.15rem 0.62rem;
   border: 1px solid transparent;
   border-radius: 2px;
-  background: var(--rose);
+  background-color: var(--rose);
+  background-image: linear-gradient(168deg, color-mix(in srgb, var(--rose-3) 30%, var(--rose)) 0%, var(--rose) 58%, color-mix(in srgb, var(--ink) 7%, var(--rose)) 100%);
   color: var(--on-rose);
   font-family: var(--mono);
   font-size: 0.72rem;
@@ -707,7 +744,7 @@ hr {
   -webkit-user-drag: none;
 }
 .btn:hover {
-  background: var(--rose-2);
+  background-image: linear-gradient(168deg, color-mix(in srgb, var(--rose-3) 46%, var(--rose-2)) 0%, var(--rose-2) 62%, color-mix(in srgb, var(--ink) 5%, var(--rose-2)) 100%);
 }
 .btn:active {
   transform: translateY(1px);
@@ -751,7 +788,7 @@ hr {
   overflow-wrap: anywhere;
 }
 .docket .d-row .sep {
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .btn.ghost {
   background: transparent;
@@ -765,18 +802,18 @@ hr {
 .chip {
   display: inline-block;
   padding: 0.16rem 0.42rem 0.1rem;
-  border: 1px solid var(--hair);
+  border: 1px solid color-mix(in srgb, var(--rose) 58%, transparent);
   border-radius: 2px;
   font-family: var(--mono);
   font-size: 0.62rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--rose-ink);
   white-space: nowrap;
 }
 .chip.stream {
-  border-color: color-mix(in srgb, var(--rose) 42%, transparent);
-  color: var(--rose);
+  border-color: color-mix(in srgb, var(--blue) 58%, transparent);
+  color: var(--blue);
 }
 .chip.final {
   border-color: color-mix(in srgb, var(--ink) 32%, transparent);
@@ -881,7 +918,7 @@ hr {
   gap: 0.7rem;
 }
 .hero-kicker .eyebrow {
-  color: var(--rose);
+  color: var(--rose-ink);
   letter-spacing: 0.16em;
 }
 .hero-kicker .eyebrow.dim {
@@ -916,7 +953,7 @@ hr {
   font-size: 0.42em;
   font-style: italic;
   letter-spacing: 0.01em;
-  color: var(--rose);
+  color: var(--rose-ink);
   vertical-align: 0.66em;
 }
 .hero-title .word {
@@ -1039,11 +1076,11 @@ hr {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--rose);
+  background: var(--blue);
   flex: none;
 }
 .t-head .t-method {
-  color: var(--ink-2);
+  color: var(--blue);
 }
 .t-head .t-status {
   margin-left: auto;
@@ -1086,8 +1123,8 @@ hr {
   border: 1px solid var(--hair);
 }
 .t-frame:first-child::before {
-  background: var(--rose);
-  border-color: var(--rose);
+  background: var(--blue);
+  border-color: var(--blue);
 }
 .t-frame pre {
   margin: 0;
@@ -1112,7 +1149,7 @@ hr {
 .t-frame .f-state {
   font-size: 0.58rem;
   letter-spacing: 0.1em;
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .t-foot {
   display: flex;
@@ -1196,7 +1233,7 @@ hr {
   font-family: var(--mono);
   font-size: 0.62rem;
   letter-spacing: 0.14em;
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .card h3 {
   margin-top: 0.7rem;
@@ -1286,7 +1323,7 @@ hr {
   background: var(--paper-2);
 }
 .state-cell.is-final code {
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .cycle-key {
   display: flex;
@@ -1333,10 +1370,13 @@ hr {
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .duo-side.client h3 {
   color: var(--blue);
+}
+.duo-side.client .duo-stack li {
+  border-left-color: color-mix(in srgb, var(--blue) 68%, transparent);
 }
 .duo-stack {
   margin-top: 1.1rem;
@@ -1345,6 +1385,7 @@ hr {
   position: relative;
   padding: 0.5rem 0.65rem;
   border: 1px solid var(--hair-2);
+  border-left: 2px solid color-mix(in srgb, var(--rose) 68%, transparent);
   border-radius: 2px;
   background: var(--paper-2);
   font-family: var(--mono);
@@ -1395,7 +1436,7 @@ hr {
 .refusal .code {
   font-family: var(--mono);
   font-size: 0.74rem;
-  color: var(--rose);
+  color: var(--rose-ink);
   font-variant-numeric: tabular-nums;
 }
 .refusal .name {
@@ -1447,7 +1488,7 @@ hr {
   transition: text-decoration-color 0.2s var(--ease);
 }
 .notes li a:hover {
-  text-decoration-color: var(--rose);
+  text-decoration-color: var(--rose-ink);
 }
 /* -------------------------------------------------------------------- code */
 .code-block {
@@ -1480,7 +1521,7 @@ hr {
   transition: color 0.2s var(--ease);
 }
 .copy:hover {
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 pre {
   margin: 0;
@@ -1493,22 +1534,22 @@ pre {
   tab-size: 2;
 }
 .tok-key {
-  color: var(--rose);
+  color: var(--blue);
 }
 .tok-str {
   color: var(--ink);
 }
 .tok-num {
-  color: var(--blue);
+  color: var(--rose-ink);
 }
 .tok-bool {
-  color: var(--blue);
+  color: var(--rose-ink);
 }
 .tok-comment {
   color: var(--ink-3);
 }
 .tok-kw {
-  color: var(--rose);
+  color: var(--blue);
 }
 .tok-name {
   color: var(--ink);
@@ -1563,7 +1604,7 @@ pre {
   color: var(--ink);
 }
 .toc a[aria-current="true"] {
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .prose {
   max-width: 68ch;
@@ -1581,7 +1622,7 @@ pre {
   margin-right: 0.5rem;
   font-family: var(--mono);
   font-size: 0.8em;
-  color: var(--rose);
+  color: var(--rose-ink);
   vertical-align: 0.06em;
 }
 .prose h2:first-child {
@@ -1630,7 +1671,7 @@ pre {
   text-decoration-color: var(--hair);
 }
 .prose a:hover {
-  text-decoration-color: var(--rose);
+  text-decoration-color: var(--rose-ink);
 }
 .note {
   padding: 0.9rem 1rem;
@@ -1693,11 +1734,11 @@ pre {
   font-size: 10.2px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  fill: var(--ink-3);
+  fill: var(--ink-2);
   transition: fill 0.2s var(--ease);
 }
 .star-map .leader {
-  stroke: var(--hair);
+  stroke: color-mix(in srgb, var(--ink) 26%, transparent);
   stroke-width: 1;
   transition: stroke 0.2s var(--ease);
 }
@@ -1725,9 +1766,14 @@ pre {
   fill: var(--rose-wash);
   stroke: color-mix(in srgb, var(--rose) 45%, transparent);
 }
+.star-map .edge {
+  stroke: var(--rose);
+  opacity: 0.3;
+  transition: opacity 0.2s var(--ease), stroke 0.2s var(--ease);
+}
 .star-map .edge.lit {
   stroke: var(--rose);
-  opacity: 0.55;
+  opacity: 0.78;
 }
 .star-map .flow {
   fill: var(--rose);
@@ -1737,14 +1783,14 @@ pre {
 }
 .star-map .node .ring {
   fill: var(--paper);
-  stroke: var(--hair);
+  stroke: color-mix(in srgb, var(--ink) 34%, transparent);
   stroke-width: 1;
   transition: stroke 0.2s var(--ease), fill 0.2s var(--ease);
 }
 .star-map .node .ref {
   font-family: var(--mono);
   font-size: 9.2px;
-  fill: var(--ink-3);
+  fill: var(--ink-2);
   text-anchor: middle;
 }
 .star-map .node:hover .ring {
@@ -1830,7 +1876,7 @@ pre {
   background: var(--rose-wash);
 }
 .node-index tbody tr.lit td:first-child {
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .node-index tbody tr:last-child td {
   border-bottom: 0;
@@ -1868,7 +1914,7 @@ pre {
   font-size: 0.62rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .ex-desc {
   padding: 0.4rem 1.1rem 0;
@@ -1937,7 +1983,7 @@ pre {
   transform: scaleY(1);
 }
 .composer .field:focus-within .field-k {
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .composer button {
   display: inline-flex;
@@ -2008,7 +2054,7 @@ pre {
 }
 .frame.event .kind-tag {
   border-color: color-mix(in srgb, var(--rose) 45%, transparent);
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .frame.error .kind-tag {
   color: var(--ink);
@@ -2061,7 +2107,7 @@ pre {
   transition: transform 0.22s var(--ease);
 }
 .card-panel summary:hover {
-  color: var(--rose);
+  color: var(--rose-ink);
   background: var(--wash);
 }
 .card-panel[open] summary {
@@ -2130,7 +2176,7 @@ pre {
   font-family: var(--mono);
   font-size: 0.68rem;
   letter-spacing: 0.08em;
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .api-nav a {
   display: block;
@@ -2227,7 +2273,7 @@ pre {
   overflow-wrap: anywhere;
 }
 .sig .kw {
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .sig .name {
   color: var(--ink);
@@ -2412,7 +2458,7 @@ pre {
   transition: color 0.18s var(--ease);
 }
 .foot-col a:hover {
-  color: var(--rose);
+  color: var(--rose-ink);
 }
 .legal {
   display: flex;
