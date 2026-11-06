@@ -189,11 +189,20 @@ async test "stream: a subscriber sees the task it joined, then what happens to i
     @async.sleep(300)
   })
   let results = taken_results(recorder)
-  assert_true(results.length() >= 3)
   // The stream begins with the task as it stood (section 3.1.6) and ends at a terminal state.
   assert_true(event_of(results[0]) is @moona2a.TaskSnapshot(_))
   let last = event_of(results[results.length() - 1])
   assert_true(last.is_final())
+  // And it carries what happened after the subscriber joined, and nothing from before: the task
+  // was left waiting on its first message, and its second run is the only run this stream sees.
+  let states : Array[String] = []
+  for result in results[1:] {
+    match event_of(result) {
+      @moona2a.StatusChange(update) => states.push(update.status.state.wire())
+      _ => ()
+    }
+  }
+  assert_eq(states, ["TASK_STATE_WORKING", "TASK_STATE_COMPLETED"])
 }
 
 ///|
