@@ -278,7 +278,7 @@ def parse_mbti(path: Path):
         m = re.match(r"^//\s+(Values|Errors|Types and methods|Type aliases|Traits)\s*$", line)
         if m:
             section = m.group(1)
-        if re.match(r"^pub\b", line):
+        if re.match(r"^(?:pub\b|type\s+[A-Za-z_]\w*$)", line):
             buf = [line]
             depth = line.count("{") - line.count("}")
             j = i + 1
@@ -295,7 +295,7 @@ def parse_mbti(path: Path):
 
 def classify(item: dict):
     first = item["lines"][0]
-    m = re.match(r"^pub(?:\(all\))?\s+(fn|let|const|struct|enum|suberror|impl|typealias|trait)\b\s*([A-Za-z_][\w:]*)?", first)
+    m = re.match(r"^(?:pub(?:\(all\))?\s+)?(?:async\s+)?(fn|let|const|struct|enum|suberror|impl|type|typealias|trait)\b\s*([A-Za-z_][\w:]*)?", first)
     if not m:
         return None
     kind, name = m.group(1), m.group(2) or ""
@@ -305,8 +305,8 @@ def classify(item: dict):
     elif kind in ("let", "const"):
         mm = re.search(r"\b(?:let|const)\s+([A-Za-z_]\w*)", first)
         name = mm.group(1) if mm else name
-    elif kind in ("struct", "enum", "suberror"):
-        mm = re.search(r"\b(?:struct|enum|suberror)\s+([A-Za-z_]\w*)", first)
+    elif kind in ("struct", "enum", "suberror", "type"):
+        mm = re.search(r"\b(?:struct|enum|suberror|type)\s+([A-Za-z_]\w*)", first)
         name = mm.group(1) if mm else name
         name = name.split("::")[0]
     return {"kind": kind, "name": name, "first": first, "body": item["lines"][1:-1] if len(item["lines"]) > 1 else []}
@@ -319,12 +319,12 @@ def classify(item: dict):
 def sig_html(sig: str) -> str:
     e = esc(sig)
     e = re.sub(
-        r"\b(pub|fn|let|const|struct|enum|suberror|impl|typealias|trait|derive|raise|for|with)\b",
+        r"\b(pub|async|fn|let|const|struct|enum|suberror|impl|type|typealias|trait|derive|raise|for|with)\b",
         r'<span class="kw">\1</span>',
         e,
     )
     e = re.sub(
-        r'(<span class="kw">(?:fn|let|const|struct|enum|suberror|typealias|trait)</span>\s+)([A-Za-z_][\w:]*)',
+        r'(<span class="kw">(?:fn|let|const|struct|enum|suberror|type|typealias|trait)</span>\s+)([A-Za-z_][\w:]*)',
         r'\1<span class="name">\2</span>',
         e,
     )
@@ -390,7 +390,7 @@ def build_package(mbti_path: Path, sources: list[Path], docs: dict, params: dict
     classified = [c for c in classified if c]
 
     for c in classified:
-        if c["kind"] in ("struct", "enum"):
+        if c["kind"] in ("struct", "enum", "type"):
             types[c["name"]] = c
         elif c["kind"] == "suberror":
             errors[c["name"]] = c
@@ -464,10 +464,13 @@ def render_package(pkg_slug: str, model: dict, docs: dict, params: dict) -> str:
                 out.append(f'<div class="doc">{md_to_html(doc)}</div>')
             if e["body"]:
                 out.append(render_members(e["body"]))
+            own = [m for m in e["methods"] if m["name"].split("::")[-1] not in DERIVED]
             derived = [m for m in e["methods"] if m["name"].split("::")[-1] in DERIVED]
-            if derived:
-                out.append('<div class="method-list"><div class="mlabel">Trait methods</div>')
-                for m in derived:
+            for label, group in (("Methods", own), ("Trait methods", derived)):
+                if not group:
+                    continue
+                out.append(f'<div class="method-list"><div class="mlabel">{label}</div>')
+                for m in group:
                     out.append(render_item("fn", m, docs, params, f'm-{pkg_slug}-{slug(m["name"])}'))
                 out.append("</div>")
             out.append("</section>")

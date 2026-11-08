@@ -76,6 +76,7 @@
 <a href="#type-moona2a-SendMessageRequest">SendMessageRequest</a>
 <a href="#type-moona2a-Server">Server</a>
 <a href="#type-moona2a-ServerConfig">ServerConfig</a>
+<a href="#type-moona2a-ServerState">ServerState</a>
 <a href="#type-moona2a-StreamEvent">StreamEvent</a>
 <a href="#type-moona2a-Task">Task</a>
 <a href="#type-moona2a-TaskArtifactUpdate">TaskArtifactUpdate</a>
@@ -93,6 +94,7 @@
 <div class="group">
 <div class="pkg">@asgi</div>
 <a href="#type-asgi-Options">Options</a>
+<a href="#type-asgi-Stream">Stream</a>
 <a href="#fn-asgi">Functions</a>
 </div>
 <div class="group">
@@ -428,9 +430,21 @@
 <ul class="members"><li><b>run</b> : <span class="pt">async (RequestContext, &amp;EventSink) -&gt; Unit</span></li><li><b>stop</b> : <span class="pt">async (String) -&gt; Unit</span></li></ul>
 <div class="method-list"><div class="mlabel">Methods</div>
 <article class="api-item" id="m-moona2a-CallableExecutor-new">
-<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">CallableExecutor::new</span>(run~ : async (RequestContext, &amp;EventSink) -&gt; Unit, stop~ : async (String) -&gt; Unit) -&gt; Self</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">CallableExecutor::new</span>(run~ : <span class="kw">async</span> (RequestContext, &amp;EventSink) -&gt; Unit, stop~ : <span class="kw">async</span> (String) -&gt; Unit) -&gt; Self</div>
 <div class="doc"><p>An executor that works requests with <code>run</code> and stops tasks with <code>stop</code>.</p></div>
 <div class="params"><span class="p"><b>run~</b> <span class="pt">async (RequestContext, &amp;EventSink) -&gt; Unit</span></span><span class="p"><b>stop~</b> <span class="pt">async (String) -&gt; Unit</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-CallableExecutor-cancel">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">CallableExecutor::cancel</span>(Self, String) -&gt; Unit</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-CallableExecutor-execute">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">CallableExecutor::execute</span>(Self, RequestContext, &amp;EventSink) -&gt; Unit</div>
+
+
 </article>
 </div>
 </section>
@@ -443,6 +457,68 @@
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Client::new</span>(&amp;Transport) -&gt; Self</div>
 <div class="doc"><p>A client talking to the agent behind <code>transport</code>.</p></div>
 <div class="params"><span class="p"><b>transport</b> <span class="pt">&amp;Transport</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-Client-cancel_task">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::cancel_task</span>(Self, String) -&gt; Task</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Client-create_push_config">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::create_push_config</span>(Self, TaskPushConfig) -&gt; TaskPushConfig</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Client-delete_push_config">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::delete_push_config</span>(Self, String, String) -&gt; Unit</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Client-discover">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::discover</span>(Self) -&gt; AgentCard</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Client-extended_card">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::extended_card</span>(Self) -&gt; AgentCard</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Client-get_push_config">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::get_push_config</span>(Self, String, String) -&gt; TaskPushConfig</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Client-get_task">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::get_task</span>(Self, String, history_length? : Int32) -&gt; Task</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Client-list_push_configs">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::list_push_configs</span>(Self, String) -&gt; Array[TaskPushConfig]</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Client-list_tasks">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::list_tasks</span>(Self, ListTasksQuery) -&gt; TaskPage</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Client-send_message">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::send_message</span>(Self, Message, configuration? : SendMessageConfig, metadata? : @json.Json, tenant? : String) -&gt; StreamEvent</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Client-send_streaming_message">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::send_streaming_message</span>(Self, Message, &amp;ReplySink, configuration? : SendMessageConfig, metadata? : @json.Json, tenant? : String) -&gt; Unit</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Client-subscribe_to_task">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::subscribe_to_task</span>(Self, String, &amp;ReplySink) -&gt; Unit</div>
+
+
 </article>
 </div>
 </section>
@@ -464,6 +540,13 @@
 <article class="api-item" id="m-moona2a-Collected-message">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Collected::message</span>(Self) -&gt; Message?</div>
 <div class="doc"><p>The message the agent answered with directly, when the run produced one instead of a task.</p></div>
+
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-Collected-emit">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Collected::emit</span>(Self, StreamEvent) -&gt; Unit</div>
+
 
 </article>
 </div>
@@ -907,7 +990,7 @@
 <div class="params"><span class="p"><b>executor</b> <span class="pt">&amp;Executor</span></span><span class="p"><b>card</b> <span class="pt">AgentCard</span></span></div>
 </article>
 <article class="api-item" id="m-moona2a-Server-attach">
-<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Server::attach</span>(Self, @async.TaskGroup[Unit]) -&gt; Self</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Server::attach</span>(Self, @<span class="kw">async</span>.TaskGroup[Unit]) -&gt; Self</div>
 <div class="doc"><p>Let the server start runs in <code>group</code> when a caller asks not to wait. A run started this way outlives the request that asked for it, and stops when the group does.</p></div>
 <div class="params"><span class="p"><b>group</b> <span class="pt">@async.TaskGroup[Unit]</span></span></div>
 </article>
@@ -947,6 +1030,18 @@
 <div class="params"><span class="p"><b>card</b> <span class="pt">AgentCard</span></span></div>
 </article>
 </div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-Server-answer">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Server::answer</span>(Self, StringView, extensions? : Array[String], version? : String) -&gt; String?</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Server-answer_stream">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Server::answer_stream</span>(Self, StringView, &amp;ReplySink, extensions? : Array[String], version? : String) -&gt; Unit</div>
+
+
+</article>
+</div>
 </section>
 <section class="api-type" id="type-moona2a-ServerConfig">
 <div class="type-head"><h3>ServerConfig</h3><span class="kind">struct</span></div>
@@ -960,6 +1055,11 @@
 
 </article>
 </div>
+</section>
+<section class="api-type" id="type-moona2a-ServerState">
+<div class="type-head"><h3>ServerState</h3><span class="kind">type</span></div>
+<div class="sig"><span class="kw">type</span> <span class="name">ServerState</span></div>
+
 </section>
 <section class="api-type" id="type-moona2a-StreamEvent">
 <div class="type-head"><h3>StreamEvent</h3><span class="kind">enum</span></div>
@@ -1352,6 +1452,43 @@
 <div class="sig"><span class="kw">pub</span>(all) <span class="kw">suberror</span> <span class="name">Refused</span></div>
 <div class="doc"><p>A refused operation, named as the specification names it. The string is the server's own note on what the caller did, empty when the name says everything.</p></div>
 <ul class="members"><li>TaskNotFound(String)</li><li>TaskNotCancelable(String)</li><li>PushNotificationNotSupported(String)</li><li>UnsupportedOperation(String)</li><li>ContentTypeNotSupported(String)</li><li>InvalidAgentResponse(String)</li><li>ExtendedAgentCardNotConfigured(String)</li><li>ExtensionSupportRequired(String)</li><li>VersionNotSupported(String)</li><li>InvalidRequest(String)</li><li>InvalidParams(String)</li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-Refused-as_failed">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Refused::as_failed</span>(Self) -&gt; @moonjrpc.Failed</div>
+<div class="doc"><p>The refusal as the error a JSON-RPC handler raises, so its code and details reach the caller.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Refused-code">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Refused::code</span>(Self) -&gt; Int32</div>
+<div class="doc"><p>The JSON-RPC error code of the refusal, as section 5.4 of the specification maps it.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Refused-detail">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Refused::detail</span>(Self) -&gt; String?</div>
+<div class="doc"><p>What the caller did that the server is complaining about, when the refusal says.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Refused-failure">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Refused::failure</span>(Self) -&gt; @moonjrpc.Failure</div>
+<div class="doc"><p>The JSON-RPC failure that carries this refusal to the caller.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Refused-from_failure">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Refused::from_failure</span>(@moonjrpc.Failure) -&gt; Self</div>
+<div class="doc"><p>Read a refusal off the wire, by the code the server gave it. A code this library does not know becomes <code>InvalidAgentResponse</code>: the caller cannot recover from it either way, and naming it after what it is beats inventing a case for it.</p></div>
+<div class="params"><span class="p"><b>failure</b> <span class="pt">@moonjrpc.Failure</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-Refused-mention">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Refused::mention</span>(Self) -&gt; String</div>
+<div class="doc"><p>The one-line message a client shows a human, worded as the specification's error table words it.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Refused-reason">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Refused::reason</span>(Self) -&gt; String</div>
+<div class="doc"><p>The machine-readable reason, which goes into the error details.</p></div>
+
+</article>
+</div>
 </section>
 <div class="api-cat" id="fn-moona2a"><h3>Functions</h3></div>
 <article class="api-item" id="fn-moona2a-is_streaming_method">
@@ -1412,9 +1549,21 @@
 </article>
 </div>
 </section>
+<section class="api-type" id="type-asgi-Stream">
+<div class="type-head"><h3>Stream</h3><span class="kind">type</span></div>
+<div class="sig"><span class="kw">type</span> <span class="name">Stream</span></div>
+
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-asgi-Stream-reply">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Stream::reply</span>(Self, @moonjrpc.Message) -&gt; Unit</div>
+
+
+</article>
+</div>
+</section>
 <div class="api-cat" id="fn-asgi"><h3>Functions</h3></div>
 <article class="api-item" id="fn-asgi-to_asgi">
-<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">to_asgi</span>(@moona2a.Server, options? : Options) -&gt; async (@spec.Scope, async () -&gt; @spec.Event, async (@spec.Event) -&gt; Unit) -&gt; Unit</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">to_asgi</span>(@moona2a.Server, options? : Options) -&gt; <span class="kw">async</span> (@spec.Scope, <span class="kw">async</span> () -&gt; @spec.Event, <span class="kw">async</span> (@spec.Event) -&gt; Unit) -&gt; Unit</div>
 <div class="doc"><p>The ASGI application for <code>server</code>: a GET of the card's well-known address answers with the card, a POST of a JSON-RPC body answers with a body or, for a streaming method, with a stream of server-sent events.</p>
 <p>The application writes its events as it goes, rather than assembling one <code>Response</code>: a stream answer is only worth having if each event leaves as it happens.</p></div>
 <div class="params"><span class="p"><b>server</b> <span class="pt">@moona2a.Server</span></span><span class="p"><b>options?</b> <span class="pt">Options</span></span></div>
@@ -1438,12 +1587,36 @@
 <div class="params"><span class="p"><b>url</b> <span class="pt">String</span></span><span class="p"><b>path?</b> <span class="pt">String</span></span><span class="p"><b>card_path?</b> <span class="pt">String</span></span></div>
 </article>
 </div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-fetch-HttpTransport-discover">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">HttpTransport::discover</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+<article class="api-item" id="m-fetch-HttpTransport-exchange">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">HttpTransport::exchange</span>(Self, @moonjrpc.Message) -&gt; @moonjrpc.Message</div>
+
+
+</article>
+<article class="api-item" id="m-fetch-HttpTransport-stream">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">HttpTransport::stream</span>(Self, @moonjrpc.Message, &amp;@moona2a.ReplySink) -&gt; Unit</div>
+
+
+</article>
+</div>
 </section>
 <section class="api-type" id="type-fetch-Webhook">
 <div class="type-head"><h3>Webhook</h3><span class="kind">struct</span></div>
 <div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">Webhook</span></div>
 <div class="doc"><p>A notifier that posts to whatever URL a registration names.</p></div>
 
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-fetch-Webhook-notify">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Webhook::notify</span>(Self, @moona2a.TaskPushConfig, @moona2a.StreamEvent) -&gt; Unit</div>
+
+
+</article>
+</div>
 </section>
 <div class="api-cat"><h3>Errors</h3></div>
 <section class="api-type" id="err-fetch-Unreachable">
@@ -1527,11 +1700,40 @@
 <div class="type-head"><h3>Traced</h3><span class="kind">struct</span></div>
 <div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">Traced</span></div>
 <ul class="members"><li><b>tracing</b> : <span class="pt">Tracing</span></li><li><b>inner</b> : <span class="pt">&amp;@moona2a.Executor</span></li></ul>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-otel-Traced-cancel">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Traced::cancel</span>(Self, String) -&gt; Unit</div>
+
+
+</article>
+<article class="api-item" id="m-otel-Traced-execute">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Traced::execute</span>(Self, @moona2a.RequestContext, &amp;@moona2a.EventSink) -&gt; Unit</div>
+
+
+</article>
+</div>
 </section>
 <section class="api-type" id="type-otel-TracedTransport">
 <div class="type-head"><h3>TracedTransport</h3><span class="kind">struct</span></div>
 <div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">TracedTransport</span></div>
 <ul class="members"><li><b>tracing</b> : <span class="pt">Tracing</span></li><li><b>inner</b> : <span class="pt">&amp;@moona2a.Transport</span></li></ul>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-otel-TracedTransport-discover">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">TracedTransport::discover</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+<article class="api-item" id="m-otel-TracedTransport-exchange">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">TracedTransport::exchange</span>(Self, @moonjrpc.Message) -&gt; @moonjrpc.Message</div>
+
+
+</article>
+<article class="api-item" id="m-otel-TracedTransport-stream">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">TracedTransport::stream</span>(Self, @moonjrpc.Message, &amp;@moona2a.ReplySink) -&gt; Unit</div>
+
+
+</article>
+</div>
 </section>
 <section class="api-type" id="type-otel-Tracing">
 <div class="type-head"><h3>Tracing</h3><span class="kind">struct</span></div>
