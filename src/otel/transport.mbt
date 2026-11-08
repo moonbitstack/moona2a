@@ -33,15 +33,46 @@ impl @moona2a.ReplySink for Watching with fn reply(self, message) {
 pub struct TracedTransport {
   tracing : Tracing
   inner : &@moona2a.Transport
+  /// Where the headers of the call in flight go, when the transport can carry them.
+  inject : ((Array[(String, String)]) -> Unit)?
 }
 
 ///|
 /// `transport`, with each call recorded.
+///
+/// `inject` is how a trace crosses to the other side: the wrapper hands it the headers of
+/// the call it is about to make, and the transport under it puts them on the request. Pass
+/// `injector.setting()` from an `Injector`, which is also what that transport asks for its
+/// headers. Without it the spans are still right, but a callee sees no parent and starts a
+/// trace of its own.
 pub fn Tracing::calling(
   self : Tracing,
   transport : &@moona2a.Transport,
+  inject? : (Array[(String, String)]) -> Unit,
 ) -> TracedTransport {
-  { tracing: self, inner: transport, }
+  { tracing: self, inner: transport, inject, }
+}
+
+///|
+/// Write the headers of the call in flight, or clear them for a call that has no span.
+fn TracedTransport::carrying(
+  self : TracedTransport,
+  context : @trace.TraceContext?,
+) -> Unit {
+  match self.inject {
+    Some(sink) =>
+      match context {
+        Some(context) =>
+          sink(
+            @propagate.inject([], {
+              context: Some(context),
+              baggage: @propagate.empty_baggage,
+            }),
+          )
+        None => sink([])
+      }
+    None => ()
+  }
 }
 
 ///|
@@ -108,11 +139,16 @@ pub impl @moona2a.Transport for TracedTransport with fn exchange(self, message) 
   let (name, attributes) = self.shape(message)
   let span = self.tracing.begin(name, @trace.Client, attributes)
   match span {
-    None => self.inner.exchange(message)
+    None => {
+      self.carrying(None)
+      self.inner.exchange(message)
+    }
     Some(span) => {
+      self.carrying(Some(span.context()))
       let outcome = Ok(self.inner.exchange(message)) catch {
         error => Err(error)
       }
+      self.carrying(None)
       match outcome {
         Ok(answer) =>
           match answer {
@@ -143,8 +179,12 @@ pub impl @moona2a.Transport for TracedTransport with fn stream(
   let (name, attributes) = self.shape(message)
   let span = self.tracing.begin(name, @trace.Client, attributes)
   match span {
-    None => self.inner.stream(message, out)
+    None => {
+      self.carrying(None)
+      self.inner.stream(message, out)
+    }
     Some(span) => {
+      self.carrying(Some(span.context()))
       let watch : Watch = {
         span,
         now: self.tracing.now,
@@ -158,6 +198,7 @@ pub impl @moona2a.Transport for TracedTransport with fn stream(
       } catch {
         error => Some(error)
       }
+      self.carrying(None)
       // A stream that ended on a refusal already set the status; a run that ended in
       // a state sets it here, and a stream that simply stopped leaves it alone.
       watch.finish(outcome)
@@ -177,9 +218,14 @@ pub impl @moona2a.Transport for TracedTransport with fn discover(self) {
     self.tracing.identity_attributes(),
   )
   match span {
-    None => self.inner.discover()
+    None => {
+      self.carrying(None)
+      self.inner.discover()
+    }
     Some(span) => {
+      self.carrying(Some(span.context()))
       let outcome = Ok(self.inner.discover()) catch { error => Err(error) }
+      self.carrying(None)
       match outcome {
         Ok(card) => {
           ignore(card)

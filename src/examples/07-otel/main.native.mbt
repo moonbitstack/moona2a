@@ -34,16 +34,21 @@ impl @moona2a.Executor for Echo with fn cancel(self, task_id) {
 pub extend Echo with @moona2a.Executor::{execute, cancel}
 
 ///|
-/// A transport that hands a call to a server in this process. The protocol does not
-/// care where the messages go, which is why a span is the only thing that changes when
-/// the transport is a socket instead.
+/// A transport that hands a call to a server in this process, carrying the headers the
+/// traced wrapper wrote. The protocol does not care where the messages go: a socket
+/// would carry the same headers, which is what the `fetch` transport does with them.
 struct Local {
   server : @moona2a.Server
+  injector : @otel.Injector
 }
 
 ///|
 impl @moona2a.Transport for Local with fn exchange(self, message) {
-  let answer = self.server.answer(message.to_json().stringify(), version="1.0") catch {
+  let answer = self.server.answer(
+    message.to_json().stringify(),
+    version="1.0",
+    headers=self.injector.current(),
+  ) catch {
     _ => None
   }
   match answer {
@@ -60,7 +65,12 @@ impl @moona2a.Transport for Local with fn exchange(self, message) {
 
 ///|
 impl @moona2a.Transport for Local with fn stream(self, message, out) {
-  self.server.answer_stream(message.to_json().stringify(), out, version="1.0")
+  self.server.answer_stream(
+    message.to_json().stringify(),
+    out,
+    version="1.0",
+    headers=self.injector.current(),
+  )
 }
 
 ///|
@@ -139,7 +149,12 @@ async fn main {
     agent=@otel.Agent::of_card(card),
   )
   let server = @moona2a.Server::new(tracing.executing(Echo::{ }), card)
-  let client = @moona2a.Client::new(tracing.calling(Local::{ server, }))
+  // The cell is what carries the trace across: the wrapper writes the headers of the call
+  // it is making, this transport reads them, and the server hands them to the run.
+  let injector = @otel.Injector::new()
+  let client = @moona2a.Client::new(
+    tracing.calling(Local::{ server, injector, }, inject=injector.setting()),
+  )
 
   println("reading the card")
   let read = client.discover()

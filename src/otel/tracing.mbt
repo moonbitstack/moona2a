@@ -139,15 +139,33 @@ fn Tracing::agent_attributes(self : Tracing) -> Array[(String, @trace.Value)] {
 ///|
 /// Open the span `name` covers, or `None` when the tracer's source of randomness is
 /// broken — a run is worth more than its trace, so an untraced one goes ahead.
+///
+/// `parent` is the context the work continues, when the request brought one: the trace of
+/// the caller that asked for this run, which is what makes one trace out of two agents.
 fn Tracing::begin(
   self : Tracing,
   name : String,
   kind : @trace.SpanKind,
   attributes : Array[(String, @trace.Value)],
+  parent? : @trace.TraceContext,
 ) -> @trace.Span? {
-  Some(self.tracer.start(name, kind~, at=(self.now)(), attributes~)) catch {
+  let started = (self.now)()
+  Some(
+    match parent {
+      Some(context) =>
+        self.tracer.start(name, parent=context, kind~, at=started, attributes~)
+      None => self.tracer.start(name, kind~, at=started, attributes~)
+    },
+  ) catch {
     _ => None
   }
+}
+
+///|
+/// The trace a request continues, read out of the headers it arrived with. A header that
+/// does not parse is no header: a run is worth more than the link to its caller.
+fn parent_of(headers : Array[(String, String)]) -> @trace.TraceContext? {
+  @propagate.extract(headers).context
 }
 
 ///|

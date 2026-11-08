@@ -137,11 +137,14 @@ pub impl @moona2a.Executor for Traced with fn execute(self, ctx, out) {
       ),
     )
   }
-  let span = self.tracing.begin(
-    self.tracing.invocation_name(),
-    @trace.Internal,
-    attributes,
-  )
+  // The trace the caller was already in, when the request brought one: the run joins it
+  // rather than starting a second one, so one trace covers both agents.
+  let name = self.tracing.invocation_name()
+  let span = match parent_of(ctx.headers) {
+    Some(context) =>
+      self.tracing.begin(name, @trace.Internal, attributes, parent=context)
+    None => self.tracing.begin(name, @trace.Internal, attributes)
+  }
   match span {
     None => self.inner.execute(ctx, out)
     Some(span) => {

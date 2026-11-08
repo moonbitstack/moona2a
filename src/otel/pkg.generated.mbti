@@ -4,6 +4,7 @@ package "moonbitstack/moona2a/otel"
 import {
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
+  "moonbitlang/core/ref",
   "moonbitstack/moona2a",
   "moonbitstack/moonjrpc",
   "moonbitstack/moontel/trace",
@@ -41,6 +42,13 @@ pub fn Agent::of_card(@moona2a.AgentCard) -> Self
 pub fn Agent::of_server(@moona2a.Server) -> Self
 pub fn Agent::to_repr(Self) -> @debug.Repr
 
+pub struct Injector {
+  cell : @ref.Ref[Array[(String, String)]]
+}
+pub fn Injector::current(Self) -> Array[(String, String)]
+pub fn Injector::new() -> Self
+pub fn Injector::setting(Self) -> (Array[(String, String)]) -> Unit
+
 #derive(@debug.Debug)
 pub(all) struct Settings {
   record_content : Bool
@@ -59,6 +67,7 @@ pub impl @moona2a.Executor for Traced
 pub struct TracedTransport {
   tracing : Tracing
   inner : &@moona2a.Transport
+  inject : ((Array[(String, String)]) -> Unit)?
 }
 pub async fn TracedTransport::discover(Self) -> @json.Json
 pub async fn TracedTransport::exchange(Self, @moonjrpc.Message) -> @moonjrpc.Message
@@ -72,11 +81,12 @@ pub(all) struct Tracing {
   settings : Settings
 }
 pub fn Tracing::at_most(Self, Int32) -> Self
-pub fn Tracing::calling(Self, &@moona2a.Transport) -> TracedTransport
+pub fn Tracing::calling(Self, &@moona2a.Transport, inject? : (Array[(String, String)]) -> Unit) -> TracedTransport
 pub fn Tracing::executing(Self, &@moona2a.Executor) -> Traced
 pub fn Tracing::new(tracer~ : @trace.Tracer, now~ : () -> Int64, agent~ : Agent, settings? : Settings) -> Self
 pub fn Tracing::recording_content(Self) -> Self
 
 // Type aliases
+pub type Headers = Array[(String, String)]
 
 // Traits

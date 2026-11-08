@@ -31,6 +31,7 @@ async fn Server::stream_call(
   rpc_name : String,
   params : Json,
   out : &ReplySink,
+  headers : Array[(String, String)],
 ) -> Unit {
   let broadcast : Broadcast = { id, out, }
   let outcome = try {
@@ -39,7 +40,7 @@ async fn Server::stream_call(
         let request : SendMessageRequest = decode(Some(params))
         let prepared = self.prepare(request)
         self.remember_inline_push(prepared.task, prepared.configuration.push)
-        self.work(prepared, broadcast) |> ignore
+        self.work(prepared, broadcast, headers) |> ignore
       }
       Some(SubscribeToTask) => self.follow(Some(params), broadcast)
       Some(_) | None => raise UnsupportedOperation(rpc_name).as_failed()

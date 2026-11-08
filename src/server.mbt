@@ -9,6 +9,12 @@ pub(all) struct RequestContext {
   task_id : String
   context_id : String
   task : Task?
+  /// What the request carried outside the message: the headers of the call that started
+  /// this run, in the binding's own spelling. Empty when the host has none to give, which
+  /// is what a server driven from a body alone passes. A header the binding defines — the
+  /// version, the extensions — is read by the server and is here as well; the rest is the
+  /// agent's to read, which is how a tenant, a credential or a trace context reaches it.
+  headers : Array[(String, String)]
 }
 
 ///|
@@ -324,8 +330,13 @@ pub async fn Server::answer(
   body : StringView,
   extensions? : Array[String],
   version? : String,
+  headers? : Array[(String, String)],
 ) -> String? {
-  let table = self.table(extensions.unwrap_or([]), version)
+  let table = self.table(
+    extensions.unwrap_or([]),
+    version,
+    headers.unwrap_or([]),
+  )
   table.body(body)
 }
 
@@ -338,6 +349,7 @@ pub async fn Server::answer_stream(
   out : &ReplySink,
   extensions? : Array[String],
   version? : String,
+  headers? : Array[(String, String)],
 ) -> Unit {
   let request = @json.parse(body) catch {
     _ => {
@@ -373,11 +385,17 @@ pub async fn Server::answer_stream(
               _ => ()
             }
           None =>
-            self.stream_call(id, name, params.unwrap_or(Json::null()), out)
+            self.stream_call(
+              id,
+              name,
+              params.unwrap_or(Json::null()),
+              out,
+              headers.unwrap_or([]),
+            )
         }
       } else {
         let answer = self
-          .table(extensions.unwrap_or([]), version)
+          .table(extensions.unwrap_or([]), version, headers.unwrap_or([]))
           .answer(message)
         match answer {
           Some(reply) => out.reply(reply) catch { _ => () }
@@ -411,11 +429,12 @@ fn Server::table(
   self : Server,
   extensions : Array[String],
   version : String?,
+  headers : Array[(String, String)],
 ) -> @moonjrpc.Methods {
   let methods = @moonjrpc.Methods::new()
   methods.call(Method::SendMessage.name(), async fn(params) {
     self.enter(extensions, version)
-    self.on_send(params)
+    self.on_send(params, headers)
   })
   methods.call(Method::CancelTask.name(), async fn(params) {
     self.enter(extensions, version)

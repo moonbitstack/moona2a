@@ -227,6 +227,7 @@ async fn Server::work(
   self : Server,
   prepared : Prepared,
   out : &EventSink,
+  headers : Array[(String, String)],
 ) -> Folding raise @moonjrpc.Failed {
   let folding = Folding::{
     server: self,
@@ -239,6 +240,7 @@ async fn Server::work(
     task_id: prepared.task.id,
     context_id: prepared.task.context_id,
     task: prepared.previous,
+    headers,
   }
   let outcome = try {
     self.state.executor.execute(context, folding)
@@ -273,6 +275,7 @@ async fn Server::work(
 async fn Server::on_send(
   self : Server,
   params : Json?,
+  headers : Array[(String, String)],
 ) -> Json raise @moonjrpc.Failed {
   let request : SendMessageRequest = decode(params)
   let prepared = self.prepare(request)
@@ -282,7 +285,7 @@ async fn Server::on_send(
       self.record(prepared.task, StreamEvent::TaskSnapshot(prepared.task))
       let discarded = Discard::{ }
       group.spawn_bg(no_wait=true) <| () => {
-        try self.work(prepared, discarded) |> ignore catch {
+        try self.work(prepared, discarded, headers) |> ignore catch {
           _ => ()
         }
       }
@@ -295,7 +298,7 @@ async fn Server::on_send(
       })
     }
   }
-  self.answer_send(prepared)
+  self.answer_send(prepared, headers)
 }
 
 ///|
@@ -303,9 +306,10 @@ async fn Server::on_send(
 async fn Server::answer_send(
   self : Server,
   prepared : Prepared,
+  headers : Array[(String, String)],
 ) -> Json raise @moonjrpc.Failed {
   let collected = Collected::new()
-  let folding = self.work(prepared, collected)
+  let folding = self.work(prepared, collected, headers)
   let view : View = {
     artifacts: true,
     history: self.history(prepared.configuration.history_length),

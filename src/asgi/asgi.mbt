@@ -73,7 +73,13 @@ async fn serve(
     Some(name) =>
       if @moona2a.is_streaming_method(name) {
         let frames : Stream = { send, opened: false, refused: None, }
-        server.answer_stream(text, frames, extensions~, version~)
+        server.answer_stream(
+          text,
+          frames,
+          extensions~,
+          version~,
+          headers=http.headers,
+        )
         match frames.refused {
           Some(refusal) =>
             // Nothing was streamed, so the answer is a plain JSON-RPC error body, with the id the
@@ -91,7 +97,12 @@ async fn serve(
             }
         }
       } else {
-        let answer = server.answer(text, extensions~, version~) catch {
+        let answer = server.answer(
+          text,
+          extensions~,
+          version~,
+          headers=http.headers,
+        ) catch {
           _ => None
         }
         match answer {
@@ -100,7 +111,12 @@ async fn serve(
         }
       }
     None => {
-      let answer = server.answer(text, extensions~, version~) catch {
+      let answer = server.answer(
+        text,
+        extensions~,
+        version~,
+        headers=http.headers,
+      ) catch {
         _ => None
       }
       match answer {

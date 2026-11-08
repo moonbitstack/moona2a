@@ -341,6 +341,7 @@ pub(all) struct RequestContext {
   task_id : String
   context_id : String
   task : Task?
+  headers : Array[(String, String)]
 }
 pub fn RequestContext::artifact(Self, Artifact, append? : Bool, last_chunk? : Bool) -> StreamEvent
 pub fn RequestContext::replying(Self, Array[Part]) -> StreamEvent
@@ -397,8 +398,8 @@ pub impl @json.ToJson for SendMessageRequest
 pub struct Server {
   state : ServerState
 }
-pub async fn Server::answer(Self, StringView, extensions? : Array[String], version? : String) -> String?
-pub async fn Server::answer_stream(Self, StringView, &ReplySink, extensions? : Array[String], version? : String) -> Unit
+pub async fn Server::answer(Self, StringView, extensions? : Array[String], version? : String, headers? : Array[(String, String)]) -> String?
+pub async fn Server::answer_stream(Self, StringView, &ReplySink, extensions? : Array[String], version? : String, headers? : Array[(String, String)]) -> Unit
 pub fn Server::attach(Self, @async.TaskGroup[Unit]) -> Self
 pub fn Server::card(Self) -> AgentCard
 pub fn Server::card_json(Self) -> @json.Json

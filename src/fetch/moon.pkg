@@ -12,6 +12,8 @@ import {
 
 import {
   "moonbitlang/async",
+  "moonbitlang/async/http",
+  "moonbitlang/async/socket",
   "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/json",
   "moonbitstack/moona2a",
@@ -25,6 +27,7 @@ options(
     "transport.mbt": [ "native", "wasm" ],
     "notifier.mbt": [ "native", "wasm" ],
     "notifier_test.mbt": [ "native", "wasm" ],
+    "transport_test.mbt": [ "native" ],
   },
 )
 

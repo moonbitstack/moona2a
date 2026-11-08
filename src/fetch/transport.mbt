@@ -9,6 +9,9 @@ pub(all) struct HttpTransport {
   path : String
   /// The path the card is served at.
   card_path : String
+  /// Headers to add to every request, read as each one is built. This is where a trace
+  /// context, a tenant or a credential the protocol does not model rides.
+  extra : () -> Array[(String, String)]
 }
 
 ///|
@@ -18,6 +21,7 @@ pub fn HttpTransport::new(
   url : String,
   path? : String,
   card_path? : String,
+  headers? : () -> Array[(String, String)],
 ) -> HttpTransport raise {
   let base = if url.has_suffix("/") {
     url[:url.length() - 1].to_owned()
@@ -31,17 +35,36 @@ pub fn HttpTransport::new(
     client,
     path: path.unwrap_or("/"),
     card_path: card_path.unwrap_or(@moona2a.card_path),
+    extra: headers.unwrap_or(fn() { ([] : Array[(String, String)]) }),
   }
+}
+
+///|
+/// The headers this transport sends with a request: what the caller asked for, then what
+/// the host supplies for this moment.
+fn HttpTransport::headers_for(
+  self : HttpTransport,
+  own : Array[(String, String)],
+) -> Array[(String, String)] {
+  let headers = own
+  for pair in (self.extra)() {
+    headers.push(pair)
+  }
+  headers
 }
 
 ///|
 /// Send the request and read the answer, which is one JSON-RPC document.
 pub impl @moona2a.Transport for HttpTransport with fn exchange(self, message) {
   let body = @moonfetch.Body::Text(message.to_json().stringify())
-  let response = self.client.post(self.path, body~, headers=[
-    ("content-type", "application/json"),
-    ("accept", "application/json"),
-  ])
+  let response = self.client.post(
+    self.path,
+    body~,
+    headers=self.headers_for([
+      ("content-type", "application/json"),
+      ("accept", "application/json"),
+    ]),
+  )
   let text = response.text()
   @json.from_json(
     @json.parse(text) catch {
@@ -60,10 +83,14 @@ pub impl @moona2a.Transport for HttpTransport with fn exchange(self, message) {
 /// still the seam a host with a streaming client delivers into as frames arrive.
 pub impl @moona2a.Transport for HttpTransport with fn stream(self, message, out) {
   let body = @moonfetch.Body::Text(message.to_json().stringify())
-  let response = self.client.post(self.path, body~, headers=[
-    ("content-type", "application/json"),
-    ("accept", "text/event-stream"),
-  ])
+  let response = self.client.post(
+    self.path,
+    body~,
+    headers=self.headers_for([
+      ("content-type", "application/json"),
+      ("accept", "text/event-stream"),
+    ]),
+  )
   let text = response.text()
   if !is_event_stream(response) {
     // A server that refuses before opening the stream answers with one JSON-RPC body.
@@ -110,9 +137,10 @@ pub suberror WrongShape {
 ///|
 /// Read the agent's card from its well-known address.
 pub impl @moona2a.Transport for HttpTransport with fn discover(self) {
-  let response = self.client.get(self.card_path, headers=[
-    ("accept", "application/json"),
-  ])
+  let response = self.client.get(
+    self.card_path,
+    headers=self.headers_for([("accept", "application/json")]),
+  )
   @json.parse(response.text()) catch {
     _ => raise WrongShape("the card is not JSON")
   }
