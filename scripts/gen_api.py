@@ -646,6 +646,7 @@ def main() -> None:
         ("moona2a", SRC),
         ("asgi", SRC / "asgi"),
         ("fetch", SRC / "fetch"),
+        ("otel", SRC / "otel"),
     ):
         mbti = directory / "pkg.generated.mbti"
         if not mbti.exists():

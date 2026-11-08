@@ -270,10 +270,55 @@
   </div>
 </section>
 
-<section class="section" id="refusals">
+<section class="section" id="telemetry">
   <div class="wrap">
     <div class="section-head">
       <span class="num">05</span>
+      <div class="head-text">
+        <span class="kicker">Telemetry</span>
+        <h2>Every run,<br>on the record.</h2>
+      </div>
+      <p>An agent run and a caller's call are spans in the OpenTelemetry GenAI conventions: <code>invoke_agent</code> and the agent's name, with the task, its state and the method beside them. The tracer is the one the process already runs.</p>
+    </div>
+
+    <div class="split">
+      <div>
+        <ul class="notes">
+          <li><span>The span opens when the agent is handed the message and closes when it stops emitting, so its length is the run.</span></li>
+          <li><span>Every status change and every artifact is an event inside the span, at the time it happened.</span></li>
+          <li><span>Message text is left out until <code>recording_content()</code> asks for it; <code>at_most(n)</code> caps what one record can cost.</span></li>
+          <li><span>The spans are checked against the conventions by <span class="mono">weaver registry live-check</span> in CI, with the example server sending them for real.</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="code-block" data-copy>
+          <div class="cap">trace.mbt</div>
+<pre data-lang="moonbit"><code>let tracing = @otel.Tracing::new(
+  tracer=@trace.Tracer::new(rand=entropy, sink=exporter, sampler=@trace.always),
+  now=nanoseconds,
+  agent=@otel.Agent::of_card(card),
+)
+let server = @moona2a.Server::new(tracing.executing(Echo::{ }), card)</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="cap">the span of one run</div>
+<!-- nocheck -->
+<pre><code>invoke_agent summariser        internal   9ms
+  a2a.task.id      a2a-1793925374888-2
+  a2a.task.state   TASK_STATE_COMPLETED
+  ├ event  a2a.task.status       TASK_STATE_WORKING
+  ├ event  a2a.artifact.produced answer
+  └ event  a2a.task.status       TASK_STATE_COMPLETED</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="refusals">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="num">06</span>
       <div class="head-text">
         <span class="kicker">Refusals</span>
         <h2>Nine ways to be told no.</h2>
@@ -298,12 +343,12 @@
 <section class="section" id="install">
   <div class="wrap">
     <div class="section-head">
-      <span class="num">06</span>
+      <span class="num">07</span>
       <div class="head-text">
         <span class="kicker">Ten lines</span>
         <h2>An agent, and a server.</h2>
       </div>
-      <p>Three packages arrive together: the wire model and the client, the ASGI endpoint, and the client's HTTP transport with the webhook notifier.</p>
+      <p>Four packages arrive together: the wire model and the client, the ASGI endpoint, the client's HTTP transport with the webhook notifier, and the instrumentation.</p>
     </div>
 
     <div class="split">
@@ -334,7 +379,8 @@ let app = @asgi.to_asgi(server)</code></pre>
 
 #  moonbitstack/moona2a        model · server · client
 #  moonbitstack/moona2a/asgi   the HTTP endpoint
-#  moonbitstack/moona2a/fetch  transport · notifier</code></pre>
+#  moonbitstack/moona2a/fetch  transport · notifier
+#  moonbitstack/moona2a/otel   spans for a run and a call</code></pre>
         </div>
       </div>
     </div>

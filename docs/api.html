@@ -104,6 +104,15 @@
 <a href="#fn-fetch">Functions</a>
 <a href="#const-fetch">Constants</a>
 </div>
+<div class="group">
+<div class="pkg">@otel</div>
+<a href="#type-otel-Agent">Agent</a>
+<a href="#type-otel-Settings">Settings</a>
+<a href="#type-otel-Traced">Traced</a>
+<a href="#type-otel-TracedTransport">TracedTransport</a>
+<a href="#type-otel-Tracing">Tracing</a>
+<a href="#const-otel">Constants</a>
+</div>
 </nav>
     <div class="api-body">
 <section class="api-pkg" id="pkg-moona2a">
@@ -1462,6 +1471,141 @@
 <article class="api-item" id="const-fetch-webhook_timeout_millis">
 <div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">webhook_timeout_millis</span> : Int32</div>
 <div class="doc"><p>How long to wait for the caller's webhook before giving up on this delivery. Section 4.3.3 suggests ten to thirty seconds; ten keeps a slow webhook from holding a task's run.</p></div>
+
+</article>
+</section>
+<section class="api-pkg" id="pkg-otel">
+<header>
+<h2><span class="mono">@otel</span></h2>
+<div class="imp">import { "moonbitstack/moona2a/otel" }</div>
+</header>
+<div class="api-cat"><h3>Types</h3></div>
+<section class="api-type" id="type-otel-Agent">
+<div class="type-head"><h3>Agent</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">Agent</span></div>
+<div class="doc"><p>Who an agent is, in the terms the semantic conventions describe an agent with.</p></div>
+<ul class="members"><li><b>id</b> : <span class="pt">String</span></li><li><b>name</b> : <span class="pt">String</span></li><li><b>description</b> : <span class="pt">String?</span></li><li><b>version</b> : <span class="pt">String?</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-otel-Agent-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Agent::new</span>(id~ : String, name~ : String, description? : String, version? : String) -&gt; Self</div>
+<div class="doc"><p>An agent named <code>name</code>, answering at <code>id</code>.</p></div>
+<div class="params"><span class="p"><b>id~</b> <span class="pt">String</span></span><span class="p"><b>name~</b> <span class="pt">String</span></span><span class="p"><b>description?</b> <span class="pt">String</span></span><span class="p"><b>version?</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-otel-Agent-of_card">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Agent::of_card</span>(@moona2a.AgentCard) -&gt; Self</div>
+<div class="doc"><p>The agent a card describes. A card carries no id of its own, so the address of the interface a caller would use stands in for one.</p></div>
+<div class="params"><span class="p"><b>card</b> <span class="pt">@moona2a.AgentCard</span></span></div>
+</article>
+<article class="api-item" id="m-otel-Agent-of_server">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Agent::of_server</span>(@moona2a.Server) -&gt; Self</div>
+<div class="doc"><p>The agent under a server's card.</p></div>
+<div class="params"><span class="p"><b>server</b> <span class="pt">@moona2a.Server</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-otel-Agent-to_repr">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Agent::to_repr</span>(Self) -&gt; @debug.Repr</div>
+<div class="doc"><p>The debug representation, from <code>Debug</code>.</p></div>
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-otel-Settings">
+<div class="type-head"><h3>Settings</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">Settings</span></div>
+<div class="doc"><p>What the instrumentation writes into a span.</p></div>
+<ul class="members"><li><b>record_content</b> : <span class="pt">Bool</span></li><li><b>text_limit</b> : <span class="pt">Int32</span></li></ul>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-otel-Settings-to_repr">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Settings::to_repr</span>(Self) -&gt; @debug.Repr</div>
+<div class="doc"><p>The debug representation, from <code>Debug</code>.</p></div>
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-otel-Traced">
+<div class="type-head"><h3>Traced</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">Traced</span></div>
+<ul class="members"><li><b>tracing</b> : <span class="pt">Tracing</span></li><li><b>inner</b> : <span class="pt">&amp;@moona2a.Executor</span></li></ul>
+</section>
+<section class="api-type" id="type-otel-TracedTransport">
+<div class="type-head"><h3>TracedTransport</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">TracedTransport</span></div>
+<ul class="members"><li><b>tracing</b> : <span class="pt">Tracing</span></li><li><b>inner</b> : <span class="pt">&amp;@moona2a.Transport</span></li></ul>
+</section>
+<section class="api-type" id="type-otel-Tracing">
+<div class="type-head"><h3>Tracing</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">Tracing</span></div>
+<div class="doc"><p>The instrumentation: one tracer, one clock, and who the agent is.</p>
+<p>The clock is handed in rather than read here, so a replay can put a run on a timeline it chose. It counts nanoseconds, which is what a span's times are in.</p></div>
+<ul class="members"><li><b>tracer</b> : <span class="pt">@trace.Tracer</span></li><li><b>now</b> : <span class="pt">() -&gt; Int64</span></li><li><b>agent</b> : <span class="pt">Agent</span></li><li><b>settings</b> : <span class="pt">Settings</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-otel-Tracing-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Tracing::new</span>(tracer~ : @trace.Tracer, now~ : () -&gt; Int64, agent~ : Agent, settings? : Settings) -&gt; Self</div>
+<div class="doc"><p>Instrumentation that writes to <code>tracer</code>, times spans with <code>now</code>, and describes <code>agent</code>.</p></div>
+<div class="params"><span class="p"><b>tracer~</b> <span class="pt">@trace.Tracer</span></span><span class="p"><b>now~</b> <span class="pt">() -&gt; Int64</span></span><span class="p"><b>agent~</b> <span class="pt">Agent</span></span><span class="p"><b>settings~</b> <span class="pt">Settings</span> <span class="d">= …</span></span></div>
+</article>
+<article class="api-item" id="m-otel-Tracing-at_most">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Tracing::at_most</span>(Self, Int32) -&gt; Self</div>
+<div class="doc"><p>The same instrumentation, cutting recorded text at <code>limit</code> characters.</p></div>
+<div class="params"><span class="p"><b>limit</b> <span class="pt">Int32</span></span></div>
+</article>
+<article class="api-item" id="m-otel-Tracing-calling">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Tracing::calling</span>(Self, &amp;@moona2a.Transport) -&gt; TracedTransport</div>
+<div class="doc"><p><code>transport</code>, with each call recorded.</p></div>
+<div class="params"><span class="p"><b>transport</b> <span class="pt">&amp;@moona2a.Transport</span></span></div>
+</article>
+<article class="api-item" id="m-otel-Tracing-executing">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Tracing::executing</span>(Self, &amp;@moona2a.Executor) -&gt; Traced</div>
+<div class="doc"><p><code>executor</code>, with each run recorded.</p></div>
+<div class="params"><span class="p"><b>executor</b> <span class="pt">&amp;@moona2a.Executor</span></span></div>
+</article>
+<article class="api-item" id="m-otel-Tracing-recording_content">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Tracing::recording_content</span>(Self) -&gt; Self</div>
+<div class="doc"><p>The same instrumentation, recording what the messages said. For a development environment, where reading the prompt in the trace is the point.</p></div>
+
+</article>
+</div>
+</section>
+<div class="api-cat" id="const-otel"><h3>Constants</h3></div>
+<article class="api-item" id="const-otel-a2a_artifact_event">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">a2a_artifact_event</span> : String</div>
+<div class="doc"><p>The event a span carries when an artifact arrives: <code>a2a.artifact.produced</code>.</p></div>
+
+</article>
+<article class="api-item" id="const-otel-a2a_artifact_id">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">a2a_artifact_id</span> : String</div>
+<div class="doc"><p><code>a2a.artifact.id</code> — the artifact an update carries.</p></div>
+
+</article>
+<article class="api-item" id="const-otel-a2a_method">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">a2a_method</span> : String</div>
+<div class="doc"><p><code>a2a.method</code> — the JSON-RPC method a client called, spelled as the wire spells it.</p></div>
+
+</article>
+<article class="api-item" id="const-otel-a2a_task_id">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">a2a_task_id</span> : String</div>
+<div class="doc"><p><code>a2a.task.id</code> — the task a run works, minted by the server that owns it.</p></div>
+
+</article>
+<article class="api-item" id="const-otel-a2a_task_state">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">a2a_task_state</span> : String</div>
+<div class="doc"><p><code>a2a.task.state</code> — a state of the task lifecycle, as <code>TASK_STATE_*</code>.</p></div>
+
+</article>
+<article class="api-item" id="const-otel-a2a_task_status_event">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">a2a_task_status_event</span> : String</div>
+<div class="doc"><p>The event a span carries when the task moves: <code>a2a.task.status</code>.</p></div>
+
+</article>
+<article class="api-item" id="const-otel-invoke_agent">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">invoke_agent</span> : String</div>
+<div class="doc"><p>The operation every agent-invocation span names: <code>gen_ai.operation.name</code>'s <code>invoke_agent</code>, which the conventions pair with the agent's name to form the span name.</p></div>
+
+</article>
+<article class="api-item" id="const-otel-settings">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">settings</span> : Settings</div>
+<div class="doc"><p>Message text left out, and a message cut at 512 characters.</p></div>
 
 </article>
 </section>

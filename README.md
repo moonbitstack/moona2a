@@ -32,23 +32,33 @@ carry the same calls.
 moon add moonbitstack/moona2a
 ```
 
-The module has three packages:
+The module has four packages:
 
 | Package | What it holds |
 |:--|:--|
 | `moonbitstack/moona2a` | The wire model, the JSON-RPC methods, the task lifecycle, and a client over any transport |
 | `moonbitstack/moona2a/asgi` | The HTTP endpoint as an ASGI application: the card, the JSON-RPC path, server-sent events |
 | `moonbitstack/moona2a/fetch` | A client transport over HTTP, and the notifier that posts to a caller's webhook |
+| `moonbitstack/moona2a/otel` | Spans for an agent run and for a client's call, in the OpenTelemetry GenAI conventions |
 
 ## A server in ten lines
 
 ```moonbit
+struct Echo {}
+
 impl @moona2a.Executor for Echo with fn execute(self, ctx, out) {
   ignore(self)
   out.emit(ctx.status(@moona2a.Working))
   out.emit(ctx.artifact(@moona2a.Artifact::text("a-1", "done")))
   out.emit(ctx.status(@moona2a.Completed))
 }
+
+impl @moona2a.Executor for Echo with fn cancel(self, task_id) {
+  ignore(self)
+  ignore(task_id)
+}
+
+pub extend Echo with @moona2a.Executor::{execute, cancel}
 ```
 
 An agent says what happens; the server turns that into a task, keeps its history and artifacts,
@@ -56,8 +66,16 @@ answers the protocol's methods around it, and hands the same events to every wat
 listing, push registrations and task lookup are the server's work, not the agent's.
 
 ```moonbit
-let server = @moona2a.Server::new(Echo::{}, card)
+let card = @moona2a.AgentCard::new(
+  "echo",
+  "repeats what it is told",
+  "1.0.0",
+  "https://echo.example.com",
+  [@moona2a.AgentSkill::new("echo", "Echo", "repeats a message", ["echo"])],
+)
+let server = @moona2a.Server::new(Echo::{ }, card)
 let app = @asgi.to_asgi(server)
+assert_eq(server.card().name, "echo")
 ```
 
 `to_asgi` answers two addresses: the card at `/.well-known/agent-card.json`, and every method on
@@ -66,7 +84,16 @@ event, written as the event happens.
 
 ## A client
 
-```moonbit
+`Client` is the protocol; `Transport` is how the messages travel. `moona2a/fetch` supplies an HTTP
+transport — it needs sockets, so it is there on the native and wasm backends and not on the
+JavaScript one — and a test supplies a table.
+
+```moonbit native
+let transport = @fetch.HttpTransport::new("https://summariser.example.com")
+let client = @moona2a.Client::new(transport)
+```
+
+```moonbit native
 let message = @moona2a.Message::user("m-1", "summarise this")
 match client.send_message(message) {
   @moona2a.TaskSnapshot(task) => println("task \{task.id}: \{task.status.state.wire()}")
@@ -74,9 +101,6 @@ match client.send_message(message) {
   _ => ()
 }
 ```
-
-`Client` is the protocol; `Transport` is how the messages travel. `moona2a/fetch` supplies an HTTP
-transport, and a test supplies a table.
 
 ## The methods
 
@@ -141,11 +165,36 @@ stream sees the same events in the same order, and one leaving affects no other.
 A caller leaves a URL, and the agent posts each update there: the same `StreamResponse` a stream
 would carry, over plain HTTP, with the credentials the registration names.
 
-```moonbit
-let config = @moona2a.TaskPushConfig::new("cfg-1", task_id, "https://caller.example/hook")
+```moonbit native
+let config = @moona2a.TaskPushConfig::new("cfg-1", "a2a-1", "https://caller.example/hook")
   .authenticating(@moona2a.AuthenticationInfo::bearer("secret"))
 client.create_push_config(config) |> ignore
 ```
+
+## Instrumentation
+
+A run and a call are traced as the OpenTelemetry GenAI conventions describe them: `invoke_agent`
+and the agent's name, with `gen_ai.operation.name`, `gen_ai.agent.*` and the conversation on it.
+The protocol's own facts ride alongside as `a2a.task.id`, `a2a.task.state` and `a2a.method`; every
+status change and artifact is an event inside the span.
+
+```moonbit
+fn traced_server(rand : (Int32) -> Bytes, now : () -> Int64, agent_card : @moona2a.AgentCard) -> @moona2a.Server {
+  let tracing = @otel.Tracing::new(
+    tracer=@trace.Tracer::new(rand~, sink=@trace.discard, sampler=@trace.always),
+    now~,
+    agent=@otel.Agent::of_card(agent_card),
+  )
+  @moona2a.Server::new(tracing.executing(Echo::{ }), agent_card)
+}
+```
+
+The tracer is the one you already run, so spans land wherever the rest of the process' spans land;
+`moonbitstack/moontel` has the exporter. Message text is left out unless `recording_content()` is
+asked for, and `at_most(n)` cuts what is recorded.
+
+`tracing.calling(transport)` is the same for the other side: a client's call is a span of kind
+`Client`, streaming answers put every event on it, and a refusal is an error span.
 
 ## Versioning
 
@@ -177,6 +226,23 @@ The same server and client were run against the [official Python SDK](https://gi
 and the Python client sending, streaming and reading a task back from the MoonBit server —
 with `scripts/interop/check.sh`.
 
+The spans of the `otel` package are checked against the semantic conventions they claim to follow.
+[Weaver](https://github.com/open-telemetry/weaver) 0.28.0 runs `registry live-check` over the spans
+the example in `src/examples/07-otel` emits, against the registry in `scripts/otel/registry`, with
+`scripts/otel/check.sh`. The job fails on any `violation` — an attribute the conventions do not
+define, one of the wrong type, a required one that is missing — and on an example that stops
+producing the spans it is supposed to.
+
+| Run | Result |
+|:--|:--|
+| registry check | valid, no policy violation |
+| live check | 7 spans, 73 entities, 0 advisories, 73% of the registry exercised |
+
+The two `opt_in` attributes, the message text, are declared and not exercised by default, which is
+where the missing quarter of the registry is. Span events are declared in the registry, but the
+0.28 live check pairs them by their enclosing span rather than by name, so a mistyped event name is
+not caught there; the package's own tests assert the names it emits.
+
 Two behaviours are worth naming:
 
 - **Media types are not refused by default.** Section 3.1.1 asks an agent to answer
@@ -197,6 +263,7 @@ Two behaviours are worth naming:
 | 04 | [`stream`](src/examples/04-stream/) | A streaming answer, event by event |
 | 05 | [`conformance`](src/examples/05-conformance/) | The server the conformance suite drives, over HTTP |
 | 06 | [`interop`](src/examples/06-interop/) | A client calling a live agent: card, message, stream |
+| 07 | [`otel`](src/examples/07-otel/) | Both ends of one exchange, instrumented and sent to a collector |
 
 ## Tests
 

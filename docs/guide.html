@@ -62,6 +62,7 @@
     <a href="#stream">Follow a task</a>
     <a href="#push">Leave a webhook</a>
     <a href="#errors">When a call is refused</a>
+    <a href="#trace">Watch a run</a>
     <a href="#rules">Rules that bite</a>
   </nav>
 
@@ -249,6 +250,33 @@ ExtensionSupportRequired        -32008   an extension the caller must honour
 VersionNotSupported             -32009   a protocol version this interface does not speak</code></pre>
     </div>
     <p>An agent that raises its own error still leaves a task: the server records it as <code>TASK_STATE_FAILED</code> and hands the refusal back, so a watcher is never left waiting on a task that will not move.</p>
+
+    <h2 id="trace">Watch a run</h2>
+    <p>Instrumentation is a wrapper, not a second server: <code>tracing.executing(agent)</code> is an executor that opens a span, passes everything through, and closes the span when the agent stops. The span is named for the operation and the agent — <code>invoke_agent summariser</code> — which is the name the OpenTelemetry GenAI conventions give it.</p>
+    <div class="code-block" data-copy>
+      <div class="cap">trace.mbt</div>
+<pre data-lang="moonbit"><code>let tracing = @otel.Tracing::new(
+  tracer=@trace.Tracer::new(rand=entropy, sink=exporter, sampler=@trace.always),
+  now=nanoseconds,
+  agent=@otel.Agent::of_card(card),
+)
+
+let server = @moona2a.Server::new(tracing.executing(Echo::{ }), card)
+let app = @asgi.to_asgi(server)</code></pre>
+    </div>
+    <p>The tracer is one the host already runs, so the spans join whatever the rest of the process sends. What lands on a span: <code>gen_ai.operation.name</code>, <code>gen_ai.agent.*</code> from the card, the conversation (<code>gen_ai.conversation.id</code>, which is the task's <code>contextId</code>), and the protocol's own <code>a2a.task.id</code> and <code>a2a.task.state</code>. Each status change and each artifact is an event inside the span, at the time it happened.</p>
+    <div class="code-block">
+      <div class="cap">one send, as a collector shows it</div>
+<!-- nocheck -->
+<pre><code>invoke_agent summariser                 internal   9ms
+├─ event  a2a.task.status               TASK_STATE_WORKING
+├─ event  a2a.artifact.produced         answer
+└─ event  a2a.task.status               TASK_STATE_COMPLETED
+   a2a.task.id      a2a-1793925374888-2
+   a2a.task.state   TASK_STATE_COMPLETED</code></pre>
+    </div>
+    <p>On the other side, <code>tracing.calling(transport)</code> records a client's call: kind <code>Client</code>, the method in <code>a2a.method</code>, and for a stream, one event per frame. A refused call is an error span, because for the caller it is a failure whether or not the agent thought so.</p>
+    <p>Message text is off by default — a span store is not the place for a caller's prompt unless the operator says so. <code>recording_content()</code> turns it on and <code>at_most(512)</code> caps what one record can cost. Each side of a call is the root of its own trace: the protocol has no header of its own to carry <code>traceparent</code>, so joining the two across a network is the host HTTP layer's work.</p>
 
     <h2 id="rules">Rules that bite</h2>
     <ul>
