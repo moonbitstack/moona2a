@@ -91,6 +91,7 @@ report = json.load(open(sys.argv[1], encoding="utf-8"))
 statistics = report["statistics"]
 
 spans = []
+records = []
 
 
 def walk(node):
@@ -98,6 +99,7 @@ def walk(node):
         span = node.get("span")
         if isinstance(span, dict):
             spans.append(span["name"])
+            records.append(span)
         for value in node.values():
             walk(value)
     elif isinstance(node, list):
@@ -120,6 +122,28 @@ for name, count in wanted.items():
     if seen != count:
         print(f"expected {count} span(s) named {name!r}, saw {seen}: {spans}")
         sys.exit(1)
+
+# One trace per send: the run on the server side names the caller's span as its parent,
+# which is the line this whole header path exists for. Two of them — the message and the
+# streamed message — and each parent has to be the client span of the same trace.
+by_id = {span.get("span_id"): span for span in records}
+parented = [span for span in records if span.get("parent_span_id")]
+if len(parented) != 2:
+    print(f"expected two spans with a parent, saw {len(parented)}")
+    sys.exit(1)
+for child in parented:
+    parent = by_id.get(child["parent_span_id"])
+    if parent is None:
+        print(f"{child['name']} names a parent that is not in the report")
+        sys.exit(1)
+    if parent["trace_id"] != child["trace_id"]:
+        print(f"{child['name']} and its parent are in different traces")
+        sys.exit(1)
+    if parent["kind"] != "client":
+        print(f"{child['name']} is parented to a {parent['kind']} span")
+        sys.exit(1)
+traces = {span["trace_id"] for span in records}
+print(f"{len(parented)} runs continue the caller's trace; {len(traces)} traces in all")
 
 violations = statistics["advice_level_counts"].get("violation", 0)
 if violations:

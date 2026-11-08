@@ -289,3 +289,59 @@ async test "asgi: a declared extension header reaches the server" {
   let (_, _, declared_body) = response_of(declared)
   assert_true(declared_body.contains("TASK_STATE_COMPLETED"))
 }
+
+///|
+/// An agent that writes down what the request carried outside the message.
+struct Peeking {
+  seen : Ref[Array[(String, String)]]
+}
+
+///|
+impl @moona2a.Executor for Peeking with fn execute(self, ctx, out) {
+  self.seen.val = ctx.headers
+  out.emit(ctx.status(@moona2a.Completed))
+}
+
+///|
+impl @moona2a.Executor for Peeking with fn cancel(self, task_id) {
+  ignore(self)
+  ignore(task_id)
+}
+
+///|
+pub extend Peeking with @moona2a.Executor::{execute, cancel}
+
+///|
+async test "asgi: the headers a request arrived with reach the agent" {
+  let seen : Ref[Array[(String, String)]] = Ref([])
+  let server = @moona2a.Server::new(Peeking::{ seen, }, card_of())
+  let app = @asgi.to_asgi(server)
+  let events = drive(
+    app,
+    scope_of("POST", "/", [
+      ("a2a-version", "1.0"),
+      ("traceparent", "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"),
+      ("x-tenant", "t-1"),
+    ]),
+    send_body(),
+  )
+  let (status, _, body) = response_of(events)
+  assert_eq(status, 200)
+  assert_true(body.contains("TASK_STATE_COMPLETED"))
+  let headers = seen.val
+  let mut tenant = None
+  let mut trace = None
+  for pair in headers {
+    if pair.0.to_lower() == "x-tenant" {
+      tenant = Some(pair.1)
+    }
+    if pair.0.to_lower() == "traceparent" {
+      trace = Some(pair.1)
+    }
+  }
+  assert_eq(tenant, Some("t-1"))
+  assert_eq(
+    trace,
+    Some("00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"),
+  )
+}

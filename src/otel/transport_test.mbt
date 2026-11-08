@@ -6,10 +6,16 @@
 struct Remote {
   answers : Map[String, Json]
   card : Json
+  /// Called when a request is made, to record what the headers were at that moment.
+  spy : (() -> Unit)?
 }
 
 ///|
 impl @moona2a.Transport for Remote with fn exchange(self, message) {
+  match self.spy {
+    Some(spy) => spy()
+    None => ()
+  }
   match message {
     @moonjrpc.Call(id~, name~, ..) =>
       match self.answers.get(name) {
@@ -57,7 +63,14 @@ pub extend Remote with @moona2a.Transport::{exchange, stream, discover}
 /// A transport that refuses one method and answers nothing else.
 fn remote(answers : Map[String, Json]) -> Remote {
   let card = summariser_card()
-  { answers, card: card.to_json(), }
+  { answers, card: card.to_json(), spy: None, }
+}
+
+///|
+/// The same transport, with `spy` called as each request goes out.
+fn watched(answers : Map[String, Json], spy : () -> Unit) -> Remote {
+  let card = summariser_card()
+  { answers, card: card.to_json(), spy: Some(spy), }
 }
 
 ///|
@@ -140,6 +153,28 @@ async test "otel: a refused call is an error span, and still the caller's error"
     @trace.Error(_) => ()
     _ => fail("a refused call should be an error span")
   }
+}
+
+///|
+async test "otel: a call hands its own context to the transport, then clears it" {
+  let injector = @otel.Injector::new()
+  let seen : Ref[@otel.Headers] = Ref([])
+  let task = @moona2a.Task::new("t-1", "c-1")
+  let transport = watched(map_of([("GetTask", task.to_json())]), fn() {
+    seen.val = injector.current()
+  })
+  let sink = @trace.Recorder::new()
+  let client = @moona2a.Client::new(
+    tracing(sink).calling(transport, inject=injector.setting()),
+  )
+  assert_eq(injector.current(), [])
+  client.get_task("t-1") |> ignore
+  let sent = seen.val
+  assert_eq(sent.length(), 1)
+  assert_eq(sent[0].0, "traceparent")
+  assert_true(sent[0].1.has_prefix("00-"))
+  // The headers belong to the call, so the next one does not inherit them.
+  assert_eq(injector.current(), [])
 }
 
 ///|

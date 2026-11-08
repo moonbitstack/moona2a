@@ -75,6 +75,7 @@ fn request() -> @moona2a.RequestContext {
     task_id: "t-1",
     context_id: "c-1",
     task: None,
+    headers: [],
   }
 }
 
@@ -225,6 +226,43 @@ async test "otel: a broken source of ids leaves the run going, untraced" {
   tracing.executing(Echo::{ }).execute(request(), out)
   assert_eq(sink.spans().length(), 0)
   assert_eq(out.events().length(), 3)
+}
+
+///|
+async test "otel: a run continues the trace the request arrived with" {
+  let caller = @propagate.parse_traceparent(
+    "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01",
+  ) catch {
+    _ => fail("the caller's own context should parse")
+  }
+  let sink = @trace.Recorder::new()
+  let context = {
+    ..request(),
+    headers: [
+      ("traceparent", "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"),
+    ],
+  }
+  tracing(sink).executing(Echo::{ }).execute(context, @moona2a.Collected::new())
+  let span = span_at(sink.spans(), 0)
+  assert_true(
+    span.context
+    .to_traceparent()
+    .has_prefix("00-4bf92f3577b34da6a3ce929d0e0e4736-"),
+  )
+  assert_eq(span.parent, Some(caller.span_id))
+}
+
+///|
+async test "otel: a request with no context starts a trace of its own" {
+  let sink = @trace.Recorder::new()
+  let context = { ..request(), headers: [("traceparent", "not-a-context")], }
+  tracing(sink).executing(Echo::{ }).execute(context, @moona2a.Collected::new())
+  let span = span_at(sink.spans(), 0)
+  assert_eq(span.parent, None)
+  assert_eq(
+    text_attribute_of(span, "a2a.task.state"),
+    Some("TASK_STATE_COMPLETED"),
+  )
 }
 
 ///|
