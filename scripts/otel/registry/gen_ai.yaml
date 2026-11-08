@@ -1,0 +1,61 @@
+# The GenAI semantic conventions this library's spans are written in. Copied from the
+# upstream registry so that a check of the emitted telemetry needs no network, and so
+# that an attribute name or type that moves upstream is a deliberate change here rather
+# than a silent drift. The names themselves come from `moonbitstack/moontel/semconv`,
+# which is generated from the same source.
+
+groups:
+  - id: registry.gen_ai.a2a
+    type: attribute_group
+    display_name: GenAI attributes
+    brief: >
+      The OpenTelemetry GenAI semantic conventions an agent run and a client call to an
+      agent are described with.
+    attributes:
+      - id: gen_ai.operation.name
+        type: string
+        stability: development
+        brief: The name of the operation being performed.
+        examples: [invoke_agent, execute_tool, embeddings]
+      - id: gen_ai.agent.id
+        type: string
+        stability: development
+        brief: The unique identifier of the GenAI agent.
+        examples: ['https://summariser.example.com']
+      - id: gen_ai.agent.name
+        type: string
+        stability: development
+        brief: Human-readable name of the GenAI agent provided by the application.
+        examples: [summariser]
+      - id: gen_ai.agent.description
+        type: string
+        stability: development
+        brief: Free-form description of the GenAI agent provided by the application.
+        examples: ['An agent that condenses documents']
+      - id: gen_ai.agent.version
+        type: string
+        stability: development
+        brief: The version of the GenAI agent provided by the application.
+        examples: ['1.0.0']
+      - id: gen_ai.conversation.id
+        type: string
+        stability: development
+        brief: >
+          The identifier of the conversation the work belongs to. In this protocol one
+          conversation is one `contextId`, so a caller's messages and a task's updates
+          join into one conversation.
+        examples: [c-1]
+      - id: gen_ai.input.messages
+        type: string
+        stability: development
+        brief: >
+          The messages the agent was given, as JSON. Recorded only when the host asks
+          for message text, since a span store is not the place for a caller's prompt.
+        examples: ['[{"role":"user","parts":[{"type":"text","content":"hello"}]}]']
+      - id: gen_ai.output.messages
+        type: string
+        stability: development
+        brief: >
+          The messages the agent answered with, as JSON. Recorded only when the host
+          asks for message text.
+        examples: ['[{"role":"assistant","parts":[{"type":"text","content":"hello"}]}]']

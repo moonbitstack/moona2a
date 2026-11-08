@@ -1,0 +1,12 @@
+# Project config for the live check in `ci.yml`. Passed with `--config`, so the check
+# does not depend on which directory it is started from.
+#
+# The GenAI conventions mark their attributes `development`, and the check says so once
+# per attribute per span: "Attribute 'gen_ai.agent.name' is not stable; stability =
+# development." That is a fact about the conventions, not about this library — it would
+# be reported just the same for a perfect implementation — so the advisory is filtered
+# and the report is left saying something about the code. Every other finding, at every
+# level, is still reported.
+
+[[live-check.finding_filters]]
+exclude = ["not_stable"]

@@ -1,0 +1,23 @@
+# The resource an instrumented process describes itself with. One attribute, because
+# that is all this library asks a host to set: the rest of a resource is the host's
+# business and whatever collector it sends to.
+
+groups:
+  - id: registry.service
+    type: attribute_group
+    display_name: Resource attributes
+    brief: The OpenTelemetry resource conventions the example sets.
+    attributes:
+      - id: service.name
+        type: string
+        stability: stable
+        brief: Logical name of the service.
+        examples: [moona2a-example]
+
+  - id: resource.service
+    type: resource
+    stability: stable
+    brief: The process the spans came from.
+    attributes:
+      - ref: service.name
+        requirement_level: required

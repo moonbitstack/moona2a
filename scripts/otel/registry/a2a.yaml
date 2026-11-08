@@ -1,0 +1,149 @@
+# The spans this library emits, and what they say. The names of the signals the GenAI
+# conventions already define come from `moonbitstack/moontel/semconv`; `a2a.*` is the
+# protocol's own vocabulary, declared here because no convention defines it yet.
+#
+# `weaver registry live-check` runs against this file in CI, with the example in
+# `src/examples/07-otel` sending real spans to it. A span name, an attribute name, an
+# attribute type or a required attribute that the instrumentation gets wrong is a
+# violation and fails the job.
+
+groups:
+  - id: registry.a2a
+    type: attribute_group
+    display_name: Agent2Agent attributes
+    brief: The attributes this library adds to describe one task of one agent.
+    attributes:
+      - id: a2a.task.id
+        type: string
+        stability: development
+        brief: The task a run works, minted by the server that owns it.
+        examples: [a2a-1793925374888-2]
+      - id: a2a.task.state
+        type: string
+        stability: development
+        brief: >
+          A state of the task lifecycle, spelled as the protocol's protobuf enum spells
+          it, so a backend can group runs by where they ended without a lookup table.
+        examples: [TASK_STATE_WORKING, TASK_STATE_COMPLETED]
+      - id: a2a.method
+        type: string
+        stability: development
+        brief: The JSON-RPC method a client called, spelled as the wire spells it.
+        examples: [SendMessage, GetTask, CancelTask]
+      - id: a2a.artifact.id
+        type: string
+        stability: development
+        brief: The identifier of an artifact an update carried.
+        examples: [answer]
+
+  - id: span.a2a.invoke_agent
+    type: span
+    span_kind: internal
+    stability: development
+    brief: >
+      One agent invocation, seen from either end. A server's span covers the agent
+      working a request: it opens when the agent is handed the message and closes when it
+      stops emitting, with the state the task reached on it. A client's span covers the
+      call that asked for that work.
+    name: "invoke_agent {gen_ai.agent.name}"
+    note: >
+      The conventions describe this span once per side — `gen_ai.invoke_agent.client` and
+      `gen_ai.invoke_agent.internal` — with the same name and different attributes. The
+      registry holds one signal per name, so what only one side can know is `recommended`
+      here and what both always write is `required`.
+    attributes:
+      - ref: gen_ai.operation.name
+        requirement_level: required
+      - ref: gen_ai.agent.id
+        requirement_level: required
+      - ref: gen_ai.agent.name
+        requirement_level: required
+      - ref: gen_ai.agent.description
+        requirement_level: recommended
+      - ref: gen_ai.agent.version
+        requirement_level: recommended
+      - ref: gen_ai.conversation.id
+        requirement_level: recommended
+        brief: The `contextId` the work belongs to, written by the server and by a client whose answer named a task.
+      - ref: a2a.task.id
+        requirement_level: recommended
+        brief: The task the run worked or the call started.
+      - ref: a2a.task.state
+        requirement_level: recommended
+        brief: The state the run ended in, or the state a streamed answer ended in.
+      - ref: a2a.method
+        requirement_level: recommended
+        brief: Written by a client; a server's span is not a call.
+      - ref: gen_ai.input.messages
+        requirement_level: opt_in
+      - ref: gen_ai.output.messages
+        requirement_level: opt_in
+
+  - id: span.a2a.call
+    type: span
+    span_kind: client
+    stability: development
+    brief: >
+      A client's call that is not a message: reading a task, listing tasks, cancelling,
+      following a stream, or a push registration. `a2a.method` says which.
+    name: a2a.call
+    attributes:
+      - ref: a2a.method
+        requirement_level: required
+      - ref: gen_ai.agent.id
+        requirement_level: required
+      - ref: gen_ai.agent.name
+        requirement_level: required
+      - ref: a2a.task.state
+        requirement_level: recommended
+        brief: The state a followed task ended in.
+      - ref: gen_ai.input.messages
+        requirement_level: opt_in
+
+  - id: span.a2a.discover
+    type: span
+    span_kind: client
+    stability: development
+    brief: >
+      A caller reading an agent's card from its well-known address. The card is a plain
+      HTTP GET rather than a JSON-RPC call, which is why this span carries no method.
+    name: a2a.discover
+    attributes:
+      - ref: gen_ai.agent.id
+        requirement_level: required
+      - ref: gen_ai.agent.name
+        requirement_level: required
+      - ref: gen_ai.agent.description
+        requirement_level: recommended
+      - ref: gen_ai.agent.version
+        requirement_level: recommended
+
+  - id: span.a2a.cancel_task
+    type: span
+    span_kind: internal
+    stability: development
+    brief: >
+      An agent being asked to stop a task. Stopping work is not an invocation, so the
+      span is the protocol's own rather than `invoke_agent`.
+    name: a2a.cancel_task
+    attributes:
+      - ref: a2a.task.id
+        requirement_level: required
+
+  - id: event.a2a.task.status
+    type: event
+    stability: development
+    brief: A task moved once, inside the span that covers the run.
+    name: a2a.task.status
+    attributes:
+      - ref: a2a.task.state
+        requirement_level: required
+
+  - id: event.a2a.artifact.produced
+    type: event
+    stability: development
+    brief: An artifact arrived, or more of one did.
+    name: a2a.artifact.produced
+    attributes:
+      - ref: a2a.artifact.id
+        requirement_level: required

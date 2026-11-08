@@ -132,3 +132,36 @@ jobs:
 
       - name: both directions
         run: A2A_PYTHON="$PWD/.venv/bin/python" scripts/interop/check.sh
+
+  # The spans the instrumentation emits, judged against the semantic conventions they
+  # claim to follow. Weaver's live check listens for real OTLP, so what is checked is
+  # what the library actually sends, not what a fixture says it would send.
+  telemetry:
+    permissions:
+      contents: read
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: install moon
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: post install
+        run: |
+          moon version --all
+          moon update
+
+      # Pinned: a registry or a set of checks that changes under the job would judge a
+      # different thing every week.
+      - name: install weaver
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf \
+            https://github.com/open-telemetry/weaver/releases/download/v0.28.0/weaver-installer.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: the emitted spans match the semantic conventions
+        run: scripts/otel/check.sh
