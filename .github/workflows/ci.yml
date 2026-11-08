@@ -162,12 +162,19 @@ jobs:
           moon update
 
       # Pinned: a registry or a set of checks that changes under the job would judge a
-      # different thing every week.
+      # different thing every week. Fetched to a file and run afterwards, because a
+      # `curl | sh` pipeline reports the shell's status: a 504 from the release host
+      # would leave the next step wondering where the binary is.
       - name: install weaver
         run: |
-          curl --proto '=https' --tlsv1.2 -LsSf \
-            https://github.com/open-telemetry/weaver/releases/download/v0.28.0/weaver-installer.sh | sh
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          set -euo pipefail
+          curl --proto '=https' --tlsv1.2 -fLsS --retry 5 --retry-all-errors \
+            https://github.com/open-telemetry/weaver/releases/download/v0.28.0/weaver-installer.sh \
+            -o weaver-installer.sh
+          sh weaver-installer.sh
+          rm -f weaver-installer.sh
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          "$HOME/.cargo/bin/weaver" --version
 
       - name: the emitted spans match the semantic conventions
         run: scripts/otel/check.sh
