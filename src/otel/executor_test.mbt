@@ -48,6 +48,26 @@ impl @moona2a.Executor for Broken with fn cancel(self, task_id) {
 pub extend Broken with @moona2a.Executor::{execute, cancel}
 
 ///|
+/// An agent that reports a task it could not finish without raising: the state is the
+/// whole of what it says, which is a shape the protocol allows.
+struct Grumbling {}
+
+///|
+impl @moona2a.Executor for Grumbling with fn execute(self, ctx, out) {
+  ignore(self)
+  out.emit(ctx.status(@moona2a.Failed))
+}
+
+///|
+impl @moona2a.Executor for Grumbling with fn cancel(self, task_id) {
+  ignore(self)
+  ignore(task_id)
+}
+
+///|
+pub extend Grumbling with @moona2a.Executor::{execute, cancel}
+
+///|
 /// The request an agent is handed for a message on the task `t-1`.
 fn request() -> @moona2a.RequestContext {
   {
@@ -174,6 +194,23 @@ async test "otel: a run that raises is an error span, and the error still arrive
     _ => fail("a run that raised should be an error span")
   }
   assert_eq(span.events[span.events.length() - 1].name, "exception")
+}
+
+///|
+async test "otel: a task that ends failed is an error span, raised or not" {
+  let sink = @trace.Recorder::new()
+  tracing(sink)
+  .executing(Grumbling::{ })
+  .execute(request(), @moona2a.Collected::new())
+  let span = span_at(sink.spans(), 0)
+  assert_eq(
+    text_attribute_of(span, "a2a.task.state"),
+    Some("TASK_STATE_FAILED"),
+  )
+  match span.status {
+    @trace.Error(reason) => assert_eq(reason, "TASK_STATE_FAILED")
+    _ => fail("a task that ended failed should be an error span")
+  }
 }
 
 ///|
