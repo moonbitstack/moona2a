@@ -27,6 +27,15 @@ keywords = [
   "webhook",
   "multi-agent",
   "interop",
+  "opentelemetry",
+  "otel",
+  "otlp",
+  "tracing",
+  "telemetry",
+  "observability",
+  "span",
+  "gen-ai",
+  "semantic-conventions",
   "moonbit",
 ]
 
@@ -41,4 +50,6 @@ import {
   "moonbitstack/moonfetch@0.1.6",
   "moonbitstack/moonhttp@0.15.9",
   "moonbitstack/moonjrpc@0.1.3",
+  "moonbitstack/moonseed@0.1.1",
+  "moonbitstack/moontel@0.1.1",
 }

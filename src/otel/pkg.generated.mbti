@@ -1,0 +1,82 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moona2a/otel"
+
+import {
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+  "moonbitstack/moona2a",
+  "moonbitstack/moonjrpc",
+  "moonbitstack/moontel/trace",
+}
+
+// Values
+pub let a2a_artifact_event : String
+
+pub let a2a_artifact_id : String
+
+pub let a2a_method : String
+
+pub let a2a_task_id : String
+
+pub let a2a_task_state : String
+
+pub let a2a_task_status_event : String
+
+pub let invoke_agent : String
+
+pub let settings : Settings
+
+// Errors
+
+// Types and methods
+#derive(@debug.Debug)
+pub(all) struct Agent {
+  id : String
+  name : String
+  description : String?
+  version : String?
+}
+pub fn Agent::new(id~ : String, name~ : String, description? : String, version? : String) -> Self
+pub fn Agent::of_card(@moona2a.AgentCard) -> Self
+pub fn Agent::of_server(@moona2a.Server) -> Self
+pub fn Agent::to_repr(Self) -> @debug.Repr
+
+#derive(@debug.Debug)
+pub(all) struct Settings {
+  record_content : Bool
+  text_limit : Int32
+}
+pub fn Settings::to_repr(Self) -> @debug.Repr
+
+pub struct Traced {
+  tracing : Tracing
+  inner : &@moona2a.Executor
+}
+pub async fn Traced::cancel(Self, String) -> Unit
+pub async fn Traced::execute(Self, @moona2a.RequestContext, &@moona2a.EventSink) -> Unit
+pub impl @moona2a.Executor for Traced
+
+pub struct TracedTransport {
+  tracing : Tracing
+  inner : &@moona2a.Transport
+}
+pub async fn TracedTransport::discover(Self) -> @json.Json
+pub async fn TracedTransport::exchange(Self, @moonjrpc.Message) -> @moonjrpc.Message
+pub async fn TracedTransport::stream(Self, @moonjrpc.Message, &@moona2a.ReplySink) -> Unit
+pub impl @moona2a.Transport for TracedTransport
+
+pub(all) struct Tracing {
+  tracer : @trace.Tracer
+  now : () -> Int64
+  agent : Agent
+  settings : Settings
+}
+pub fn Tracing::at_most(Self, Int32) -> Self
+pub fn Tracing::calling(Self, &@moona2a.Transport) -> TracedTransport
+pub fn Tracing::executing(Self, &@moona2a.Executor) -> Traced
+pub fn Tracing::new(tracer~ : @trace.Tracer, now~ : () -> Int64, agent~ : Agent, settings? : Settings) -> Self
+pub fn Tracing::recording_content(Self) -> Self
+
+// Type aliases
+
+// Traits

@@ -1,0 +1,19 @@
+// Instrumentation for the protocol: one span per agent run and one per client call,
+// named after the OpenTelemetry GenAI semantic conventions. Those names come from
+// `moonbitstack/moontel/semconv`; the `a2a.*` ones this package adds are declared in
+// `scripts/otel/registry`, which the conformance job checks the emitted spans against.
+
+import {
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+  "moonbitstack/moona2a",
+  "moonbitstack/moonjrpc",
+  "moonbitstack/moontel/semconv",
+  "moonbitstack/moontel/trace",
+}
+
+import {
+  "moonbitlang/async",
+  "moonbitstack/moona2a",
+  "moonbitstack/moontel/trace",
+} for "test"
