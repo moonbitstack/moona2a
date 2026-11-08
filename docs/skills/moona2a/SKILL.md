@@ -102,6 +102,21 @@ fn traced(greeter : &@moona2a.Executor, rand : (Int32) -> Bytes, now : () -> Int
 `tracing.calling(transport)` does the same for the client side. Message text stays out of the spans
 until `recording_content()` is asked for.
 
+A call carries its trace across the wire, so the run on the other side is a child of the span that
+called it: the wrapper writes `traceparent` into an injector, the transport sends it, and the agent
+is handed the request's headers as `RequestContext.headers`.
+
+```moonbit native
+fn wired(url : String, tracing : @otel.Tracing) -> @moona2a.Client raise {
+  let injector = @otel.Injector::new()
+  let transport = @fetch.HttpTransport::new(
+    url,
+    headers=fn() { injector.current() },
+  )
+  @moona2a.Client::new(tracing.calling(transport, inject=injector.setting()))
+}
+```
+
 ## Rules that bite
 
 - **Version.** Send `A2A-Version: 1.0` on every request. A request with no version header is a 0.3
@@ -121,3 +136,6 @@ until `recording_content()` is asked for.
   `authentication` in one object — not nested, as earlier drafts had it.
 - **Sockets.** `moona2a/fetch` needs them, so it is there on the native and wasm backends and not
   on the JavaScript one. The server side is an ASGI application and needs nothing.
+- **One call at a time per transport.** An injector's headers ride on the transport, not on the
+  call, because the `Transport` trait has no per-call place for them. Two tasks sharing one traced
+  transport can put one call's `traceparent` on the other's request.

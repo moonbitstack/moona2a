@@ -196,6 +196,36 @@ asked for, and `at_most(n)` cuts what is recorded.
 `tracing.calling(transport)` is the same for the other side: a client's call is a span of kind
 `Client`, streaming answers put every event on it, and a refusal is an error span.
 
+### One trace, both agents
+
+A call carries its own context across the wire, so the run on the other side is a child of the span
+that called it rather than the root of a second trace. The protocol has no header of its own for
+this, so the pieces are generic: an agent is handed the request's headers, and a transport sends the
+ones its host supplies.
+
+```moonbit native
+fn calling_agent(rand : (Int32) -> Bytes, now : () -> Int64, agent_card : @moona2a.AgentCard) -> @moona2a.Client raise {
+  let tracing = @otel.Tracing::new(
+    tracer=@trace.Tracer::new(rand~, sink=@trace.discard, sampler=@trace.always),
+    now~,
+    agent=@otel.Agent::of_card(agent_card),
+  )
+  let injector = @otel.Injector::new()
+  let transport = @fetch.HttpTransport::new(
+    "https://summariser.example.com",
+    headers=fn() { injector.current() },
+  )
+  @moona2a.Client::new(tracing.calling(transport, inject=injector.setting()))
+}
+```
+
+The wrapper writes `traceparent` into the injector for the call it is making and clears it when the
+call returns; the transport reads it as it builds the request. On the other side `to_asgi` hands the
+request's headers to `Server::answer`, they reach the agent as `RequestContext.headers`, and the run
+takes the caller's context as its parent. A header that does not parse is no header: the run starts
+its own trace. The injector is one call at a time, since the headers ride on the transport rather
+than on the call — a host that fans out from several tasks gives each its own transport.
+
 ## Versioning
 
 The interface speaks `1.0`. A request that names another version is refused with
@@ -237,6 +267,7 @@ producing the spans it is supposed to.
 |:--|:--|
 | registry check | valid, no policy violation |
 | live check | 7 spans, 73 entities, 0 advisories, 73% of the registry exercised |
+| the trace | one trace per send: the run's span names the caller's span as its parent |
 
 The two `opt_in` attributes, the message text, are declared and not exercised by default, which is
 where the missing quarter of the registry is. Span events are declared in the registry, but the

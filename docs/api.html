@@ -109,6 +109,8 @@
 <div class="group">
 <div class="pkg">@otel</div>
 <a href="#type-otel-Agent">Agent</a>
+<a href="#type-otel-Headers">Headers</a>
+<a href="#type-otel-Injector">Injector</a>
 <a href="#type-otel-Settings">Settings</a>
 <a href="#type-otel-Traced">Traced</a>
 <a href="#type-otel-TracedTransport">TracedTransport</a>
@@ -835,7 +837,7 @@
 <div class="type-head"><h3>RequestContext</h3><span class="kind">struct</span></div>
 <div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">RequestContext</span></div>
 <div class="doc"><p>What an executor is given when it is asked to work a request: the message, the ids it belongs to, and the task as it stands when the message continues one.</p></div>
-<ul class="members"><li><b>message</b> : <span class="pt">Message</span></li><li><b>task_id</b> : <span class="pt">String</span></li><li><b>context_id</b> : <span class="pt">String</span></li><li><b>task</b> : <span class="pt">Task?</span></li></ul>
+<ul class="members"><li><b>message</b> : <span class="pt">Message</span></li><li><b>task_id</b> : <span class="pt">String</span></li><li><b>context_id</b> : <span class="pt">String</span></li><li><b>task</b> : <span class="pt">Task?</span></li><li><b>headers</b> : <span class="pt">Array[(String, String)]</span></li></ul>
 <div class="method-list"><div class="mlabel">Methods</div>
 <article class="api-item" id="m-moona2a-RequestContext-artifact">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">RequestContext::artifact</span>(Self, Artifact, append? : Bool, last_chunk? : Bool) -&gt; StreamEvent</div>
@@ -1032,12 +1034,12 @@
 </div>
 <div class="method-list"><div class="mlabel">Trait methods</div>
 <article class="api-item" id="m-moona2a-Server-answer">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Server::answer</span>(Self, StringView, extensions? : Array[String], version? : String) -&gt; String?</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Server::answer</span>(Self, StringView, extensions? : Array[String], version? : String, headers? : Array[(String, String)]) -&gt; String?</div>
 
 
 </article>
 <article class="api-item" id="m-moona2a-Server-answer_stream">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Server::answer_stream</span>(Self, StringView, &amp;ReplySink, extensions? : Array[String], version? : String) -&gt; Unit</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Server::answer_stream</span>(Self, StringView, &amp;ReplySink, extensions? : Array[String], version? : String, headers? : Array[(String, String)]) -&gt; Unit</div>
 
 
 </article>
@@ -1579,12 +1581,12 @@
 <div class="type-head"><h3>HttpTransport</h3><span class="kind">struct</span></div>
 <div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">HttpTransport</span></div>
 <div class="doc"><p>The JSON-RPC endpoint of one agent, reached over HTTP.</p></div>
-<ul class="members"><li><b>client</b> : <span class="pt">@moonfetch.Client</span></li><li><b>path</b> : <span class="pt">String</span></li><li><b>card_path</b> : <span class="pt">String</span></li></ul>
+<ul class="members"><li><b>client</b> : <span class="pt">@moonfetch.Client</span></li><li><b>path</b> : <span class="pt">String</span></li><li><b>card_path</b> : <span class="pt">String</span></li><li><b>extra</b> : <span class="pt">() -&gt; Array[(String, String)]</span></li></ul>
 <div class="method-list"><div class="mlabel">Methods</div>
 <article class="api-item" id="m-fetch-HttpTransport-new">
-<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">HttpTransport::new</span>(String, path? : String, card_path? : String) -&gt; Self <span class="kw">raise</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">HttpTransport::new</span>(String, path? : String, card_path? : String, headers? : () -&gt; Array[(String, String)]) -&gt; Self <span class="kw">raise</span></div>
 <div class="doc"><p>A transport to the agent at <code>url</code>, e.g. <code>https://agent.example.com</code>, answering JSON-RPC on the root path and serving its card at the well-known one.</p></div>
-<div class="params"><span class="p"><b>url</b> <span class="pt">String</span></span><span class="p"><b>path?</b> <span class="pt">String</span></span><span class="p"><b>card_path?</b> <span class="pt">String</span></span></div>
+<div class="params"><span class="p"><b>url</b> <span class="pt">String</span></span><span class="p"><b>path?</b> <span class="pt">String</span></span><span class="p"><b>card_path?</b> <span class="pt">String</span></span><span class="p"><b>headers?</b> <span class="pt">() -&gt; Array[(String, String)]</span></span></div>
 </article>
 </div>
 <div class="method-list"><div class="mlabel">Trait methods</div>
@@ -1683,6 +1685,33 @@
 </article>
 </div>
 </section>
+<section class="api-type" id="type-otel-Headers">
+<div class="type-head"><h3>Headers</h3><span class="kind">type</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">type</span> <span class="name">Headers</span> = Array[(String, String)]</div>
+
+</section>
+<section class="api-type" id="type-otel-Injector">
+<div class="type-head"><h3>Injector</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">Injector</span></div>
+<ul class="members"><li><b>cell</b> : <span class="pt">@ref.Ref[Array[(String, String)]]</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-otel-Injector-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Injector::new</span>() -&gt; Self</div>
+<div class="doc"><p>An injector holding no headers.</p></div>
+
+</article>
+<article class="api-item" id="m-otel-Injector-current">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Injector::current</span>(Self) -&gt; Array[(String, String)]</div>
+<div class="doc"><p>The headers of the call in flight, which a transport reads while it builds the request: <code>@fetch.HttpTransport::new(url, headers=fn() { injector.current() })</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-otel-Injector-setting">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Injector::setting</span>(Self) -&gt; (Array[(String, String)]) -&gt; Unit</div>
+<div class="doc"><p>The sink <code>Tracing::calling</code> writes into: the headers of the call it is making, or none.</p></div>
+
+</article>
+</div>
+</section>
 <section class="api-type" id="type-otel-Settings">
 <div class="type-head"><h3>Settings</h3><span class="kind">struct</span></div>
 <div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">Settings</span></div>
@@ -1716,7 +1745,7 @@
 <section class="api-type" id="type-otel-TracedTransport">
 <div class="type-head"><h3>TracedTransport</h3><span class="kind">struct</span></div>
 <div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">TracedTransport</span></div>
-<ul class="members"><li><b>tracing</b> : <span class="pt">Tracing</span></li><li><b>inner</b> : <span class="pt">&amp;@moona2a.Transport</span></li></ul>
+<ul class="members"><li><b>tracing</b> : <span class="pt">Tracing</span></li><li><b>inner</b> : <span class="pt">&amp;@moona2a.Transport</span></li><li><b>inject</b> : <span class="pt">((Array[(String, String)]) -&gt; Unit)?</span></li></ul>
 <div class="method-list"><div class="mlabel">Trait methods</div>
 <article class="api-item" id="m-otel-TracedTransport-discover">
 <div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">TracedTransport::discover</span>(Self) -&gt; @json.Json</div>
@@ -1753,9 +1782,10 @@
 <div class="params"><span class="p"><b>limit</b> <span class="pt">Int32</span></span></div>
 </article>
 <article class="api-item" id="m-otel-Tracing-calling">
-<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Tracing::calling</span>(Self, &amp;@moona2a.Transport) -&gt; TracedTransport</div>
-<div class="doc"><p><code>transport</code>, with each call recorded.</p></div>
-<div class="params"><span class="p"><b>transport</b> <span class="pt">&amp;@moona2a.Transport</span></span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Tracing::calling</span>(Self, &amp;@moona2a.Transport, inject? : (Array[(String, String)]) -&gt; Unit) -&gt; TracedTransport</div>
+<div class="doc"><p><code>transport</code>, with each call recorded.</p>
+<p><code>inject</code> is how a trace crosses to the other side: the wrapper hands it the headers of the call it is about to make, and the transport under it puts them on the request. Pass <code>injector.setting()</code> from an <code>Injector</code>, which is also what that transport asks for its headers. Without it the spans are still right, but a callee sees no parent and starts a trace of its own.</p></div>
+<div class="params"><span class="p"><b>transport</b> <span class="pt">&amp;@moona2a.Transport</span></span><span class="p"><b>inject?</b> <span class="pt">(Array[(String, String)]) -&gt; Unit</span></span></div>
 </article>
 <article class="api-item" id="m-otel-Tracing-executing">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Tracing::executing</span>(Self, &amp;@moona2a.Executor) -&gt; Traced</div>
