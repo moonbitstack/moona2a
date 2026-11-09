@@ -1,6 +1,6 @@
 name = "moonbitstack/moona2a"
 
-version = "0.1.0"
+version = "0.1.1"
 
 readme = "README.md"
 
@@ -45,11 +45,11 @@ source = "src"
 
 import {
   "moonbitlang/async@0.22.5",
-  "moonbitstack/moondate@0.1.5",
-  "moonbitstack/moonasgi@0.10.6",
-  "moonbitstack/moonfetch@0.1.6",
-  "moonbitstack/moonhttp@0.15.9",
-  "moonbitstack/moonjrpc@0.1.3",
-  "moonbitstack/moonseed@0.1.1",
+  "moonbitstack/moondate@0.1.6",
+  "moonbitstack/moonasgi@0.10.8",
+  "moonbitstack/moonfetch@0.1.8",
+  "moonbitstack/moonhttp@0.15.10",
+  "moonbitstack/moonjrpc@0.1.4",
+  "moonbitstack/moonseed@0.1.3",
   "moonbitstack/moontel@0.1.2",
 }
