@@ -51,5 +51,5 @@ import {
   "moonbitstack/moonhttp@0.15.9",
   "moonbitstack/moonjrpc@0.1.3",
   "moonbitstack/moonseed@0.1.1",
-  "moonbitstack/moontel@0.1.1",
+  "moonbitstack/moontel@0.1.2",
 }

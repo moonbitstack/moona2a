@@ -126,7 +126,7 @@ async fn main {
     transport~,
     endpoint="http://\{address}",
     resource=@otlp.Resource::of_service("moona2a-example"),
-    format=@otlp.BodyFormat::Protobuf,
+    encoding=@binary.protobuf,
     now=millis,
     rand=random_bytes,
     attempts=5,
