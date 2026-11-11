@@ -102,6 +102,23 @@ match client.send_message(message) {
 }
 ```
 
+### Headers on a call
+
+Every client method takes `headers?`: the headers of that one call, in wire spelling. The transport
+sends them alongside what it always sends, and a name both supply keeps the call's value. The
+`Transport` trait carries them as `exchange_with`, `stream_with` and `discover_with`, each with a
+default that reaches the original three methods — a transport written before per-call headers
+existed needs no change.
+
+```moonbit native
+let task = client.get_task("t-1", headers=[("x-tenant", "acme")])
+println("task \{task.id}: \{task.status.state.wire()}")
+```
+
+A host can also give `HttpTransport` a `headers` callback for headers it wants on every request;
+those sit behind the ones a call names. A trace context, a tenant that changes with the caller, or
+a short-lived credential belongs to the call, not to the handle that sends it.
+
 ## The methods
 
 | Method | What it does |
@@ -200,8 +217,10 @@ asked for, and `at_most(n)` cuts what is recorded.
 
 A call carries its own context across the wire, so the run on the other side is a child of the span
 that called it rather than the root of a second trace. The protocol has no header of its own for
-this, so the pieces are generic: an agent is handed the request's headers, and a transport sends the
-ones its host supplies.
+this, so the pieces are generic: `tracing.calling(transport)` adds `traceparent` to that call's
+headers, the transport puts them on the request, `to_asgi` hands the request's headers to
+`Server::answer`, they reach the agent as `RequestContext.headers`, and the run takes the caller's
+context as its parent. A header that does not parse is no header: the run starts its own trace.
 
 ```moonbit native
 fn calling_agent(rand : (Int32) -> Bytes, now : () -> Int64, agent_card : @moona2a.AgentCard) -> @moona2a.Client raise {
@@ -210,21 +229,17 @@ fn calling_agent(rand : (Int32) -> Bytes, now : () -> Int64, agent_card : @moona
     now~,
     agent=@otel.Agent::of_card(agent_card),
   )
-  let injector = @otel.Injector::new()
-  let transport = @fetch.HttpTransport::new(
-    "https://summariser.example.com",
-    headers=fn() { injector.current() },
+  @moona2a.Client::new(
+    tracing.calling(@fetch.HttpTransport::new("https://summariser.example.com")),
   )
-  @moona2a.Client::new(tracing.calling(transport, inject=injector.setting()))
 }
 ```
 
-The wrapper writes `traceparent` into the injector for the call it is making and clears it when the
-call returns; the transport reads it as it builds the request. On the other side `to_asgi` hands the
-request's headers to `Server::answer`, they reach the agent as `RequestContext.headers`, and the run
-takes the caller's context as its parent. A header that does not parse is no header: the run starts
-its own trace. The injector is one call at a time, since the headers ride on the transport rather
-than on the call — a host that fans out from several tasks gives each its own transport.
+Headers are an argument of the call, not a slot on the transport, so one traced transport serves
+many tasks at once: each request carries the context of the span that opened it, and no task's trace
+can land on another's request. `Injector` remains as an optional observer of a single call; it is
+not on the path to the wire. The `a2a-version` header the transport always sends is still there,
+and a call's headers take precedence when a name is used twice.
 
 ## Versioning
 
@@ -273,6 +288,11 @@ The two `opt_in` attributes, the message text, are declared and not exercised by
 where the missing quarter of the registry is. Span events are declared in the registry, but the
 0.28 live check pairs them by their enclosing span rather than by name, so a mistyped event name is
 not caught there; the package's own tests assert the names it emits.
+
+The per-call header path is checked two ways: over a real socket, where a server reads back the
+headers a call sent, and with two tasks sharing one traced transport at once. The second holds both
+calls at the same point in the transport before either reads its headers, so a context shared
+between calls cannot hide: each request is asserted to carry the `traceparent` of its own span.
 
 Two behaviours are worth naming:
 

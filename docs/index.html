@@ -288,6 +288,7 @@
           <li><span>Every status change and every artifact is an event inside the span, at the time it happened.</span></li>
           <li><span>Message text is left out until <code>recording_content()</code> asks for it; <code>at_most(n)</code> caps what one record can cost.</span></li>
           <li><span>A call carries its trace across the wire, so the run on the other side is a child of the span that called it.</span></li>
+          <li><span>Each call carries its own headers, so one traced transport serves many tasks at once without mixing traces.</span></li>
           <li><span>The spans are checked against the conventions by <span class="mono">weaver registry live-check</span> in CI, with the example server sending them for real.</span></li>
         </ul>
       </div>

@@ -278,19 +278,17 @@ let app = @asgi.to_asgi(server)</code></pre>
     <p>On the other side, <code>tracing.calling(transport)</code> records a client's call: kind <code>Client</code>, the method in <code>a2a.method</code>, and for a stream, one event per frame. A refused call is an error span, because for the caller it is a failure whether or not the agent thought so.</p>
     <p>Message text is off by default — a span store is not the place for a caller's prompt unless the operator says so. <code>recording_content()</code> turns it on and <code>at_most(512)</code> caps what one record can cost.</p>
 
-    <p><b>Across the hop.</b> One trace covers both agents. The protocol has no header of its own for a trace context, so the two pieces are generic: the caller's transport sends the headers its host supplies, and the agent is handed the headers its request arrived with.</p>
+    <p><b>Across the hop.</b> One trace covers both agents. The protocol has no header of its own for a trace context, so the pieces are generic: a call carries its own headers, and the agent is handed the headers its request arrived with.</p>
     <div class="code-block" data-copy>
       <div class="cap">call.mbt</div>
-<pre data-lang="moonbit"><code>let injector = @otel.Injector::new()
-let transport = @fetch.HttpTransport::new(
-  "https://summariser.example.com",
-  headers=fn() { injector.current() },
+<pre data-lang="moonbit"><code>let client = @moona2a.Client::new(
+  tracing.calling(@fetch.HttpTransport::new(
+    "https://summariser.example.com",
+  )),
 )
-let client = @moona2a.Client::new(
-  tracing.calling(transport, inject=injector.setting()),
-)</code></pre>
+let card = client.discover(headers=[("x-tenant", "acme")])</code></pre>
     </div>
-    <p>The wrapper writes <code>traceparent</code> into the injector for the call it is making and clears it when the call returns; the transport reads it while it builds the request. At the other end <code>to_asgi</code> hands the request's headers to <code>Server::answer</code>, they reach the agent as <code>RequestContext.headers</code>, and the run opens its span as a child of the caller's. A header that does not parse is no header, so the run starts a trace of its own rather than losing the work.</p>
+    <p>Every client method takes <code>headers?</code>. <code>tracing.calling(transport)</code> adds <code>traceparent</code> to the headers of the call it records, and the transport puts them on the request. At the other end <code>to_asgi</code> hands the request's headers to <code>Server::answer</code>, they reach the agent as <code>RequestContext.headers</code>, and the run opens its span as a child of the caller's. A header that does not parse is no header, so the run starts a trace of its own rather than losing the work.</p>
     <div class="code-block">
       <div class="cap">two agents, one trace</div>
 <!-- nocheck -->
@@ -301,7 +299,7 @@ let client = @moona2a.Client::new(
 │     ├ event  a2a.artifact.produced answer
 │     └ event  a2a.task.status      TASK_STATE_COMPLETED</code></pre>
     </div>
-    <p>The injector holds one call's headers at a time, because the headers ride on the transport and the protocol trait has no per-call place for them. A host that fans out from several tasks gives each its own transport — a handle, and a struct's worth of memory.</p>
+    <p>Headers are an argument of the call, not a slot on the transport, so one traced transport serves many tasks at once: a span opened by one task cannot appear on another's request. <code>exchange_with</code>, <code>stream_with</code> and <code>discover_with</code> default to the original three methods, so a transport written before them needs no change. Headers a host gives the transport sit behind the ones a call names, and a name used twice keeps the call's value. <code>Injector</code> observes a single call in flight; it is not on the path to the wire.</p>
 
     <h2 id="rules">Rules that bite</h2>
     <ul>

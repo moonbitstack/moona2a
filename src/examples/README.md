@@ -8,7 +8,7 @@
 | 04 | [`stream`](04-stream/) | A streaming answer, one event at a time, into a sink that prints as it goes |
 | 05 | [`conformance`](05-conformance/) | The server the conformance suite drives: an agent that answers the suite's message ids, served over HTTP |
 | 06 | [`interop`](06-interop/) | A client calling an agent that is already running: card, message, stream, over HTTP |
-| 07 | [`otel`](07-otel/) | Both ends of one exchange instrumented, with the spans sent to a collector over OTLP/gRPC |
+| 07 | [`otel`](07-otel/) | Both ends of one exchange instrumented, each call carrying its own headers, with the spans sent to a collector over OTLP/gRPC |
 
 Examples 01 to 04 print and exit; 05, 06 and 07 have to be pointed at something — 05 is a server and
 runs until it is stopped, 06 takes the endpoint of one that is already up, 07 takes a collector's
