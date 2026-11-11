@@ -1,23 +1,15 @@
-// The one piece of state a traced call needs: the headers of the call in flight.
-//
-// The wrapper knows the span; the transport is what puts headers on the wire, and the
-// protocol's `Transport` trait has no room for them. So the wrapper writes the headers
-// here, the transport reads them as it builds the request, and the wrapper clears them
-// when the call returns.
+// An observer for the headers of a call in flight. The headers reach the transport as an
+// argument of the call; this cell only lets a host see what a single call is carrying.
 
 ///|
 /// A list of headers, in the spelling the wire uses: the name, then the value.
-pub type Headers = Array[(String, String)]
+pub type Headers = @moona2a.Headers
 
 ///|
-/// A cell between a traced transport and the transport under it: `Tracing::calling` writes
-/// the headers of the call it is about to make, and the transport reads them when it builds
-/// the request.
-///
-/// One call at a time. The headers ride on the transport rather than on the call, because
-/// the protocol trait has no per-call place for them, so a transport shared by several tasks
-/// at once would put one call's `traceparent` on another's request. A host that fans out
-/// gives each task its own transport, which is a handle and costs a struct.
+/// A cell a host can read while one call is in flight. It is not on the path to the wire:
+/// `Transport` receives each call's headers as an argument, so a wrapper shared by several
+/// tasks needs no cell and mixes no traces. Use `current()` to observe a single call — for
+/// instance in a test or a diagnostic — and do not rely on it when calls overlap.
 pub struct Injector {
   cell : Ref[Headers]
 }
@@ -29,14 +21,15 @@ pub fn Injector::new() -> Injector {
 }
 
 ///|
-/// The headers of the call in flight, which a transport reads while it builds the request:
-/// `@fetch.HttpTransport::new(url, headers=fn() { injector.current() })`.
+/// The headers the observer was last given. A transport that wants the headers of the
+/// call it is making takes them from its `*_with` argument instead.
 pub fn Injector::current(self : Injector) -> Headers {
   self.cell.val
 }
 
 ///|
-/// The sink `Tracing::calling` writes into: the headers of the call it is making, or none.
+/// The sink `Tracing::calling` writes into when `inject` was supplied: the headers of
+/// the call it is making, or none.
 pub fn Injector::setting(self : Injector) -> (Headers) -> Unit {
   fn(headers) { self.cell.val = headers }
 }

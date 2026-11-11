@@ -33,18 +33,19 @@ impl @moona2a.ReplySink for Watching with fn reply(self, message) {
 pub struct TracedTransport {
   tracing : Tracing
   inner : &@moona2a.Transport
-  /// Where the headers of the call in flight go, when the transport can carry them.
+  /// An optional observer of the headers of a call in flight. The headers themselves
+  /// travel as an argument of the call, not through this sink.
   inject : ((Array[(String, String)]) -> Unit)?
 }
 
 ///|
 /// `transport`, with each call recorded.
 ///
-/// `inject` is how a trace crosses to the other side: the wrapper hands it the headers of
-/// the call it is about to make, and the transport under it puts them on the request. Pass
-/// `injector.setting()` from an `Injector`, which is also what that transport asks for its
-/// headers. Without it the spans are still right, but a callee sees no parent and starts a
-/// trace of its own.
+/// A call's `traceparent` is added to that call's own headers, which reach the transport
+/// as an argument. One wrapper can therefore serve many tasks at once: a span opened by
+/// one of them cannot appear on another's request. `inject` is an observer for a host
+/// that wants to see those headers while a single call is in flight; it is not part of
+/// the path to the wire, and a wrapper shared by tasks has no one call's headers to show.
 pub fn Tracing::calling(
   self : Tracing,
   transport : &@moona2a.Transport,
@@ -54,7 +55,8 @@ pub fn Tracing::calling(
 }
 
 ///|
-/// Write the headers of the call in flight, or clear them for a call that has no span.
+/// Tell the observer the headers of the call in flight, or clear them for a call that
+/// has no span. The transport is not read from here: it receives them as an argument.
 fn TracedTransport::carrying(
   self : TracedTransport,
   context : @trace.TraceContext?,
@@ -72,6 +74,28 @@ fn TracedTransport::carrying(
         None => sink([])
       }
     None => ()
+  }
+}
+
+///|
+/// The headers of this call, with the span's context added. Nothing here is shared
+/// between calls, so a transport under several tasks sees one context per request.
+fn TracedTransport::outgoing(
+  self : TracedTransport,
+  headers : @moona2a.Headers,
+  context : @trace.TraceContext?,
+) -> @moona2a.Headers {
+  ignore(self)
+  match context {
+    Some(context) =>
+      @moona2a.merge_headers(
+        headers,
+        @propagate.inject([], {
+          context: Some(context),
+          baggage: @propagate.empty_baggage,
+        }),
+      )
+    None => headers
   }
 }
 
@@ -135,20 +159,28 @@ fn sent_message(params : Json?) -> @moona2a.Message? {
 }
 
 ///|
-pub impl @moona2a.Transport for TracedTransport with fn exchange(self, message) {
+/// One call and its span. The headers belong to the call, from the span that opens here
+/// to the transport that sends them.
+async fn TracedTransport::carry_call(
+  self : TracedTransport,
+  message : @moonjrpc.Message,
+  headers : @moona2a.Headers,
+) -> @moonjrpc.Message {
   let (name, attributes) = self.shape(message)
   let span = self.tracing.begin(name, @trace.Client, attributes)
+  let context = match span {
+    Some(opened) => Some(opened.context())
+    None => None
+  }
+  self.carrying(context)
+  let outcome = Ok(
+    self.inner.exchange_with(message, self.outgoing(headers, context)),
+  ) catch {
+    error => Err(error)
+  }
+  self.carrying(None)
   match span {
-    None => {
-      self.carrying(None)
-      self.inner.exchange(message)
-    }
     Some(span) => {
-      self.carrying(Some(span.context()))
-      let outcome = Ok(self.inner.exchange(message)) catch {
-        error => Err(error)
-      }
-      self.carrying(None)
       match outcome {
         Ok(answer) =>
           match answer {
@@ -162,29 +194,36 @@ pub impl @moona2a.Transport for TracedTransport with fn exchange(self, message) 
         }
       }
       span.finish(at=(self.tracing.now)())
-      match outcome {
-        Ok(answer) => answer
-        Err(error) => raise error
-      }
     }
+    None => ()
+  }
+  match outcome {
+    Ok(answer) => answer
+    Err(error) => raise error
   }
 }
 
 ///|
-pub impl @moona2a.Transport for TracedTransport with fn stream(
-  self,
-  message,
-  out,
-) {
+/// One streamed call and its span.
+async fn TracedTransport::carry_stream(
+  self : TracedTransport,
+  message : @moonjrpc.Message,
+  out : &@moona2a.ReplySink,
+  headers : @moona2a.Headers,
+) -> Unit {
   let (name, attributes) = self.shape(message)
   let span = self.tracing.begin(name, @trace.Client, attributes)
+  let context = match span {
+    Some(opened) => Some(opened.context())
+    None => None
+  }
+  self.carrying(context)
   match span {
     None => {
+      self.inner.stream_with(message, out, self.outgoing(headers, context))
       self.carrying(None)
-      self.inner.stream(message, out)
     }
     Some(span) => {
-      self.carrying(Some(span.context()))
       let watch : Watch = {
         span,
         now: self.tracing.now,
@@ -193,7 +232,11 @@ pub impl @moona2a.Transport for TracedTransport with fn stream(
         answer: None,
       }
       let outcome = try {
-        self.inner.stream(message, Watching::{ watch, out, })
+        self.inner.stream_with(
+          message,
+          Watching::{ watch, out, },
+          self.outgoing(headers, context),
+        )
         None
       } catch {
         error => Some(error)
@@ -211,21 +254,27 @@ pub impl @moona2a.Transport for TracedTransport with fn stream(
 }
 
 ///|
-pub impl @moona2a.Transport for TracedTransport with fn discover(self) {
+/// Reading a card is its own call, with its own headers.
+async fn TracedTransport::carry_card(
+  self : TracedTransport,
+  headers : @moona2a.Headers,
+) -> Json {
   let span = self.tracing.begin(
     discover_span,
     @trace.Client,
     self.tracing.identity_attributes(),
   )
+  let context = match span {
+    Some(opened) => Some(opened.context())
+    None => None
+  }
+  self.carrying(context)
+  let outcome = Ok(self.inner.discover_with(self.outgoing(headers, context))) catch {
+    error => Err(error)
+  }
+  self.carrying(None)
   match span {
-    None => {
-      self.carrying(None)
-      self.inner.discover()
-    }
     Some(span) => {
-      self.carrying(Some(span.context()))
-      let outcome = Ok(self.inner.discover()) catch { error => Err(error) }
-      self.carrying(None)
       match outcome {
         Ok(card) => {
           ignore(card)
@@ -237,13 +286,67 @@ pub impl @moona2a.Transport for TracedTransport with fn discover(self) {
         }
       }
       span.finish(at=(self.tracing.now)())
-      match outcome {
-        Ok(card) => card
-        Err(error) => raise error
-      }
     }
+    None => ()
+  }
+  match outcome {
+    Ok(card) => card
+    Err(error) => raise error
   }
 }
 
 ///|
-pub extend TracedTransport with @moona2a.Transport::{exchange, stream, discover}
+pub impl @moona2a.Transport for TracedTransport with fn exchange(self, message) {
+  self.carry_call(message, [])
+}
+
+///|
+pub impl @moona2a.Transport for TracedTransport with fn exchange_with(
+  self,
+  message,
+  headers,
+) {
+  self.carry_call(message, headers)
+}
+
+///|
+pub impl @moona2a.Transport for TracedTransport with fn stream(
+  self,
+  message,
+  out,
+) {
+  self.carry_stream(message, out, [])
+}
+
+///|
+pub impl @moona2a.Transport for TracedTransport with fn stream_with(
+  self,
+  message,
+  out,
+  headers,
+) {
+  self.carry_stream(message, out, headers)
+}
+
+///|
+pub impl @moona2a.Transport for TracedTransport with fn discover(self) {
+  self.carry_card([])
+}
+
+///|
+pub impl @moona2a.Transport for TracedTransport with fn discover_with(
+  self,
+  headers,
+) {
+  self.carry_card(headers)
+}
+
+///|
+pub extend TracedTransport with @moona2a.Transport::{
+  exchange,
+  exchange_with,
+  stream,
+  stream_with,
+  discover,
+  discover_with,
+}

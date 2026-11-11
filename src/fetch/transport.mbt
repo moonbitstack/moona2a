@@ -16,7 +16,8 @@ pub(all) struct HttpTransport {
 
 ///|
 /// A transport to the agent at `url`, e.g. `https://agent.example.com`, answering JSON-RPC on the
-/// root path and serving its card at the well-known one.
+/// root path and serving its card at the well-known one. The `headers` callback supplies headers
+/// for every request; the headers a call names take precedence over them.
 pub fn HttpTransport::new(
   url : String,
   path? : String,
@@ -40,30 +41,33 @@ pub fn HttpTransport::new(
 }
 
 ///|
-/// The headers this transport sends with a request: what the caller asked for, then what
-/// the host supplies for this moment.
+/// The headers this transport sends with a request: what the protocol asks for, then what
+/// the host supplies for this moment, then what this one call asked for. A name that
+/// appears twice is sent once, with the last value, so a per-call `traceparent` cannot
+/// leave an older one beside it on the wire.
 fn HttpTransport::headers_for(
   self : HttpTransport,
   own : Array[(String, String)],
+  per_call : Array[(String, String)],
 ) -> Array[(String, String)] {
-  let headers = own
-  for pair in (self.extra)() {
-    headers.push(pair)
-  }
-  headers
+  @moona2a.merge_headers(@moona2a.merge_headers(own, (self.extra)()), per_call)
 }
 
 ///|
 /// Send the request and read the answer, which is one JSON-RPC document.
-pub impl @moona2a.Transport for HttpTransport with fn exchange(self, message) {
+async fn HttpTransport::reply(
+  self : HttpTransport,
+  message : @moonjrpc.Message,
+  headers : Array[(String, String)],
+) -> @moonjrpc.Message {
   let body = @moonfetch.Body::Text(message.to_json().stringify())
   let response = self.client.post(
     self.path,
     body~,
-    headers=self.headers_for([
-      ("content-type", "application/json"),
-      ("accept", "application/json"),
-    ]),
+    headers=self.headers_for(
+      [("content-type", "application/json"), ("accept", "application/json")],
+      headers,
+    ),
   )
   let text = response.text()
   @json.from_json(
@@ -76,20 +80,39 @@ pub impl @moona2a.Transport for HttpTransport with fn exchange(self, message) {
 }
 
 ///|
+pub impl @moona2a.Transport for HttpTransport with fn exchange(self, message) {
+  self.reply(message, [])
+}
+
+///|
+pub impl @moona2a.Transport for HttpTransport with fn exchange_with(
+  self,
+  message,
+  headers,
+) {
+  self.reply(message, headers)
+}
+
+///|
 /// Send the request and hand each server-sent event to `out`.
 ///
 /// The answer is read to its end before the events are handed over: the HTTP client this library
 /// depends on has no incremental body, so a frame waits for the response to finish. The sink is
 /// still the seam a host with a streaming client delivers into as frames arrive.
-pub impl @moona2a.Transport for HttpTransport with fn stream(self, message, out) {
+async fn HttpTransport::deliver(
+  self : HttpTransport,
+  message : @moonjrpc.Message,
+  out : &@moona2a.ReplySink,
+  headers : Array[(String, String)],
+) -> Unit {
   let body = @moonfetch.Body::Text(message.to_json().stringify())
   let response = self.client.post(
     self.path,
     body~,
-    headers=self.headers_for([
-      ("content-type", "application/json"),
-      ("accept", "text/event-stream"),
-    ]),
+    headers=self.headers_for(
+      [("content-type", "application/json"), ("accept", "text/event-stream")],
+      headers,
+    ),
   )
   let text = response.text()
   if !is_event_stream(response) {
@@ -120,6 +143,21 @@ pub impl @moona2a.Transport for HttpTransport with fn stream(self, message, out)
 }
 
 ///|
+pub impl @moona2a.Transport for HttpTransport with fn stream(self, message, out) {
+  self.deliver(message, out, [])
+}
+
+///|
+pub impl @moona2a.Transport for HttpTransport with fn stream_with(
+  self,
+  message,
+  out,
+  headers,
+) {
+  self.deliver(message, out, headers)
+}
+
+///|
 /// Whether the answer is a stream of events rather than one body.
 fn is_event_stream(response : @moonfetch.Response) -> Bool {
   match response.header("content-type") {
@@ -136,10 +174,13 @@ pub suberror WrongShape {
 
 ///|
 /// Read the agent's card from its well-known address.
-pub impl @moona2a.Transport for HttpTransport with fn discover(self) {
+async fn HttpTransport::card(
+  self : HttpTransport,
+  headers : Array[(String, String)],
+) -> Json {
   let response = self.client.get(
     self.card_path,
-    headers=self.headers_for([("accept", "application/json")]),
+    headers=self.headers_for([("accept", "application/json")], headers),
   )
   @json.parse(response.text()) catch {
     _ => raise WrongShape("the card is not JSON")
@@ -147,4 +188,24 @@ pub impl @moona2a.Transport for HttpTransport with fn discover(self) {
 }
 
 ///|
-pub extend HttpTransport with @moona2a.Transport::{exchange, stream, discover}
+pub impl @moona2a.Transport for HttpTransport with fn discover(self) {
+  self.card([])
+}
+
+///|
+pub impl @moona2a.Transport for HttpTransport with fn discover_with(
+  self,
+  headers,
+) {
+  self.card(headers)
+}
+
+///|
+pub extend HttpTransport with @moona2a.Transport::{
+  exchange,
+  exchange_with,
+  stream,
+  stream_with,
+  discover,
+  discover_with,
+}

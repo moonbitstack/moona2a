@@ -32,9 +32,12 @@ pub(all) struct HttpTransport {
   extra : () -> Array[(String, String)]
 }
 pub async fn HttpTransport::discover(Self) -> @json.Json
+pub async fn HttpTransport::discover_with(Self, Array[(String, String)]) -> @json.Json
 pub async fn HttpTransport::exchange(Self, @moonjrpc.Message) -> @moonjrpc.Message
+pub async fn HttpTransport::exchange_with(Self, @moonjrpc.Message, Array[(String, String)]) -> @moonjrpc.Message
 pub fn HttpTransport::new(String, path? : String, card_path? : String, headers? : () -> Array[(String, String)]) -> Self raise
 pub async fn HttpTransport::stream(Self, @moonjrpc.Message, &@moona2a.ReplySink) -> Unit
+pub async fn HttpTransport::stream_with(Self, @moonjrpc.Message, &@moona2a.ReplySink, Array[(String, String)]) -> Unit
 pub impl @moona2a.Transport for HttpTransport
 
 pub(all) struct Webhook {

@@ -34,20 +34,23 @@ impl @moona2a.Executor for Echo with fn cancel(self, task_id) {
 pub extend Echo with @moona2a.Executor::{execute, cancel}
 
 ///|
-/// A transport that hands a call to a server in this process, carrying the headers the
-/// traced wrapper wrote. The protocol does not care where the messages go: a socket
-/// would carry the same headers, which is what the `fetch` transport does with them.
+/// A transport that hands a call to a server in this process, carrying the headers of
+/// that call. The protocol does not care where the messages go: a socket would carry
+/// the same headers, which is what the `fetch` transport does with them.
 struct Local {
   server : @moona2a.Server
-  injector : @otel.Injector
 }
 
 ///|
-impl @moona2a.Transport for Local with fn exchange(self, message) {
+async fn Local::answer(
+  self : Local,
+  message : @moonjrpc.Message,
+  headers : @moona2a.Headers,
+) -> @moonjrpc.Message {
   let answer = self.server.answer(
     message.to_json().stringify(),
     version="1.0",
-    headers=self.injector.current(),
+    headers~,
   ) catch {
     _ => None
   }
@@ -64,13 +67,43 @@ impl @moona2a.Transport for Local with fn exchange(self, message) {
 }
 
 ///|
-impl @moona2a.Transport for Local with fn stream(self, message, out) {
+impl @moona2a.Transport for Local with fn exchange(self, message) {
+  self.answer(message, [])
+}
+
+///|
+impl @moona2a.Transport for Local with fn exchange_with(self, message, headers) {
+  self.answer(message, headers)
+}
+
+///|
+async fn Local::deliver(
+  self : Local,
+  message : @moonjrpc.Message,
+  out : &@moona2a.ReplySink,
+  headers : @moona2a.Headers,
+) -> Unit {
   self.server.answer_stream(
     message.to_json().stringify(),
     out,
     version="1.0",
-    headers=self.injector.current(),
+    headers~,
   )
+}
+
+///|
+impl @moona2a.Transport for Local with fn stream(self, message, out) {
+  self.deliver(message, out, [])
+}
+
+///|
+impl @moona2a.Transport for Local with fn stream_with(
+  self,
+  message,
+  out,
+  headers,
+) {
+  self.deliver(message, out, headers)
 }
 
 ///|
@@ -79,7 +112,20 @@ impl @moona2a.Transport for Local with fn discover(self) {
 }
 
 ///|
-pub extend Local with @moona2a.Transport::{exchange, stream, discover}
+impl @moona2a.Transport for Local with fn discover_with(self, headers) {
+  ignore(headers)
+  self.server.card_json()
+}
+
+///|
+pub extend Local with @moona2a.Transport::{
+  exchange,
+  exchange_with,
+  stream,
+  stream_with,
+  discover,
+  discover_with,
+}
 
 ///|
 /// A reply sink that prints what a stream carries as it arrives.
@@ -149,12 +195,9 @@ async fn main {
     agent=@otel.Agent::of_card(card),
   )
   let server = @moona2a.Server::new(tracing.executing(Echo::{ }), card)
-  // The cell is what carries the trace across: the wrapper writes the headers of the call
-  // it is making, this transport reads them, and the server hands them to the run.
-  let injector = @otel.Injector::new()
-  let client = @moona2a.Client::new(
-    tracing.calling(Local::{ server, injector, }, inject=injector.setting()),
-  )
+  // Each call carries its own headers to this transport, which hands them to the server;
+  // the server hands them to the run. No cell, so several calls can be in flight at once.
+  let client = @moona2a.Client::new(tracing.calling(Local::{ server, }))
 
   println("reading the card")
   let read = client.discover()

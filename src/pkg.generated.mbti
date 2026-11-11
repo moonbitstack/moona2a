@@ -16,6 +16,8 @@ pub let follow_tick_millis : Int32
 
 pub fn is_streaming_method(String) -> Bool
 
+pub fn merge_headers(Array[(String, String)], Array[(String, String)]) -> Array[(String, String)]
+
 pub let protocol_version : String
 
 pub fn request_method(StringView) -> String?
@@ -193,20 +195,21 @@ pub impl Executor for CallableExecutor
 pub struct Client {
   transport : &Transport
   mut next : Int64
+  ids : @async.Mutex
 }
-pub async fn Client::cancel_task(Self, String) -> Task
-pub async fn Client::create_push_config(Self, TaskPushConfig) -> TaskPushConfig
-pub async fn Client::delete_push_config(Self, String, String) -> Unit
-pub async fn Client::discover(Self) -> AgentCard
-pub async fn Client::extended_card(Self) -> AgentCard
-pub async fn Client::get_push_config(Self, String, String) -> TaskPushConfig
-pub async fn Client::get_task(Self, String, history_length? : Int32) -> Task
-pub async fn Client::list_push_configs(Self, String) -> Array[TaskPushConfig]
-pub async fn Client::list_tasks(Self, ListTasksQuery) -> TaskPage
+pub async fn Client::cancel_task(Self, String, headers? : Array[(String, String)]) -> Task
+pub async fn Client::create_push_config(Self, TaskPushConfig, headers? : Array[(String, String)]) -> TaskPushConfig
+pub async fn Client::delete_push_config(Self, String, String, headers? : Array[(String, String)]) -> Unit
+pub async fn Client::discover(Self, headers? : Array[(String, String)]) -> AgentCard
+pub async fn Client::extended_card(Self, headers? : Array[(String, String)]) -> AgentCard
+pub async fn Client::get_push_config(Self, String, String, headers? : Array[(String, String)]) -> TaskPushConfig
+pub async fn Client::get_task(Self, String, history_length? : Int32, headers? : Array[(String, String)]) -> Task
+pub async fn Client::list_push_configs(Self, String, headers? : Array[(String, String)]) -> Array[TaskPushConfig]
+pub async fn Client::list_tasks(Self, ListTasksQuery, headers? : Array[(String, String)]) -> TaskPage
 pub fn Client::new(&Transport) -> Self
-pub async fn Client::send_message(Self, Message, configuration? : SendMessageConfig, metadata? : @json.Json, tenant? : String) -> StreamEvent
-pub async fn Client::send_streaming_message(Self, Message, &ReplySink, configuration? : SendMessageConfig, metadata? : @json.Json, tenant? : String) -> Unit
-pub async fn Client::subscribe_to_task(Self, String, &ReplySink) -> Unit
+pub async fn Client::send_message(Self, Message, configuration? : SendMessageConfig, metadata? : @json.Json, tenant? : String, headers? : Array[(String, String)]) -> StreamEvent
+pub async fn Client::send_streaming_message(Self, Message, &ReplySink, configuration? : SendMessageConfig, metadata? : @json.Json, tenant? : String, headers? : Array[(String, String)]) -> Unit
+pub async fn Client::subscribe_to_task(Self, String, &ReplySink, headers? : Array[(String, String)]) -> Unit
 
 pub struct Collected {
   taken : Array[StreamEvent]
@@ -580,6 +583,7 @@ pub fn View::full() -> Self
 pub fn View::not_equal(Self, Self) -> Bool
 
 // Type aliases
+pub type Headers = Array[(String, String)]
 
 // Traits
 pub(open) trait EventSink {
@@ -610,4 +614,7 @@ pub(open) trait Transport {
   async fn exchange(Self, @moonjrpc.Message) -> @moonjrpc.Message
   async fn stream(Self, @moonjrpc.Message, &ReplySink) -> Unit
   async fn discover(Self) -> @json.Json
+  async fn exchange_with(Self, @moonjrpc.Message, Array[(String, String)]) -> @moonjrpc.Message = _
+  async fn stream_with(Self, @moonjrpc.Message, &ReplySink, Array[(String, String)]) -> Unit = _
+  async fn discover_with(Self, Array[(String, String)]) -> @json.Json = _
 }

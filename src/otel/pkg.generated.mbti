@@ -70,8 +70,11 @@ pub struct TracedTransport {
   inject : ((Array[(String, String)]) -> Unit)?
 }
 pub async fn TracedTransport::discover(Self) -> @json.Json
+pub async fn TracedTransport::discover_with(Self, Array[(String, String)]) -> @json.Json
 pub async fn TracedTransport::exchange(Self, @moonjrpc.Message) -> @moonjrpc.Message
+pub async fn TracedTransport::exchange_with(Self, @moonjrpc.Message, Array[(String, String)]) -> @moonjrpc.Message
 pub async fn TracedTransport::stream(Self, @moonjrpc.Message, &@moona2a.ReplySink) -> Unit
+pub async fn TracedTransport::stream_with(Self, @moonjrpc.Message, &@moona2a.ReplySink, Array[(String, String)]) -> Unit
 pub impl @moona2a.Transport for TracedTransport
 
 pub(all) struct Tracing {

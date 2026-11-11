@@ -36,6 +36,13 @@ keywords = [
   "span",
   "gen-ai",
   "semantic-conventions",
+  "request-headers",
+  "headers",
+  "traceparent",
+  "w3c-trace-context",
+  "context-propagation",
+  "concurrency",
+  "multi-task",
   "moonbit",
 ]
 

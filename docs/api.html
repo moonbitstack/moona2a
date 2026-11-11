@@ -63,6 +63,7 @@
 <a href="#type-moona2a-Client">Client</a>
 <a href="#type-moona2a-Collected">Collected</a>
 <a href="#type-moona2a-Discard">Discard</a>
+<a href="#type-moona2a-Headers">Headers</a>
 <a href="#type-moona2a-ListTasksQuery">ListTasksQuery</a>
 <a href="#type-moona2a-MemoryStore">MemoryStore</a>
 <a href="#type-moona2a-Message">Message</a>
@@ -453,7 +454,7 @@
 <section class="api-type" id="type-moona2a-Client">
 <div class="type-head"><h3>Client</h3><span class="kind">struct</span></div>
 <div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">Client</span></div>
-<ul class="members"><li><b>transport</b> : <span class="pt">&amp;Transport</span></li><li>mut next : Int64</li></ul>
+<ul class="members"><li><b>transport</b> : <span class="pt">&amp;Transport</span></li><li>mut next : Int64</li><li><b>ids</b> : <span class="pt">@async.Mutex</span></li></ul>
 <div class="method-list"><div class="mlabel">Methods</div>
 <article class="api-item" id="m-moona2a-Client-new">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Client::new</span>(&amp;Transport) -&gt; Self</div>
@@ -463,62 +464,62 @@
 </div>
 <div class="method-list"><div class="mlabel">Trait methods</div>
 <article class="api-item" id="m-moona2a-Client-cancel_task">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::cancel_task</span>(Self, String) -&gt; Task</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::cancel_task</span>(Self, String, headers? : Array[(String, String)]) -&gt; Task</div>
 
 
 </article>
 <article class="api-item" id="m-moona2a-Client-create_push_config">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::create_push_config</span>(Self, TaskPushConfig) -&gt; TaskPushConfig</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::create_push_config</span>(Self, TaskPushConfig, headers? : Array[(String, String)]) -&gt; TaskPushConfig</div>
 
 
 </article>
 <article class="api-item" id="m-moona2a-Client-delete_push_config">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::delete_push_config</span>(Self, String, String) -&gt; Unit</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::delete_push_config</span>(Self, String, String, headers? : Array[(String, String)]) -&gt; Unit</div>
 
 
 </article>
 <article class="api-item" id="m-moona2a-Client-discover">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::discover</span>(Self) -&gt; AgentCard</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::discover</span>(Self, headers? : Array[(String, String)]) -&gt; AgentCard</div>
 
 
 </article>
 <article class="api-item" id="m-moona2a-Client-extended_card">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::extended_card</span>(Self) -&gt; AgentCard</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::extended_card</span>(Self, headers? : Array[(String, String)]) -&gt; AgentCard</div>
 
 
 </article>
 <article class="api-item" id="m-moona2a-Client-get_push_config">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::get_push_config</span>(Self, String, String) -&gt; TaskPushConfig</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::get_push_config</span>(Self, String, String, headers? : Array[(String, String)]) -&gt; TaskPushConfig</div>
 
 
 </article>
 <article class="api-item" id="m-moona2a-Client-get_task">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::get_task</span>(Self, String, history_length? : Int32) -&gt; Task</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::get_task</span>(Self, String, history_length? : Int32, headers? : Array[(String, String)]) -&gt; Task</div>
 
 
 </article>
 <article class="api-item" id="m-moona2a-Client-list_push_configs">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::list_push_configs</span>(Self, String) -&gt; Array[TaskPushConfig]</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::list_push_configs</span>(Self, String, headers? : Array[(String, String)]) -&gt; Array[TaskPushConfig]</div>
 
 
 </article>
 <article class="api-item" id="m-moona2a-Client-list_tasks">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::list_tasks</span>(Self, ListTasksQuery) -&gt; TaskPage</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::list_tasks</span>(Self, ListTasksQuery, headers? : Array[(String, String)]) -&gt; TaskPage</div>
 
 
 </article>
 <article class="api-item" id="m-moona2a-Client-send_message">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::send_message</span>(Self, Message, configuration? : SendMessageConfig, metadata? : @json.Json, tenant? : String) -&gt; StreamEvent</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::send_message</span>(Self, Message, configuration? : SendMessageConfig, metadata? : @json.Json, tenant? : String, headers? : Array[(String, String)]) -&gt; StreamEvent</div>
 
 
 </article>
 <article class="api-item" id="m-moona2a-Client-send_streaming_message">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::send_streaming_message</span>(Self, Message, &amp;ReplySink, configuration? : SendMessageConfig, metadata? : @json.Json, tenant? : String) -&gt; Unit</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::send_streaming_message</span>(Self, Message, &amp;ReplySink, configuration? : SendMessageConfig, metadata? : @json.Json, tenant? : String, headers? : Array[(String, String)]) -&gt; Unit</div>
 
 
 </article>
 <article class="api-item" id="m-moona2a-Client-subscribe_to_task">
-<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::subscribe_to_task</span>(Self, String, &amp;ReplySink) -&gt; Unit</div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Client::subscribe_to_task</span>(Self, String, &amp;ReplySink, headers? : Array[(String, String)]) -&gt; Unit</div>
 
 
 </article>
@@ -556,6 +557,11 @@
 <section class="api-type" id="type-moona2a-Discard">
 <div class="type-head"><h3>Discard</h3><span class="kind">struct</span></div>
 <div class="sig"><span class="kw">pub</span> <span class="kw">struct</span> <span class="name">Discard</span></div>
+
+</section>
+<section class="api-type" id="type-moona2a-Headers">
+<div class="type-head"><h3>Headers</h3><span class="kind">type</span></div>
+<div class="sig"><span class="kw">pub</span> <span class="kw">type</span> <span class="name">Headers</span> = Array[(String, String)]</div>
 
 </section>
 <section class="api-type" id="type-moona2a-ListTasksQuery">
@@ -1498,6 +1504,11 @@
 <div class="doc"><p>Whether <code>name</code> is one of the methods whose answer is a stream, for a transport that has to decide before reading the whole request.</p></div>
 <div class="params"><span class="p"><b>name</b> <span class="pt">String</span></span></div>
 </article>
+<article class="api-item" id="fn-moona2a-merge_headers">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">merge_headers</span>(Array[(String, String)], Array[(String, String)]) -&gt; Array[(String, String)]</div>
+<div class="doc"><p><code>overlay</code> on top of <code>base</code>: a name the two share keeps the overlay's value and spelling, so one request never carries two values for a header the protocol reads. Header names are case-insensitive on the wire.</p></div>
+<div class="params"><span class="p"><b>base</b> <span class="pt">Headers</span></span><span class="p"><b>overlay</b> <span class="pt">Headers</span></span></div>
+</article>
 <article class="api-item" id="fn-moona2a-request_method">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">request_method</span>(StringView) -&gt; String?</div>
 <div class="doc"><p>The method this request asks for, so a transport can decide whether its answer is a stream before reading the whole body.</p></div>
@@ -1585,7 +1596,7 @@
 <div class="method-list"><div class="mlabel">Methods</div>
 <article class="api-item" id="m-fetch-HttpTransport-new">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">HttpTransport::new</span>(String, path? : String, card_path? : String, headers? : () -&gt; Array[(String, String)]) -&gt; Self <span class="kw">raise</span></div>
-<div class="doc"><p>A transport to the agent at <code>url</code>, e.g. <code>https://agent.example.com</code>, answering JSON-RPC on the root path and serving its card at the well-known one.</p></div>
+<div class="doc"><p>A transport to the agent at <code>url</code>, e.g. <code>https://agent.example.com</code>, answering JSON-RPC on the root path and serving its card at the well-known one. The <code>headers</code> callback supplies headers for every request; the headers a call names take precedence over them.</p></div>
 <div class="params"><span class="p"><b>url</b> <span class="pt">String</span></span><span class="p"><b>path?</b> <span class="pt">String</span></span><span class="p"><b>card_path?</b> <span class="pt">String</span></span><span class="p"><b>headers?</b> <span class="pt">() -&gt; Array[(String, String)]</span></span></div>
 </article>
 </div>
@@ -1595,13 +1606,28 @@
 
 
 </article>
+<article class="api-item" id="m-fetch-HttpTransport-discover_with">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">HttpTransport::discover_with</span>(Self, Array[(String, String)]) -&gt; @json.Json</div>
+
+
+</article>
 <article class="api-item" id="m-fetch-HttpTransport-exchange">
 <div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">HttpTransport::exchange</span>(Self, @moonjrpc.Message) -&gt; @moonjrpc.Message</div>
 
 
 </article>
+<article class="api-item" id="m-fetch-HttpTransport-exchange_with">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">HttpTransport::exchange_with</span>(Self, @moonjrpc.Message, Array[(String, String)]) -&gt; @moonjrpc.Message</div>
+
+
+</article>
 <article class="api-item" id="m-fetch-HttpTransport-stream">
 <div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">HttpTransport::stream</span>(Self, @moonjrpc.Message, &amp;@moona2a.ReplySink) -&gt; Unit</div>
+
+
+</article>
+<article class="api-item" id="m-fetch-HttpTransport-stream_with">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">HttpTransport::stream_with</span>(Self, @moonjrpc.Message, &amp;@moona2a.ReplySink, Array[(String, String)]) -&gt; Unit</div>
 
 
 </article>
@@ -1702,12 +1728,12 @@
 </article>
 <article class="api-item" id="m-otel-Injector-current">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Injector::current</span>(Self) -&gt; Array[(String, String)]</div>
-<div class="doc"><p>The headers of the call in flight, which a transport reads while it builds the request: <code>@fetch.HttpTransport::new(url, headers=fn() { injector.current() })</code>.</p></div>
+<div class="doc"><p>The headers the observer was last given. A transport that wants the headers of the call it is making takes them from its <code>*_with</code> argument instead.</p></div>
 
 </article>
 <article class="api-item" id="m-otel-Injector-setting">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Injector::setting</span>(Self) -&gt; (Array[(String, String)]) -&gt; Unit</div>
-<div class="doc"><p>The sink <code>Tracing::calling</code> writes into: the headers of the call it is making, or none.</p></div>
+<div class="doc"><p>The sink <code>Tracing::calling</code> writes into when <code>inject</code> was supplied: the headers of the call it is making, or none.</p></div>
 
 </article>
 </div>
@@ -1752,13 +1778,28 @@
 
 
 </article>
+<article class="api-item" id="m-otel-TracedTransport-discover_with">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">TracedTransport::discover_with</span>(Self, Array[(String, String)]) -&gt; @json.Json</div>
+
+
+</article>
 <article class="api-item" id="m-otel-TracedTransport-exchange">
 <div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">TracedTransport::exchange</span>(Self, @moonjrpc.Message) -&gt; @moonjrpc.Message</div>
 
 
 </article>
+<article class="api-item" id="m-otel-TracedTransport-exchange_with">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">TracedTransport::exchange_with</span>(Self, @moonjrpc.Message, Array[(String, String)]) -&gt; @moonjrpc.Message</div>
+
+
+</article>
 <article class="api-item" id="m-otel-TracedTransport-stream">
 <div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">TracedTransport::stream</span>(Self, @moonjrpc.Message, &amp;@moona2a.ReplySink) -&gt; Unit</div>
+
+
+</article>
+<article class="api-item" id="m-otel-TracedTransport-stream_with">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">TracedTransport::stream_with</span>(Self, @moonjrpc.Message, &amp;@moona2a.ReplySink, Array[(String, String)]) -&gt; Unit</div>
 
 
 </article>
@@ -1784,7 +1825,7 @@
 <article class="api-item" id="m-otel-Tracing-calling">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Tracing::calling</span>(Self, &amp;@moona2a.Transport, inject? : (Array[(String, String)]) -&gt; Unit) -&gt; TracedTransport</div>
 <div class="doc"><p><code>transport</code>, with each call recorded.</p>
-<p><code>inject</code> is how a trace crosses to the other side: the wrapper hands it the headers of the call it is about to make, and the transport under it puts them on the request. Pass <code>injector.setting()</code> from an <code>Injector</code>, which is also what that transport asks for its headers. Without it the spans are still right, but a callee sees no parent and starts a trace of its own.</p></div>
+<p>A call's <code>traceparent</code> is added to that call's own headers, which reach the transport as an argument. One wrapper can therefore serve many tasks at once: a span opened by one of them cannot appear on another's request. <code>inject</code> is an observer for a host that wants to see those headers while a single call is in flight; it is not part of the path to the wire, and a wrapper shared by tasks has no one call's headers to show.</p></div>
 <div class="params"><span class="p"><b>transport</b> <span class="pt">&amp;@moona2a.Transport</span></span><span class="p"><b>inject?</b> <span class="pt">(Array[(String, String)]) -&gt; Unit</span></span></div>
 </article>
 <article class="api-item" id="m-otel-Tracing-executing">
