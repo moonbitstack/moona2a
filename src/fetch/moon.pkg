@@ -28,6 +28,7 @@ options(
     "notifier.mbt": [ "native", "wasm" ],
     "notifier_test.mbt": [ "native", "wasm" ],
     "transport_test.mbt": [ "native" ],
+    "transport_headers_test.mbt": [ "native" ],
   },
 )
 
