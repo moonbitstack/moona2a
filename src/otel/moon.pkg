@@ -8,6 +8,7 @@ import {
   "moonbitlang/core/json",
   "moonbitstack/moona2a",
   "moonbitstack/moonjrpc",
+  "moonbitstack/moonjson",
   "moonbitstack/moontel/propagate",
   "moonbitstack/moontel/semconv",
   "moonbitstack/moontel/trace",

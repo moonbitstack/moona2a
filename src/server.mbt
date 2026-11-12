@@ -351,7 +351,7 @@ pub async fn Server::answer_stream(
   version? : String,
   headers? : Array[(String, String)],
 ) -> Unit {
-  let request = @json.parse(body) catch {
+  let request = @moonjson.loads(body, @moonjson.strict) catch {
     _ => {
       out.reply(@moonjrpc.Message::unreadable()) catch {
         _ => ()
@@ -410,7 +410,9 @@ pub async fn Server::answer_stream(
 /// The method this request asks for, so a transport can decide whether its answer is a stream
 /// before reading the whole body.
 pub fn request_method(body : StringView) -> String? {
-  let request = @json.parse(body) catch { _ => return None }
+  let request = @moonjson.loads(body, @moonjson.strict) catch {
+    _ => return None
+  }
   match request {
     Object(fields) =>
       match fields.get("method") {

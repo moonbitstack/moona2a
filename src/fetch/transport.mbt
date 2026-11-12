@@ -60,7 +60,7 @@ async fn HttpTransport::reply(
   message : @moonjrpc.Message,
   headers : Array[(String, String)],
 ) -> @moonjrpc.Message {
-  let body = @moonfetch.Body::Text(message.to_json().stringify())
+  let body = @moonfetch.Body::Text(@moonjson.dumps(message.to_json()))
   let response = self.client.post(
     self.path,
     body~,
@@ -71,7 +71,7 @@ async fn HttpTransport::reply(
   )
   let text = response.text()
   @json.from_json(
-    @json.parse(text) catch {
+    @moonjson.loads(text, @moonjson.strict) catch {
       _ => raise WrongShape("the answer is not JSON: \{text}")
     },
   ) catch {
@@ -105,7 +105,7 @@ async fn HttpTransport::deliver(
   out : &@moona2a.ReplySink,
   headers : Array[(String, String)],
 ) -> Unit {
-  let body = @moonfetch.Body::Text(message.to_json().stringify())
+  let body = @moonfetch.Body::Text(@moonjson.dumps(message.to_json()))
   let response = self.client.post(
     self.path,
     body~,
@@ -118,7 +118,7 @@ async fn HttpTransport::deliver(
   if !is_event_stream(response) {
     // A server that refuses before opening the stream answers with one JSON-RPC body.
     let reply : @moonjrpc.Message = @json.from_json(
-      @json.parse(text) catch {
+      @moonjson.loads(text, @moonjson.strict) catch {
         _ => raise WrongShape("the answer is not JSON: \{text}")
       },
     ) catch {
@@ -132,7 +132,7 @@ async fn HttpTransport::deliver(
       continue
     }
     let reply : @moonjrpc.Message = @json.from_json(
-      @json.parse(event.data) catch {
+      @moonjson.loads(event.data, @moonjson.strict) catch {
         _ => raise WrongShape("a frame is not JSON: \{event.data}")
       },
     ) catch {
@@ -182,7 +182,7 @@ async fn HttpTransport::card(
     self.card_path,
     headers=self.headers_for([("accept", "application/json")], headers),
   )
-  @json.parse(response.text()) catch {
+  @moonjson.loads(response.text(), @moonjson.strict) catch {
     _ => raise WrongShape("the card is not JSON")
   }
 }

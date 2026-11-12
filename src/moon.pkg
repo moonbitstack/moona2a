@@ -8,6 +8,7 @@ import {
   "moonbitstack/moonbase/base64",
   "moonbitstack/moondate",
   "moonbitstack/moonjrpc",
+  "moonbitstack/moonjson",
 }
 
 import {

@@ -84,7 +84,10 @@ async fn serve(
           Some(refusal) =>
             // Nothing was streamed, so the answer is a plain JSON-RPC error body, with the id the
             // caller sent.
-            send_response(send, json_response(refusal.to_json().stringify()))
+            send_response(
+              send,
+              json_response(@moonjson.dumps(refusal.to_json())),
+            )
           None =>
             if frames.opened {
               send_stop(send)
@@ -171,7 +174,7 @@ async fn Stream::write_reply(
       ),
     )
   }
-  let frame = "data: \{message.to_json().stringify()}\n\n"
+  let frame = "data: \{@moonjson.dumps(message.to_json())}\n\n"
   (self.send)(@spec.HttpResponseBody(body=@utf8.encode(frame), more_body=true))
 }
 
@@ -258,7 +261,7 @@ fn card_response(
   server : @moona2a.Server,
   options : Options,
 ) -> @moonasgi.Response {
-  let text = server.card_json().stringify()
+  let text = @moonjson.dumps(server.card_json())
   let tag = "\"\{text.hash().to_string()}\""
   @moonasgi.Response::new(
     200,

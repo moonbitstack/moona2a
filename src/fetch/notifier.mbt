@@ -49,7 +49,7 @@ pub impl @moona2a.Notifier for Webhook with fn notify(self, config, event) {
   let headers = delivery_headers(config)
   let response = @moonfetch.post(
     config.url,
-    body=@moonfetch.Body::Text(event.to_json().stringify()),
+    body=@moonfetch.Body::Text(@moonjson.dumps(event.to_json())),
     headers~,
     timeout=webhook_timeout_millis,
   )

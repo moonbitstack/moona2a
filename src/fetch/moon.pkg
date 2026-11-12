@@ -8,6 +8,7 @@ import {
   "moonbitstack/moonfetch",
   "moonbitstack/moonhttp/sse",
   "moonbitstack/moonjrpc",
+  "moonbitstack/moonjson",
 }
 
 import {

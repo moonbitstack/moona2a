@@ -215,7 +215,7 @@ fn Tracing::messages_json(self : Tracing, message : @moona2a.Message) -> String 
     },
   )
   entry["parts"] = Json::array(parts)
-  Json::array([Json::object(entry)]).stringify()
+  @moonjson.dumps(Json::array([Json::object(entry)]))
 }
 
 ///|
@@ -228,7 +228,7 @@ fn answer_json(text : String, limit : Int32) -> String {
   let entry : Map[String, Json] = Map([])
   entry["role"] = Json::string("assistant")
   entry["parts"] = Json::array([Json::object(part)])
-  Json::array([Json::object(entry)]).stringify()
+  @moonjson.dumps(Json::array([Json::object(entry)]))
 }
 
 ///|
