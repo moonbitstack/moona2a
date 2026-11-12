@@ -52,11 +52,13 @@ source = "src"
 
 import {
   "moonbitlang/async@0.22.5",
-  "moonbitstack/moondate@0.1.6",
+  "moonbitstack/moondate@0.1.7",
   "moonbitstack/moonasgi@0.10.8",
   "moonbitstack/moonfetch@0.1.8",
   "moonbitstack/moonhttp@0.15.10",
-  "moonbitstack/moonjrpc@0.1.4",
+  "moonbitstack/moonjrpc@0.1.5",
   "moonbitstack/moonseed@0.1.3",
   "moonbitstack/moontel@0.1.2",
+  "moonbitstack/moonbase@0.4.5",
+  "moonbitstack/moonjson@0.4.4",
 }
