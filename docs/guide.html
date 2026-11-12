@@ -307,7 +307,7 @@ let card = client.discover(headers=[("x-tenant", "acme")])</code></pre>
       <li><b>Ids are the server's.</b> The caller chooses <code>messageId</code>; <code>taskId</code> and <code>contextId</code> are minted by the server. A message that names a task continues it; one that names a finished task is refused.</li>
       <li><b>Media types are the agent's call.</b> Nothing is refused because its media type is missing from the card. Turn on <code>ServerConfig.refuse_unknown_media</code> to make the card's list a hard filter.</li>
       <li><b>History is not guaranteed.</b> The agent decides what is worth keeping, so a client reads the status message for the agent's own words rather than assuming they are in the history.</li>
-      <li><b>A body is read strictly.</b> A comment, a trailing comma or a number in hex is refused with <code>-32700</code> rather than guessed at, and nesting stops at 500 levels. A number a caller writes keeps its digits when an answer carries it back.</li>
+      <li><b>A body is read strictly.</b> A comment, a trailing comma or a number in hex is refused with <code>-32700</code> rather than guessed at. A number a caller writes keeps its digits when an answer carries it back.</li>
     </ul>
 
     <div class="note" style="margin-top:2.4rem">
