@@ -2,10 +2,10 @@
 
 import {
   "moonbitlang/async",
-  "moonbitlang/core/encoding/base64",
   "moonbitlang/core/env",
   "moonbitlang/core/json",
   "moonbitlang/core/string",
+  "moonbitstack/moonbase/base64",
   "moonbitstack/moondate",
   "moonbitstack/moonjrpc",
 }
