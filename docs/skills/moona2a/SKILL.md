@@ -131,6 +131,9 @@ fn wired(url : String, tracing : @otel.Tracing) -> @moona2a.Client raise {
 
 - **Version.** Send `A2A-Version: 1.0` on every request. A request with no version header is a 0.3
   client and is refused with `VersionNotSupported`, because this library speaks 1.0 only.
+- **Bodies are read strictly.** A comment, a trailing comma or a hex number is refused with
+  `-32700`, and nesting stops at 500 levels. A number a caller writes keeps its digits in the
+  answer.
 - **Streaming errors.** A call refused before the stream starts (unknown task, finished task,
   unsupported version) answers with a plain JSON-RPC error body, not a stream. Read the
   content-type before assuming frames.

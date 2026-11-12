@@ -141,6 +141,14 @@ Errors are the specification's own. A refused call carries one of `TaskNotFound`
 `ExtensionSupportRequired` or `VersionNotSupported`, each with the code section 5.4 assigns it and a
 `google.rpc.ErrorInfo` detail.
 
+## Bodies
+
+A body is read as JSON and nothing else: a comment, a trailing comma, a single-quoted name or a
+number in hex is refused with `-32700` rather than repaired, and nesting stops at 500 levels, so a
+body of many thousand open brackets cannot exhaust the stack. A number a caller writes keeps its
+digits when an answer carries it back, so an integer past what a double holds survives the round
+trip. Text goes out as UTF-8, not as `\u` escapes.
+
 ## The server's parts
 
 | Name | What it is |
