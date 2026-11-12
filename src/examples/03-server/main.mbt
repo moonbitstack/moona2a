@@ -39,7 +39,9 @@ async fn main {
   let answer = server.answer(send, version="1.0") catch { _ => None }
   match answer {
     Some(text) => {
-      let result = @json.parse(text) catch { _ => Json::null() }
+      let result = @moonjson.loads(text, @moonjson.strict) catch {
+        _ => Json::null()
+      }
       let fields = match result {
         Object(fields) => fields
         _ => Map([])

@@ -2,6 +2,7 @@ import {
   "moonbitlang/async",
   "moonbitlang/core/json",
   "moonbitstack/moona2a",
+  "moonbitstack/moonjson",
 }
 
 supported_targets = "+native"

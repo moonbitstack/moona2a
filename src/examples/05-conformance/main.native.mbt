@@ -92,7 +92,9 @@ impl @moona2a.Executor for Conformance with fn execute(self, context, out) {
     return
   }
   if message_id.has_prefix("tck-artifact-data") {
-    let data = @json.parse("{\"key\":\"value\",\"count\":42}") catch {
+    let data = @moonjson.loads(
+      "{\"key\":\"value\",\"count\":42}", @moonjson.strict,
+    ) catch {
       _ => Json::null()
     }
     out.emit(

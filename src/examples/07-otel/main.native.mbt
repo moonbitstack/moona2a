@@ -56,7 +56,9 @@ async fn Local::answer(
   }
   match answer {
     Some(text) => {
-      let body = @json.parse(text) catch { _ => Json::null() }
+      let body = @moonjson.loads(text, @moonjson.strict) catch {
+        _ => Json::null()
+      }
       let reply : @moonjrpc.Message = @json.from_json(body) catch {
         _ => @moonjrpc.Message::unreadable()
       }
