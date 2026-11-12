@@ -15,4 +15,5 @@ import {
   "moonbitlang/async",
   "moonbitlang/core/json",
   "moonbitstack/moonjrpc",
+  "moonbitstack/moonjson",
 } for "test"
