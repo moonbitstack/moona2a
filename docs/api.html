@@ -59,6 +59,7 @@
 <a href="#type-moona2a-AgentSkill">AgentSkill</a>
 <a href="#type-moona2a-Artifact">Artifact</a>
 <a href="#type-moona2a-AuthenticationInfo">AuthenticationInfo</a>
+<a href="#type-moona2a-Binding">Binding</a>
 <a href="#type-moona2a-CallableExecutor">CallableExecutor</a>
 <a href="#type-moona2a-Client">Client</a>
 <a href="#type-moona2a-Collected">Collected</a>
@@ -78,6 +79,7 @@
 <a href="#type-moona2a-Server">Server</a>
 <a href="#type-moona2a-ServerConfig">ServerConfig</a>
 <a href="#type-moona2a-ServerState">ServerState</a>
+<a href="#type-moona2a-Status">Status</a>
 <a href="#type-moona2a-StreamEvent">StreamEvent</a>
 <a href="#type-moona2a-Task">Task</a>
 <a href="#type-moona2a-TaskArtifactUpdate">TaskArtifactUpdate</a>
@@ -94,6 +96,7 @@
 </div>
 <div class="group">
 <div class="pkg">@asgi</div>
+<a href="#type-asgi-Events">Events</a>
 <a href="#type-asgi-Options">Options</a>
 <a href="#type-asgi-Stream">Stream</a>
 <a href="#fn-asgi">Functions</a>
@@ -101,6 +104,7 @@
 <div class="group">
 <div class="pkg">@fetch</div>
 <a href="#type-fetch-HttpTransport">HttpTransport</a>
+<a href="#type-fetch-RestTransport">RestTransport</a>
 <a href="#type-fetch-Webhook">Webhook</a>
 <a href="#err-fetch-Unreachable">Unreachable</a>
 <a href="#err-fetch-WrongShape">WrongShape</a>
@@ -182,6 +186,11 @@
 <div class="doc"><p>The same card advertising <code>capabilities</code>.</p></div>
 <div class="params"><span class="p"><b>capabilities</b> <span class="pt">AgentCapabilities</span></span></div>
 </article>
+<article class="api-item" id="m-moona2a-AgentCard-choose">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCard::choose</span>(Self, Array[Binding]) -&gt; AgentInterface?</div>
+<div class="doc"><p>The interface a client speaking <code>bindings</code> should use: the first the card lists among those it can speak, since the card lists them in the agent's order of preference.</p></div>
+<div class="params"><span class="p"><b>bindings</b> <span class="pt">Array[Binding]</span></span></div>
+</article>
 <article class="api-item" id="m-moona2a-AgentCard-input_modes">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCard::input_modes</span>(Self) -&gt; Array[String]</div>
 <div class="doc"><p>The media types the card offers to take, from its defaults and its skills together.</p></div>
@@ -250,6 +259,16 @@
 <div class="doc"><p>One address an agent answers on (A2A <code>AgentInterface</code>).</p></div>
 <ul class="members"><li><b>url</b> : <span class="pt">String</span></li><li><b>protocol_binding</b> : <span class="pt">String</span></li><li><b>protocol_version</b> : <span class="pt">String</span></li><li><b>tenant</b> : <span class="pt">String?</span></li></ul>
 <div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-AgentInterface-grpc">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentInterface::grpc</span>(String, protocol_version~ : String) -&gt; Self</div>
+<div class="doc"><p>An interface speaking gRPC at <code>url</code>, written <code>host:port</code>.</p></div>
+<div class="params"><span class="p"><b>url</b> <span class="pt">String</span></span><span class="p"><b>protocol_version~</b> <span class="pt">String</span></span></div>
+</article>
+<article class="api-item" id="m-moona2a-AgentInterface-http_json">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentInterface::http_json</span>(String, protocol_version~ : String) -&gt; Self</div>
+<div class="doc"><p>An interface speaking HTTP+JSON under <code>url</code>.</p></div>
+<div class="params"><span class="p"><b>url</b> <span class="pt">String</span></span><span class="p"><b>protocol_version~</b> <span class="pt">String</span></span></div>
+</article>
 <article class="api-item" id="m-moona2a-AgentInterface-json_rpc">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentInterface::json_rpc</span>(String, protocol_version~ : String) -&gt; Self</div>
 <div class="doc"><p>An interface speaking JSON-RPC at <code>url</code>.</p></div>
@@ -423,6 +442,41 @@
 <article class="api-item" id="m-moona2a-AuthenticationInfo-to_json">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AuthenticationInfo::to_json</span>(Self) -&gt; @json.Json</div>
 
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-moona2a-Binding">
+<div class="type-head"><h3>Binding</h3><span class="kind">enum</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">enum</span> <span class="name">Binding</span></div>
+<div class="doc"><p>A transport the specification defines, as a card names it in <code>protocolBinding</code>.</p></div>
+<ul class="members"><li>JsonRpc</li><li>Grpc</li><li>HttpJson</li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-Binding-code">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Binding::code</span>(Self) -&gt; String</div>
+<div class="doc"><p>The name the card writes for this binding.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Binding-of">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Binding::of</span>(StringView) -&gt; Self?</div>
+<div class="doc"><p>The binding a card names, when it is one of the specification's.</p></div>
+<div class="params"><span class="p"><b>code</b> <span class="pt">StringView</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-Binding-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Binding::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Binding-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Binding::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Binding-to_repr">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Binding::to_repr</span>(Self) -&gt; @debug.Repr</div>
+<div class="doc"><p>The debug representation, from <code>Debug</code>.</p></div>
 
 </article>
 </div>
@@ -699,14 +753,29 @@
 <div class="doc"><p>Every method of the JSON-RPC binding.</p></div>
 <ul class="members"><li>SendMessage</li><li>SendStreamingMessage</li><li>GetTask</li><li>ListTasks</li><li>CancelTask</li><li>SubscribeToTask</li><li>CreatePushConfig</li><li>GetPushConfig</li><li>ListPushConfigs</li><li>DeletePushConfig</li><li>GetExtendedCard</li></ul>
 <div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-Method-all">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Method::all</span>() -&gt; Array[Self]</div>
+<div class="doc"><p>Every method of the protocol, in the order section 3.1 lists them.</p></div>
+
+</article>
 <article class="api-item" id="m-moona2a-Method-from_name">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Method::from_name</span>(String) -&gt; Self?</div>
 <div class="doc"><p>The method that goes by <code>name</code>, when it is one of the protocol's.</p></div>
 <div class="params"><span class="p"><b>name</b> <span class="pt">String</span></span></div>
 </article>
+<article class="api-item" id="m-moona2a-Method-grpc_path">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Method::grpc_path</span>(Self) -&gt; String</div>
+<div class="doc"><p>The path a gRPC call of this method goes to.</p></div>
+
+</article>
 <article class="api-item" id="m-moona2a-Method-name">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Method::name</span>(Self) -&gt; String</div>
 <div class="doc"><p>The name the method goes by on the wire: PascalCase, as section 9.1 requires.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Method-rest">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Method::rest</span>(Self) -&gt; (String, String)</div>
+<div class="doc"><p>Where this method lives on the HTTP+JSON binding (section 11.3): the verb, and the path with <code>{id}</code> for the task and <code>{configId}</code> for a push configuration. <code>SubscribeToTask</code> also answers a <code>GET</code>, which is what <code>a2a.proto</code> annotates; the specification's table writes <code>POST</code>.</p></div>
 
 </article>
 <article class="api-item" id="m-moona2a-Method-streams">
@@ -1049,6 +1118,16 @@
 
 
 </article>
+<article class="api-item" id="m-moona2a-Server-invoke">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Server::invoke</span>(Self, Method, params? : @json.Json, extensions? : Array[String], version? : String, headers? : Array[(String, String)]) -&gt; @json.Json <span class="kw">raise</span> @moonjrpc.Failed</div>
+
+
+</article>
+<article class="api-item" id="m-moona2a-Server-invoke_stream">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Server::invoke_stream</span>(Self, Method, &amp;EventSink, params? : @json.Json, extensions? : Array[String], version? : String, headers? : Array[(String, String)]) -&gt; Unit <span class="kw">raise</span> @moonjrpc.Failed</div>
+
+
+</article>
 </div>
 </section>
 <section class="api-type" id="type-moona2a-ServerConfig">
@@ -1068,6 +1147,36 @@
 <div class="type-head"><h3>ServerState</h3><span class="kind">type</span></div>
 <div class="sig"><span class="kw">type</span> <span class="name">ServerState</span></div>
 
+</section>
+<section class="api-type" id="type-moona2a-Status">
+<div class="type-head"><h3>Status</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">Status</span></div>
+<div class="doc"><p>How a failure reads on gRPC and on HTTP+JSON (section 5.4).</p></div>
+<ul class="members"><li><b>grpc</b> : <span class="pt">Int32</span></li><li><b>name</b> : <span class="pt">String</span></li><li><b>http</b> : <span class="pt">Int32</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-moona2a-Status-of">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Status::of</span>(Int32) -&gt; Self</div>
+<div class="doc"><p>The status a failure with JSON-RPC code <code>code</code> maps to. A method nobody serves is a not found, as the Python SDK answers it; a code the specification does not name is an internal error.</p></div>
+<div class="params"><span class="p"><b>code</b> <span class="pt">Int32</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-moona2a-Status-equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Status::equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>Structural equality from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Status-not_equal">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Status::not_equal</span>(Self, Self) -&gt; Bool</div>
+<div class="doc"><p>The negation of <code>equal</code>, from <code>Eq</code>.</p></div>
+
+</article>
+<article class="api-item" id="m-moona2a-Status-to_repr">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Status::to_repr</span>(Self) -&gt; @debug.Repr</div>
+<div class="doc"><p>The debug representation, from <code>Debug</code>.</p></div>
+
+</article>
+</div>
 </section>
 <section class="api-type" id="type-moona2a-StreamEvent">
 <div class="type-head"><h3>StreamEvent</h3><span class="kind">enum</span></div>
@@ -1491,6 +1600,11 @@
 <div class="doc"><p>The one-line message a client shows a human, worded as the specification's error table words it.</p></div>
 
 </article>
+<article class="api-item" id="m-moona2a-Refused-of">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Refused::of</span>(StringView) -&gt; Self?</div>
+<div class="doc"><p>The refusal an <code>ErrorInfo</code> reason names, as the gRPC and HTTP+JSON bindings carry it.</p></div>
+<div class="params"><span class="p"><b>reason</b> <span class="pt">StringView</span></span></div>
+</article>
 <article class="api-item" id="m-moona2a-Refused-reason">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Refused::reason</span>(Self) -&gt; String</div>
 <div class="doc"><p>The machine-readable reason, which goes into the error details.</p></div>
@@ -1499,6 +1613,16 @@
 </div>
 </section>
 <div class="api-cat" id="fn-moona2a"><h3>Functions</h3></div>
+<article class="api-item" id="fn-moona2a-failure_of">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">failure_of</span>(Error) -&gt; @moonjrpc.Failure</div>
+<div class="doc"><p>Turn what raised into the failure a caller sees. A refusal keeps its own name and code; anything else is the internal error the specification reserves for a bug, because what an agent trips over is not the caller's to read.</p></div>
+<div class="params"><span class="p"><b>error</b> <span class="pt">Error</span></span></div>
+</article>
+<article class="api-item" id="fn-moona2a-failure_of_status">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">failure_of_status</span>(Int32, String, Array[@json.Json]) -&gt; @moonjrpc.Failure</div>
+<div class="doc"><p>The failure a gRPC or HTTP+JSON refusal stands for. The A2A error its <code>ErrorInfo</code> names wins; without one, the gRPC code picks the nearest JSON-RPC code. <code>details</code> stay as the server sent them, as the failure's data.</p></div>
+<div class="params"><span class="p"><b>grpc</b> <span class="pt">Int32</span></span><span class="p"><b>message</b> <span class="pt">String</span></span><span class="p"><b>details</b> <span class="pt">Array[Json]</span></span></div>
+</article>
 <article class="api-item" id="fn-moona2a-is_streaming_method">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">is_streaming_method</span>(String) -&gt; Bool</div>
 <div class="doc"><p>Whether <code>name</code> is one of the methods whose answer is a stream, for a transport that has to decide before reading the whole request.</p></div>
@@ -1537,6 +1661,11 @@
 <p>The log is the ordering guarantee, not the wake-up: a follower reads forward from its own cursor, so it sees every event once, in order, whether it woke on the first tick or the fifth. 25 milliseconds is short enough that a stream feels live and long enough that an idle subscription costs nothing worth measuring.</p></div>
 
 </article>
+<article class="api-item" id="const-moona2a-grpc_service">
+<div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">grpc_service</span> : String</div>
+<div class="doc"><p>The service every gRPC method belongs to, as <code>a2a.proto</code> declares it.</p></div>
+
+</article>
 <article class="api-item" id="const-moona2a-protocol_version">
 <div class="sig"><span class="kw">pub</span> <span class="kw">let</span> <span class="name">protocol_version</span> : String</div>
 <div class="doc"><p>The protocol version this library speaks, as a client writes it in <code>A2A-Version</code>.</p></div>
@@ -1549,15 +1678,27 @@
 <div class="imp">import { "moonbitstack/moona2a/asgi" }</div>
 </header>
 <div class="api-cat"><h3>Types</h3></div>
+<section class="api-type" id="type-asgi-Events">
+<div class="type-head"><h3>Events</h3><span class="kind">type</span></div>
+<div class="sig"><span class="kw">type</span> <span class="name">Events</span></div>
+
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-asgi-Events-emit">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">Events::emit</span>(Self, @moona2a.StreamEvent) -&gt; Unit</div>
+
+
+</article>
+</div>
+</section>
 <section class="api-type" id="type-asgi-Options">
 <div class="type-head"><h3>Options</h3><span class="kind">struct</span></div>
 <div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">Options</span></div>
 <div class="doc"><p>Where the endpoint answers, and how long a client may cache the card.</p></div>
-<ul class="members"><li><b>rpc_path</b> : <span class="pt">String</span></li><li><b>card_path</b> : <span class="pt">String</span></li><li><b>cache_seconds</b> : <span class="pt">Int32</span></li></ul>
+<ul class="members"><li><b>rpc_path</b> : <span class="pt">String</span></li><li><b>card_path</b> : <span class="pt">String</span></li><li><b>cache_seconds</b> : <span class="pt">Int32</span></li><li><b>rest_path</b> : <span class="pt">String?</span></li></ul>
 <div class="method-list"><div class="mlabel">Methods</div>
 <article class="api-item" id="m-asgi-Options-new">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">Options::new</span>() -&gt; Self</div>
-<div class="doc"><p>The endpoint at <code>/</code>, the card at its well-known address, and a card a client may keep for five minutes.</p></div>
+<div class="doc"><p>The endpoint at <code>/</code>, the card at its well-known address, a card a client may keep for five minutes, and the HTTP+JSON routes from the root.</p></div>
 
 </article>
 </div>
@@ -1628,6 +1769,51 @@
 </article>
 <article class="api-item" id="m-fetch-HttpTransport-stream_with">
 <div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">HttpTransport::stream_with</span>(Self, @moonjrpc.Message, &amp;@moona2a.ReplySink, Array[(String, String)]) -&gt; Unit</div>
+
+
+</article>
+</div>
+</section>
+<section class="api-type" id="type-fetch-RestTransport">
+<div class="type-head"><h3>RestTransport</h3><span class="kind">struct</span></div>
+<div class="sig"><span class="kw">pub</span>(all) <span class="kw">struct</span> <span class="name">RestTransport</span></div>
+<div class="doc"><p>The HTTP+JSON endpoint of one agent.</p></div>
+<ul class="members"><li><b>client</b> : <span class="pt">@moonfetch.Client</span></li><li><b>card_path</b> : <span class="pt">String</span></li><li><b>extra</b> : <span class="pt">() -&gt; Array[(String, String)]</span></li></ul>
+<div class="method-list"><div class="mlabel">Methods</div>
+<article class="api-item" id="m-fetch-RestTransport-new">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">RestTransport::new</span>(String, card_path? : String, headers? : () -&gt; Array[(String, String)]) -&gt; Self <span class="kw">raise</span></div>
+<div class="doc"><p>A transport to the agent whose HTTP+JSON routes hang off <code>url</code>, as its card's interface gives it. The <code>headers</code> callback supplies headers for every request; the headers a call names take precedence over them.</p></div>
+<div class="params"><span class="p"><b>url</b> <span class="pt">String</span></span><span class="p"><b>card_path?</b> <span class="pt">String</span></span><span class="p"><b>headers?</b> <span class="pt">() -&gt; Array[(String, String)]</span></span></div>
+</article>
+</div>
+<div class="method-list"><div class="mlabel">Trait methods</div>
+<article class="api-item" id="m-fetch-RestTransport-discover">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">RestTransport::discover</span>(Self) -&gt; @json.Json</div>
+
+
+</article>
+<article class="api-item" id="m-fetch-RestTransport-discover_with">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">RestTransport::discover_with</span>(Self, Array[(String, String)]) -&gt; @json.Json</div>
+
+
+</article>
+<article class="api-item" id="m-fetch-RestTransport-exchange">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">RestTransport::exchange</span>(Self, @moonjrpc.Message) -&gt; @moonjrpc.Message</div>
+
+
+</article>
+<article class="api-item" id="m-fetch-RestTransport-exchange_with">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">RestTransport::exchange_with</span>(Self, @moonjrpc.Message, Array[(String, String)]) -&gt; @moonjrpc.Message</div>
+
+
+</article>
+<article class="api-item" id="m-fetch-RestTransport-stream">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">RestTransport::stream</span>(Self, @moonjrpc.Message, &amp;@moona2a.ReplySink) -&gt; Unit</div>
+
+
+</article>
+<article class="api-item" id="m-fetch-RestTransport-stream_with">
+<div class="sig"><span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="name">RestTransport::stream_with</span>(Self, @moonjrpc.Message, &amp;@moona2a.ReplySink, Array[(String, String)]) -&gt; Unit</div>
 
 
 </article>

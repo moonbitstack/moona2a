@@ -58,6 +58,7 @@
     <a href="#card">The card</a>
     <a href="#agent">An agent, and a server</a>
     <a href="#endpoint">Put it on an endpoint</a>
+    <a href="#bindings">Three bindings</a>
     <a href="#call">Call an agent</a>
     <a href="#stream">Follow a task</a>
     <a href="#push">Leave a webhook</a>
@@ -150,7 +151,7 @@ You said: hello</code></pre>
     </div>
 
     <h2 id="endpoint">Put it on an endpoint</h2>
-    <p>The server is an ASGI application, so the HTTP server stays a choice the host makes. <code>to_asgi</code> answers two addresses: the card at its well-known path, and every method on the JSON-RPC path.</p>
+    <p>The server is an ASGI application, so the HTTP server stays a choice the host makes. <code>to_asgi</code> answers the card at its well-known path, every method on the JSON-RPC path, and every method at its own HTTP+JSON path.</p>
     <div class="code-block" data-copy>
       <div class="cap">serve.mbt</div>
 <pre data-lang="moonbit"><code>let server = @moona2a.Server::new(Echo::{ }, card)
@@ -159,6 +160,35 @@ let app = @asgi.to_asgi(server)
 // app : (scope, receive, send) -> Unit, the shape an ASGI server calls.</code></pre>
     </div>
     <p>A streaming method answers <code>text/event-stream</code> and one <code>data:</code> frame per event, written as the event happens. A call refused before the stream opens — an unknown task, a version the interface does not serve — is an ordinary JSON-RPC error body instead, because a stream carrying one error is worse than no stream.</p>
+
+    <h2 id="bindings">Three bindings</h2>
+    <p>The specification defines three ways to carry the same methods, and one server answers all of them with the same tasks. JSON-RPC and HTTP+JSON come from <code>to_asgi</code>; gRPC is HTTP/2, so it goes on a moonrpc server of its own.</p>
+    <div class="code-block" data-copy>
+      <div class="cap">grpc.mbt</div>
+<pre data-lang="moonbit"><code>async fn serve_grpc(server : @moona2a.Server) -&gt; Unit {
+  let grpc = @net.GrpcServer::new()
+  @grpc.register(grpc, server)
+  grpc.serve(port=12001)
+}</code></pre>
+    </div>
+    <p>HTTP+JSON puts each method at its own verb and path, the identifiers in the path and the rest in the query or the body; a tenant goes in front of any path.</p>
+    <div class="code-block">
+      <div class="cap">the routes</div>
+<!-- nocheck -->
+<pre><code>POST   /message:send                                 SendMessage
+POST   /message:stream                               SendStreamingMessage
+GET    /tasks/{id}                                   GetTask
+GET    /tasks                                        ListTasks
+POST   /tasks/{id}:cancel                            CancelTask
+POST   /tasks/{id}:subscribe                         SubscribeToTask
+POST   /tasks/{id}/pushNotificationConfigs           CreateTaskPushNotificationConfig
+GET    /tasks/{id}/pushNotificationConfigs/{cfg}     GetTaskPushNotificationConfig
+GET    /tasks/{id}/pushNotificationConfigs           ListTaskPushNotificationConfigs
+DELETE /tasks/{id}/pushNotificationConfigs/{cfg}     DeleteTaskPushNotificationConfig
+GET    /extendedAgentCard                            GetExtendedAgentCard</code></pre>
+    </div>
+    <p>The card lists every interface in the order a client should try them. A client calls <code>choose</code> with the bindings it speaks and builds the transport for the first match: <code>HttpTransport</code>, <code>RestTransport</code> or <code>GrpcTransport</code>. The <code>Client</code> above any of them is the same.</p>
+    <p>gRPC messages are read from the specification's own <code>a2a.proto</code>, kept in the source byte for byte, so nothing here is generated code that could drift from it.</p>
 
     <h2 id="call">Call an agent</h2>
     <p>A client is the same protocol from the other side. <code>Client</code> is the protocol; <code>Transport</code> is how messages travel, which is why a test can answer from a table and production can use HTTP.</p>
@@ -235,19 +265,20 @@ client.create_push_config(config) |> ignore</code></pre>
     <p>The notifier is a trait, so an agent that keeps its registrations in a database or delivers over something other than HTTP replaces it. <code>@fetch.Webhook</code> is the HTTP one: it posts <code>application/a2a+json</code>, adds <code>x-a2a-notification-token</code> when a token was set, and an <code>authorization</code> header for registered credentials.</p>
 
     <h2 id="errors">When a call is refused</h2>
-    <p>Refusals are the specification's own, with the code of section 5.4 and a <code>google.rpc.ErrorInfo</code> detail, so a client branches on the reason rather than on the sentence.</p>
+    <p>Refusals are the specification's own, with the codes of section 5.4 and a <code>google.rpc.ErrorInfo</code> detail on every binding, so a client branches on the reason rather than on the sentence, and sees the same error whichever binding carried it.</p>
     <div class="code-block">
       <div class="cap">the refusals</div>
 <!-- nocheck -->
-<pre><code>TaskNotFound                    -32001   no such task
-TaskNotCancelable               -32002   it is finished, or it cannot stop
-PushNotificationNotSupported    -32003   the agent takes no webhooks
-UnsupportedOperation            -32004   the method, or a task that is over
-ContentTypeNotSupported         -32005   a part the agent cannot read
-InvalidAgentResponse            -32006   the agent answered with something else
-ExtendedAgentCardNotConfigured  -32007   there is no second card
-ExtensionSupportRequired        -32008   an extension the caller must honour
-VersionNotSupported             -32009   a protocol version this interface does not speak</code></pre>
+<pre><code>                                JSON-RPC  gRPC                 HTTP
+TaskNotFound                    -32001    NOT_FOUND            404   no such task
+TaskNotCancelable               -32002    FAILED_PRECONDITION  400   it is finished, or it cannot stop
+PushNotificationNotSupported    -32003    FAILED_PRECONDITION  400   the agent takes no webhooks
+UnsupportedOperation            -32004    FAILED_PRECONDITION  400   the method, or a task that is over
+ContentTypeNotSupported         -32005    INVALID_ARGUMENT     400   a part the agent cannot read
+InvalidAgentResponse            -32006    INTERNAL             500   the agent answered with something else
+ExtendedAgentCardNotConfigured  -32007    FAILED_PRECONDITION  400   there is no second card
+ExtensionSupportRequired        -32008    FAILED_PRECONDITION  400   an extension the caller must honour
+VersionNotSupported             -32009    FAILED_PRECONDITION  400   a protocol version this interface does not speak</code></pre>
     </div>
     <p>An agent that raises its own error still leaves a task: the server records it as <code>TASK_STATE_FAILED</code> and hands the refusal back, so a watcher is never left waiting on a task that will not move.</p>
 

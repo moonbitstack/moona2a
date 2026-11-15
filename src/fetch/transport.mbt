@@ -41,19 +41,6 @@ pub fn HttpTransport::new(
 }
 
 ///|
-/// The headers this transport sends with a request: what the protocol asks for, then what
-/// the host supplies for this moment, then what this one call asked for. A name that
-/// appears twice is sent once, with the last value, so a per-call `traceparent` cannot
-/// leave an older one beside it on the wire.
-fn HttpTransport::headers_for(
-  self : HttpTransport,
-  own : Array[(String, String)],
-  per_call : Array[(String, String)],
-) -> Array[(String, String)] {
-  @moona2a.merge_headers(@moona2a.merge_headers(own, (self.extra)()), per_call)
-}
-
-///|
 /// Send the request and read the answer, which is one JSON-RPC document.
 async fn HttpTransport::reply(
   self : HttpTransport,
@@ -64,19 +51,13 @@ async fn HttpTransport::reply(
   let response = self.client.post(
     self.path,
     body~,
-    headers=self.headers_for(
+    headers=headers_for(
+      self.extra,
       [("content-type", "application/json"), ("accept", "application/json")],
       headers,
     ),
   )
-  let text = response.text()
-  @json.from_json(
-    @moonjson.loads(text, @moonjson.strict) catch {
-      _ => raise WrongShape("the answer is not JSON: \{text}")
-    },
-  ) catch {
-    _ => raise WrongShape("the answer is not a JSON-RPC message: \{text}")
-  }
+  message_of(response.text(), "the answer")
 }
 
 ///|
@@ -94,11 +75,7 @@ pub impl @moona2a.Transport for HttpTransport with fn exchange_with(
 }
 
 ///|
-/// Send the request and hand each server-sent event to `out`.
-///
-/// The answer is read to its end before the events are handed over: the HTTP client this library
-/// depends on has no incremental body, so a frame waits for the response to finish. The sink is
-/// still the seam a host with a streaming client delivers into as frames arrive.
+/// Send the request and hand each server-sent event to `out` as it arrives.
 async fn HttpTransport::deliver(
   self : HttpTransport,
   message : @moonjrpc.Message,
@@ -106,39 +83,39 @@ async fn HttpTransport::deliver(
   headers : Array[(String, String)],
 ) -> Unit {
   let body = @moonfetch.Body::Text(@moonjson.dumps(message.to_json()))
-  let response = self.client.post(
+  let stream = self.client.stream(
+    Post,
     self.path,
     body~,
-    headers=self.headers_for(
+    headers=headers_for(
+      self.extra,
       [("content-type", "application/json"), ("accept", "text/event-stream")],
       headers,
     ),
   )
-  let text = response.text()
-  if !is_event_stream(response) {
+  defer stream.close()
+  if !is_event_stream(stream.header("content-type")) {
     // A server that refuses before opening the stream answers with one JSON-RPC body.
-    let reply : @moonjrpc.Message = @json.from_json(
-      @moonjson.loads(text, @moonjson.strict) catch {
-        _ => raise WrongShape("the answer is not JSON: \{text}")
-      },
-    ) catch {
-      _ => raise WrongShape("the answer is not a JSON-RPC message: \{text}")
-    }
-    out.reply(reply)
+    let text = stream.text()
+    out.reply(message_of(text, "the answer"))
     return
   }
-  for event in @sse.events(text) {
-    if event.data.trim() == "" {
-      continue
+  each_event(stream, async fn(event) {
+    if event.data.trim() != "" {
+      out.reply(message_of(event.data, "a frame"))
     }
-    let reply : @moonjrpc.Message = @json.from_json(
-      @moonjson.loads(event.data, @moonjson.strict) catch {
-        _ => raise WrongShape("a frame is not JSON: \{event.data}")
-      },
-    ) catch {
-      _ => raise WrongShape("a frame is not a JSON-RPC message: \{event.data}")
-    }
-    out.reply(reply)
+  })
+}
+
+///|
+/// Read one JSON-RPC message, naming what it was when it does not read.
+fn message_of(text : String, what : String) -> @moonjrpc.Message raise {
+  @json.from_json(
+    @moonjson.loads(text, @moonjson.strict) catch {
+      _ => raise WrongShape("\{what} is not JSON: \{text}")
+    },
+  ) catch {
+    _ => raise WrongShape("\{what} is not a JSON-RPC message: \{text}")
   }
 }
 
@@ -158,15 +135,6 @@ pub impl @moona2a.Transport for HttpTransport with fn stream_with(
 }
 
 ///|
-/// Whether the answer is a stream of events rather than one body.
-fn is_event_stream(response : @moonfetch.Response) -> Bool {
-  match response.header("content-type") {
-    Some(value) => value.contains("text/event-stream")
-    None => false
-  }
-}
-
-///|
 /// A reply that does not read as what the protocol says it is.
 pub suberror WrongShape {
   WrongShape(String)
@@ -178,13 +146,11 @@ async fn HttpTransport::card(
   self : HttpTransport,
   headers : Array[(String, String)],
 ) -> Json {
-  let response = self.client.get(
+  card_of(
+    self.client,
     self.card_path,
-    headers=self.headers_for([("accept", "application/json")], headers),
+    headers_for(self.extra, [("accept", "application/json")], headers),
   )
-  @moonjson.loads(response.text(), @moonjson.strict) catch {
-    _ => raise WrongShape("the card is not JSON")
-  }
 }
 
 ///|

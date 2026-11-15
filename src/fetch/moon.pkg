@@ -1,14 +1,16 @@
-// The HTTP side of the wire, over moonfetch: a client that speaks JSON-RPC over HTTP, and a
-// notifier that posts a task's updates to a caller's webhook.
+// The HTTP side of the wire, over moonfetch: clients for the JSON-RPC and HTTP+JSON bindings, and
+// a notifier that posts a task's updates to a caller's webhook.
 
 import {
   "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/json",
   "moonbitstack/moona2a",
   "moonbitstack/moonfetch",
+  "moonbitstack/moonhttp/method",
   "moonbitstack/moonhttp/sse",
   "moonbitstack/moonjrpc",
   "moonbitstack/moonjson",
+  "moonbitstack/moonurl",
 }
 
 import {
@@ -26,11 +28,14 @@ import {
 options(
   targets: {
     "transport.mbt": [ "native", "wasm" ],
+    "rest.mbt": [ "native", "wasm" ],
+    "events.mbt": [ "native", "wasm" ],
     "notifier.mbt": [ "native", "wasm" ],
     "notifier_test.mbt": [ "native", "wasm" ],
     "transport_test.mbt": [ "native" ],
     "transport_text_test.mbt": [ "native" ],
     "transport_headers_test.mbt": [ "native" ],
+    "rest_test.mbt": [ "native" ],
   },
 )
 

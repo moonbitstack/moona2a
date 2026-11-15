@@ -1,0 +1,26 @@
+// A client of the gRPC binding over one moonrpc channel: each call one HTTP/2 stream, a
+// streaming answer read message by message.
+import {
+  "moonbitlang/async",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/string",
+  "moonbitstack/moona2a",
+  "moonbitstack/moona2a/grpc",
+  "moonbitstack/moonhttp/header",
+  "moonbitstack/moonjrpc",
+  "moonbitstack/moonrpc",
+  "moonbitstack/moonrpc/net",
+  "moonbitstack/moontls/tls",
+}
+
+import {
+  "moonbitlang/async",
+  "moonbitstack/moona2a",
+  "moonbitstack/moona2a/grpc",
+  "moonbitstack/moonjrpc",
+  "moonbitstack/moonrpc/net",
+} for "test"
+
+// A channel is a TCP connection, and only the native backend has those.
+
+supported_targets = "native"

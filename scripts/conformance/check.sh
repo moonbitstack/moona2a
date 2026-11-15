@@ -2,9 +2,10 @@
 # Run the official Agent2Agent conformance suite against the example server in this repository.
 #
 # The suite is fetched at a pinned commit, so a run here and a run in CI judge the same thing. It
-# drives the server over the JSON-RPC transport, which is the one this library speaks.
+# drives the server over every binding the card lists: JSON-RPC and HTTP+JSON on the port below,
+# gRPC on the next one.
 #
-# Usage: scripts/conformance/check.sh [--level must|should|may] [--suite-tag <tag>]
+# Usage: scripts/conformance/check.sh [--level must|should|may] [--transport jsonrpc,grpc,http_json]
 # Exit status is the suite's own: 0 only when every automated check passed.
 
 set -euo pipefail
@@ -16,10 +17,15 @@ workdir="${CONFORMANCE_WORKDIR:-${TMPDIR:-/tmp}/moona2a-conformance}"
 port="${CONFORMANCE_PORT:-9999}"
 
 level=""
+transport=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --level)
       level="$2"
+      shift 2
+      ;;
+    --transport)
+      transport="$2"
       shift 2
       ;;
     *)
@@ -76,8 +82,11 @@ for _ in $(seq 1 100); do
 done
 
 echo "== running the suite =="
-suite_args=(--sut-host "http://127.0.0.1:$port" --transport jsonrpc)
+suite_args=(--sut-host "http://127.0.0.1:$port")
 if [[ -n "$level" ]]; then
   suite_args+=(--level "$level")
+fi
+if [[ -n "$transport" ]]; then
+  suite_args+=(--transport "$transport")
 fi
 (cd "$workdir/a2a-tck" && "$suite_python" ./run_tck.py "${suite_args[@]}")

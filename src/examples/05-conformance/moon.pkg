@@ -1,5 +1,5 @@
 // A server to run a conformance suite against: it answers the message ids the suite sends with
-// the behaviours the suite checks, over HTTP with the card at its well-known address.
+// the behaviours the suite checks, over all three bindings, with the card at its well-known address.
 
 import {
   "moonbitlang/async",
@@ -8,6 +8,10 @@ import {
   "moonbitstack/moona2a",
   "moonbitstack/moona2a/asgi",
   "moonbitstack/moona2a/fetch",
+  "moonbitstack/moona2a/grpc",
+  "moonbitstack/moonrpc/net",
+  "moonbitstack/moonurl",
+  "moonbitlang/core/encoding/utf8",
   "moonbitstack/moonasgi",
   "moonbitstack/moonasgi/spec",
   "moonbitstack/moonjson",

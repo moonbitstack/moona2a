@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MoonA2A — the Agent2Agent protocol for MoonBit</title>
-<meta name="description" content="MoonA2A is the Agent2Agent protocol in MoonBit: an agent card, one JSON-RPC endpoint for the protocol's methods, tasks that stream, push notifications, and a client for calling an agent someone else runs.">
+<meta name="description" content="MoonA2A is the Agent2Agent protocol in MoonBit: an agent card, the protocol's methods over JSON-RPC, HTTP+JSON and gRPC, tasks that stream, push notifications, and a client for calling an agent someone else runs.">
 <meta name="theme-color" content="#fbfaf6">
 <script>try{var e=document.documentElement,n=performance.getEntriesByType("navigation")[0];if(n&&n.type==="reload")sessionStorage.removeItem("moona2a-theme");else{var t=sessionStorage.getItem("moona2a-theme");if(t)e.setAttribute("data-theme",t)}}catch(r){}</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Crect%20width='24'%20height='24'%20fill='%23fbfaf6'/%3E%3Cg%20fill='none'%20stroke-width='2.05'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M6.37%2017.63%2017.63%206.37M7.69%2018.39%205.10%2015.80%202.00%2018.90%205.10%2022.00%208.20%2018.90%205.61%2016.31M16.31%205.61%2018.90%208.20%2022.00%205.10%2018.90%202.00%2015.80%205.10%2018.39%207.69'%20stroke='%232f4a73'/%3E%3Cpath%20d='M6.37%206.37%2017.63%2017.63M5.61%207.69%208.20%205.10%205.10%202.00%202.00%205.10%205.10%208.20%207.69%205.61M18.39%2016.31%2015.80%2018.90%2018.90%2022.00%2022.00%2018.90%2018.90%2015.80%2016.31%2018.39'%20stroke='%23a86f4f'/%3E%3C/g%3E%3C/svg%3E">
@@ -59,14 +59,14 @@
           <span class="hl"><span class="one">one</span><span class="word">transcript<svg class="strike" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8.6C36 5.4 74 4.1 112 5.1c31 0.8 60 2.4 86 1.2"/></svg></span><span class="stop" aria-hidden="true"></span></span>
         </h1>
 
-        <p class="lede">A card says what an agent is. One endpoint answers the protocol's eleven methods, and a stream reports the task while it runs. Serve that from MoonBit, or call an agent someone else serves.</p>
+        <p class="lede">A card says what an agent is. The protocol's eleven methods are answered over JSON-RPC, HTTP+JSON and gRPC, and a stream reports the task while it runs. Serve that from MoonBit, or call an agent someone else serves.</p>
         <div class="actions">
           <a class="btn" href="guide.html">Read the guide <span class="arrow">→</span></a>
           <a class="btn ghost" href="showcase.html">Watch a session</a>
         </div>
         <dl class="docket">
           <div class="d-row"><dt>serve</dt><dd>moon add moonbitstack/moona2a</dd></div>
-          <div class="d-row"><dt>call</dt><dd>POST / <span class="sep">·</span> JSON-RPC 2.0</dd></div>
+          <div class="d-row"><dt>call</dt><dd>JSON-RPC <span class="sep">·</span> HTTP+JSON <span class="sep">·</span> gRPC</dd></div>
           <div class="d-row"><dt>stream</dt><dd>text/event-stream</dd></div>
         </dl>
       </div>
@@ -254,7 +254,8 @@
         <ul class="duo-stack">
           <li><b>Executor</b> — emits status, artifacts, messages</li>
           <li><b>Server</b> — tasks, history, methods, watchers</li>
-          <li><b>to_asgi</b> — the card and the JSON-RPC path</li>
+          <li><b>to_asgi</b> — the card, JSON-RPC and HTTP+JSON</li>
+          <li><b>grpc.register</b> — the gRPC service on a moonrpc server</li>
         </ul>
       </div>
       <div class="duo-mid"><span>json-rpc 2.0</span></div>
@@ -263,7 +264,7 @@
         <ul class="duo-stack">
           <li><b>Client</b> — the protocol, method by method</li>
           <li><b>Transport</b> — a trait, not a socket</li>
-          <li><b>HttpTransport</b> — a live agent over HTTP</li>
+          <li><b>HttpTransport</b>, <b>RestTransport</b>, <b>GrpcTransport</b> — one per binding, picked from the card</li>
         </ul>
       </div>
     </div>

@@ -3,7 +3,7 @@
 # moona2a
 
 **The Agent2Agent protocol for MoonBit.**<br>
-Agent cards, tasks, streaming and push notifications — one JSON-RPC endpoint, served or called.
+Agent cards, tasks, streaming and push notifications — over JSON-RPC, HTTP+JSON and gRPC, served or called.
 
 <a href="https://moonbitstack.github.io/moona2a/"><kbd> &nbsp;home&nbsp; </kbd></a>
 &nbsp;
@@ -17,14 +17,16 @@ Agent cards, tasks, streaming and push notifications — one JSON-RPC endpoint, 
 
 ---
 
-An agent that other agents can talk to needs three things: a document saying what it is, one
+An agent that other agents can talk to needs three things: a document saying what it is, an
 endpoint that answers a fixed set of methods, and a way to report progress on work that takes
 longer than a request. `moona2a` is that protocol in MoonBit, in both directions: a server you
-plug an agent into, and a client you point at someone else's agent.
+plug an agent into, and a client you point at someone else's agent. All three bindings the
+specification defines are here, on one server and one client.
 
-Nothing here owns a socket. The server is an ASGI application, so the HTTP server stays a choice
-the host makes; the client talks through a transport trait, so a test, HTTP and anything else can
-carry the same calls.
+Nothing in the server owns a socket. JSON-RPC and HTTP+JSON are one ASGI application, so the HTTP
+server stays a choice the host makes; gRPC is a set of handlers registered on a moonrpc server.
+The client talks through a transport trait, so a test, HTTP, gRPC and anything else carry the same
+calls.
 
 ## Install
 
@@ -32,13 +34,15 @@ carry the same calls.
 moon add moonbitstack/moona2a
 ```
 
-The module has four packages:
+The module has six packages:
 
 | Package | What it holds |
 |:--|:--|
-| `moonbitstack/moona2a` | The wire model, the JSON-RPC methods, the task lifecycle, and a client over any transport |
-| `moonbitstack/moona2a/asgi` | The HTTP endpoint as an ASGI application: the card, the JSON-RPC path, server-sent events |
-| `moonbitstack/moona2a/fetch` | A client transport over HTTP, and the notifier that posts to a caller's webhook |
+| `moonbitstack/moona2a` | The wire model, the methods, the task lifecycle, the binding table, and a client over any transport |
+| `moonbitstack/moona2a/asgi` | JSON-RPC and HTTP+JSON as one ASGI application: the card, both bindings' paths, server-sent events |
+| `moonbitstack/moona2a/grpc` | `A2AService` registered on any moonrpc server, and the message codec read from the specification's `a2a.proto` |
+| `moonbitstack/moona2a/grpc/channel` | A client transport over a moonrpc channel; native only |
+| `moonbitstack/moona2a/fetch` | Client transports for JSON-RPC and HTTP+JSON, and the notifier that posts to a caller's webhook |
 | `moonbitstack/moona2a/otel` | Spans for an agent run and for a client's call, in the OpenTelemetry GenAI conventions |
 
 ## A server in ten lines
@@ -78,9 +82,9 @@ let app = @asgi.to_asgi(server)
 assert_eq(server.card().name, "echo")
 ```
 
-`to_asgi` answers two addresses: the card at `/.well-known/agent-card.json`, and every method on
-the JSON-RPC path. A streaming method answers with `text/event-stream` and one `data:` frame per
-event, written as the event happens.
+`to_asgi` answers the card at `/.well-known/agent-card.json`, every method on the JSON-RPC path,
+and every method at its own HTTP+JSON path. A streaming method answers with `text/event-stream`
+and one `data:` frame per event, written as the event happens.
 
 ## A client
 
@@ -118,6 +122,61 @@ println("task \{task.id}: \{task.status.state.wire()}")
 A host can also give `HttpTransport` a `headers` callback for headers it wants on every request;
 those sit behind the ones a call names. A trace context, a tenant that changes with the caller, or
 a short-lived credential belongs to the call, not to the handle that sends it.
+
+## Three bindings
+
+A server answers all three with the same tasks: the JSON-RPC and HTTP+JSON bindings come from
+`to_asgi`, and gRPC from `@grpc.register` on a moonrpc server. gRPC is HTTP/2 and runs on its own
+listener.
+
+```moonbit native
+async fn serve_grpc(server : @moona2a.Server) -> Unit {
+  let grpc = @net.GrpcServer::new()
+  @grpc.register(grpc, server)
+  grpc.serve(port=12001)
+}
+```
+
+The card lists every interface, in the order a client should try them, and a client takes the
+first it can speak:
+
+```moonbit
+let base = {
+  ..@moona2a.AgentCard::new("echo", "repeats", "1.0.0", "https://echo.example.com", []),
+  supported_interfaces: [
+    @moona2a.AgentInterface::grpc("echo.example.com:12001", protocol_version="1.0"),
+    @moona2a.AgentInterface::http_json("https://echo.example.com", protocol_version="1.0"),
+    @moona2a.AgentInterface::json_rpc("https://echo.example.com", protocol_version="1.0"),
+  ],
+}
+let chosen = base.choose([HttpJson, JsonRpc])
+assert_eq(chosen.map(i => i.protocol_binding), Some("HTTP+JSON"))
+```
+
+| Binding | Server | Client transport |
+|:--|:--|:--|
+| JSON-RPC | `@asgi.to_asgi`, one path | `@fetch.HttpTransport` |
+| HTTP+JSON | `@asgi.to_asgi`, `/message:send` and the rest, also under `/{tenant}` | `@fetch.RestTransport` |
+| gRPC | `@grpc.register` on `@net.GrpcServer` | `@channel.GrpcTransport` |
+
+`Server::invoke` and `Server::invoke_stream` are what the three share: a method, its parameters as
+the JSON form of the request message, and the answer in the JSON form of the reply. A binding of
+your own is a path or a handler that reads a call into those and writes the answer back.
+
+A refusal reads as each binding writes it, with the same `google.rpc.ErrorInfo` in all three:
+
+| Error | JSON-RPC | gRPC | HTTP |
+|:--|:--:|:--:|:--:|
+| `TaskNotFound` | `-32001` | `NOT_FOUND` | 404 |
+| `TaskNotCancelable`, `PushNotificationNotSupported`, `UnsupportedOperation` | `-32002` to `-32004` | `FAILED_PRECONDITION` | 400 |
+| `ContentTypeNotSupported` | `-32005` | `INVALID_ARGUMENT` | 400 |
+| `InvalidAgentResponse` | `-32006` | `INTERNAL` | 500 |
+| `ExtendedAgentCardNotConfigured`, `ExtensionSupportRequired`, `VersionNotSupported` | `-32007` to `-32009` | `FAILED_PRECONDITION` | 400 |
+| invalid request or parameters | `-32600`, `-32602` | `INVALID_ARGUMENT` | 400 |
+
+`Status::of` gives the gRPC and HTTP status of a JSON-RPC code, and `failure_of_status` reads a
+gRPC or HTTP+JSON refusal back into the error its `ErrorInfo` names. A client sees `TaskNotFound`
+whichever binding carried it.
 
 ## The methods
 
@@ -307,9 +366,9 @@ Two behaviours are worth naming:
   `ContentTypeNotSupported` for a media type it cannot take, but only the agent knows what it can
   take; the card's list is what a caller may *ask* for. `ServerConfig.refuse_unknown_media` turns
   the card's list into a hard filter for agents that want that.
-- **The client reads a streamed answer to its end.** The HTTP client this library depends on has no
-  incremental body, so `moona2a/fetch` hands the events over once the response finishes. The sink is
-  still the seam: a host with a streaming HTTP client delivers into the same trait as frames arrive.
+- **Subscribing is `POST` and `GET`.** The specification's table writes `POST /tasks/{id}:subscribe`
+  and `a2a.proto` annotates a `GET`; the server answers both, as the Python SDK does, and the
+  client sends the `POST`.
 
 ## Examples
 
@@ -319,8 +378,8 @@ Two behaviours are worth naming:
 | 02 | [`client`](src/examples/02-client/) | A client over a transport that answers from a table |
 | 03 | [`server`](src/examples/03-server/) | A server answering a `SendMessage` body |
 | 04 | [`stream`](src/examples/04-stream/) | A streaming answer, event by event |
-| 05 | [`conformance`](src/examples/05-conformance/) | The server the conformance suite drives, over HTTP |
-| 06 | [`interop`](src/examples/06-interop/) | A client calling a live agent: card, message, stream |
+| 05 | [`conformance`](src/examples/05-conformance/) | The server the conformance suite drives, over all three bindings |
+| 06 | [`interop`](src/examples/06-interop/) | A client calling a live agent over the binding it is told: message, stream, task, two refusals |
 | 07 | [`otel`](src/examples/07-otel/) | Both ends of one exchange, instrumented and sent to a collector |
 
 ## Tests

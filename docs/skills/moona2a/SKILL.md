@@ -1,6 +1,6 @@
 ---
 name: moona2a
-description: "Serve or call an Agent2Agent (A2A) agent in MoonBit — publish an agent card, answer the JSON-RPC methods, stream task updates, register push webhooks, send per-call request headers, trace a run with OpenTelemetry, and talk to another agent. Use when agents need to discover each other and exchange tasks over HTTP."
+description: "Serve or call an Agent2Agent (A2A) agent in MoonBit over JSON-RPC, HTTP+JSON or gRPC — publish an agent card, answer the protocol's methods, stream task updates, register push webhooks, send per-call request headers, trace a run with OpenTelemetry, and talk to another agent. Use when agents need to discover each other and exchange tasks."
 ---
 
 # moona2a
@@ -14,9 +14,11 @@ moon add moonbitstack/moona2a
 
 | Package | Use it for |
 |:--|:--|
-| `moonbitstack/moona2a` | the wire model, the server, the client |
-| `moonbitstack/moona2a/asgi` | the HTTP endpoint as an ASGI application |
-| `moonbitstack/moona2a/fetch` | an HTTP client transport, and the webhook notifier |
+| `moonbitstack/moona2a` | the wire model, the server, the client, the binding table |
+| `moonbitstack/moona2a/asgi` | JSON-RPC and HTTP+JSON as one ASGI application |
+| `moonbitstack/moona2a/grpc` | the gRPC service, registered on a moonrpc server |
+| `moonbitstack/moona2a/grpc/channel` | a gRPC client transport (native) |
+| `moonbitstack/moona2a/fetch` | JSON-RPC and HTTP+JSON client transports, and the webhook notifier |
 | `moonbitstack/moona2a/otel` | spans for a run and for a client's call |
 
 An agent is an `Executor`: it is given the message and emits what happens. Tasks, history,
@@ -54,9 +56,25 @@ let server = @moona2a.Server::new(Greeter::{ }, card)
 let app = @asgi.to_asgi(server)
 ```
 
-The application answers `GET /.well-known/agent-card.json` with the card and `POST /` with the
-methods. A streaming method answers `text/event-stream`, one `data:` frame per event, and holds the
-response open until the task finishes or the caller leaves.
+The application answers `GET /.well-known/agent-card.json` with the card, `POST /` with the
+JSON-RPC methods, and each method at its HTTP+JSON path (`POST /message:send`,
+`GET /tasks/{id}`, and the rest). A streaming method answers `text/event-stream`, one `data:` frame
+per event, and holds the response open until the task finishes or the caller leaves.
+
+gRPC is HTTP/2 on a listener of its own:
+
+```moonbit native
+async fn serve_grpc(server : @moona2a.Server) -> Unit {
+  let grpc = @net.GrpcServer::new()
+  @grpc.register(grpc, server)
+  grpc.serve(port=12001)
+}
+```
+
+List every interface on the card, in the order a client should try them; a client calls
+`card.choose([...])` with the bindings it speaks and takes the first match. A refusal reaches the
+caller as the same error whichever binding carried it: `TaskNotFound` is `-32001`, `NOT_FOUND` and
+404, each with a `google.rpc.ErrorInfo` naming `TASK_NOT_FOUND`.
 
 ## Call another agent
 
@@ -73,8 +91,21 @@ async fn ask(url : String) -> String raise {
 }
 ```
 
-`Client` takes any `Transport`. In a test, implement `exchange`, `stream` and `discover` on a
-struct and answer from a table; nothing binds the client to HTTP.
+`Client` takes any `Transport`: `HttpTransport` for JSON-RPC, `RestTransport` for HTTP+JSON,
+`GrpcTransport` for gRPC. In a test, implement `exchange`, `stream` and `discover` on a struct and
+answer from a table; nothing binds the client to one binding.
+
+```moonbit native
+async fn over_the_card(card : @moona2a.AgentCard) -> &@moona2a.Transport raise {
+  guard card.choose([HttpJson, JsonRpc]) is Some(interface) else {
+    fail("no interface this client speaks")
+  }
+  match @moona2a.Binding::of(interface.protocol_binding) {
+    Some(HttpJson) => @fetch.RestTransport::new(interface.url) as &@moona2a.Transport
+    _ => @fetch.HttpTransport::new(interface.url) as &@moona2a.Transport
+  }
+}
+```
 
 ## Headers on a call
 

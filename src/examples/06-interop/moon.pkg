@@ -1,4 +1,5 @@
-// Calls an agent that is already running, over HTTP. Native only: it needs sockets.
+// Calls an agent that is already running, over the binding named on the command line, and checks
+// what comes back. Native only: it needs sockets.
 
 import {
   "moonbitlang/async",
@@ -6,6 +7,7 @@ import {
   "moonbitlang/core/json",
   "moonbitstack/moona2a",
   "moonbitstack/moona2a/fetch",
+  "moonbitstack/moona2a/grpc/channel",
   "moonbitstack/moonjrpc",
 }
 

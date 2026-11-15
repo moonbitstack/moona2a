@@ -199,7 +199,7 @@ impl @moona2a.Executor for Conformance with fn cancel(self, task_id) {
 pub extend Conformance with @moona2a.Executor::{execute, cancel}
 
 ///|
-/// The card this server publishes.
+/// The card this server publishes: JSON-RPC and HTTP+JSON on `port`, gRPC on the next one.
 fn card(port : Int32) -> @moona2a.AgentCard {
   let base = "http://127.0.0.1:\{port}"
   @moona2a.AgentCard::new(
@@ -221,6 +221,23 @@ fn card(port : Int32) -> @moona2a.AgentCard {
     extended_agent_card: false,
     extensions: [],
   })
+  |> with_interfaces([
+    @moona2a.AgentInterface::json_rpc(base, protocol_version="1.0"),
+    @moona2a.AgentInterface::http_json(base, protocol_version="1.0"),
+    @moona2a.AgentInterface::grpc(
+      "127.0.0.1:\{port + 1}",
+      protocol_version="1.0",
+    ),
+  ])
+}
+
+///|
+/// The card with the interfaces it lists, in the order a client should try them.
+fn with_interfaces(
+  card : @moona2a.AgentCard,
+  interfaces : Array[@moona2a.AgentInterface],
+) -> @moona2a.AgentCard {
+  { ..card, supported_interfaces: interfaces, }
 }
 
 ///|
@@ -234,6 +251,11 @@ async fn main {
   @async.with_task_group(async fn(group) {
     // A caller that asks not to wait leaves its run to this group, which outlives the request.
     server.attach(group) |> ignore
+    // gRPC is HTTP/2 and the listener below speaks HTTP/1.1, so it gets a port of its own.
+    let grpc = @net.GrpcServer::new()
+    @grpc.register(grpc, server)
+    ignore(grpc.bind(host="0.0.0.0", port=port + 1))
+    group.spawn_bg(no_wait=true, () => grpc.serve())
     let address = @socket.Addr::parse("0.0.0.0:\{port}")
     @http.Server(address, reuse_addr=true).run_forever(async fn(
       request,
@@ -241,13 +263,14 @@ async fn main {
       connection,
     ) {
       let whole = body.read_all()
+      let (raw, query) = split_target(path_of(request.path))
       let scope = @spec.Http({
         http_version: "1.1",
         http_method: method_name(request.meth),
         scheme: "http",
-        path: path_of(request.path),
-        raw_path: None,
-        query_string: b"",
+        path: @moonurl.unescape_text(raw),
+        raw_path: Some(@utf8.encode(raw)),
+        query_string: @utf8.encode(query),
         root_path: "",
         headers: request.headers
         .iter()
@@ -302,6 +325,19 @@ fn path_of(target : String) -> String {
     }
   }
   target
+}
+
+///|
+/// A path and its query, which the scope keeps apart.
+fn split_target(target : String) -> (String, String) {
+  match target.find("?") {
+    Some(mark) =>
+      (
+        target.exact_view(start=0, end=mark).to_owned(),
+        target.exact_view(start=mark + 1, end=target.length()).to_owned(),
+      )
+    None => (target, "")
+  }
 }
 
 ///|

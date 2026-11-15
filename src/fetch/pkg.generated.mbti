@@ -40,6 +40,20 @@ pub async fn HttpTransport::stream(Self, @moonjrpc.Message, &@moona2a.ReplySink)
 pub async fn HttpTransport::stream_with(Self, @moonjrpc.Message, &@moona2a.ReplySink, Array[(String, String)]) -> Unit
 pub impl @moona2a.Transport for HttpTransport
 
+pub(all) struct RestTransport {
+  client : @moonfetch.Client
+  card_path : String
+  extra : () -> Array[(String, String)]
+}
+pub async fn RestTransport::discover(Self) -> @json.Json
+pub async fn RestTransport::discover_with(Self, Array[(String, String)]) -> @json.Json
+pub async fn RestTransport::exchange(Self, @moonjrpc.Message) -> @moonjrpc.Message
+pub async fn RestTransport::exchange_with(Self, @moonjrpc.Message, Array[(String, String)]) -> @moonjrpc.Message
+pub fn RestTransport::new(String, card_path? : String, headers? : () -> Array[(String, String)]) -> Self raise
+pub async fn RestTransport::stream(Self, @moonjrpc.Message, &@moona2a.ReplySink) -> Unit
+pub async fn RestTransport::stream_with(Self, @moonjrpc.Message, &@moona2a.ReplySink, Array[(String, String)]) -> Unit
+pub impl @moona2a.Transport for RestTransport
+
 pub(all) struct Webhook {
 }
 pub async fn Webhook::notify(Self, @moona2a.TaskPushConfig, @moona2a.StreamEvent) -> Unit

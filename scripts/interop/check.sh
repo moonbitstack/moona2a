@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
-# Run the two interoperability directions against the official Python SDK.
+# Run the two interoperability directions against the official Python SDK, over each binding.
 #
 #   scripts/interop/check.sh
 #
 # Direction one: the MoonBit client calls an agent the Python SDK serves.
 # Direction two: the Python SDK's client calls the MoonBit server, and checks what comes back.
+# Both directions run once per binding: JSON-RPC, HTTP+JSON and gRPC.
 #
-# The Python side needs `a2a-sdk` (1.3 or later), `fastapi`, `uvicorn`, `httpx` and `sse-starlette`:
+# The Python side needs `a2a-sdk` with its gRPC and server extras, `fastapi`, `uvicorn`, `httpx`
+# and `sse-starlette`:
 #
-#     uv venv && uv pip install "a2a-sdk>=1.3" fastapi uvicorn httpx sse-starlette
+#     uv venv && uv pip install "a2a-sdk[grpc,http-server]==1.3.0" fastapi uvicorn httpx sse-starlette
 #
 # Point A2A_PYTHON at that environment's interpreter; the default is the one on PATH.
 
@@ -47,8 +49,10 @@ cleanup() {
 }
 trap cleanup EXIT
 wait_for_card "http://127.0.0.1:$python_port"
-(cd "$repo_root" && moon run src/examples/06-interop --target native -- \
-  "http://127.0.0.1:$python_port/a2a/jsonrpc")
+for binding in JSONRPC HTTP+JSON GRPC; do
+  (cd "$repo_root" && moon run src/examples/06-interop --target native -- \
+    "http://127.0.0.1:$python_port" "$binding")
+done
 cleanup
 trap - EXIT
 
@@ -61,6 +65,9 @@ cleanup() {
 }
 trap cleanup EXIT
 wait_for_card "http://127.0.0.1:$moon_port"
-"$python" "$repo_root/scripts/interop/py_client.py" --url "http://127.0.0.1:$moon_port"
+for binding in JSONRPC HTTP+JSON GRPC; do
+  "$python" "$repo_root/scripts/interop/py_client.py" \
+    --url "http://127.0.0.1:$moon_port" --binding "$binding"
+done
 
-echo "interoperability: both directions ok"
+echo "interoperability: both directions, three bindings, ok"
