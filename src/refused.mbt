@@ -55,6 +55,26 @@ pub fn Refused::reason(self : Refused) -> String {
 }
 
 ///|
+/// The refusal an `ErrorInfo` reason names, as the gRPC and HTTP+JSON bindings carry it.
+pub fn Refused::of(reason : StringView) -> Refused? {
+  match reason {
+    "TASK_NOT_FOUND" => Some(TaskNotFound(""))
+    "TASK_NOT_CANCELABLE" => Some(TaskNotCancelable(""))
+    "PUSH_NOTIFICATION_NOT_SUPPORTED" => Some(PushNotificationNotSupported(""))
+    "UNSUPPORTED_OPERATION" => Some(UnsupportedOperation(""))
+    "CONTENT_TYPE_NOT_SUPPORTED" => Some(ContentTypeNotSupported(""))
+    "INVALID_AGENT_RESPONSE" => Some(InvalidAgentResponse(""))
+    "EXTENDED_AGENT_CARD_NOT_CONFIGURED" =>
+      Some(ExtendedAgentCardNotConfigured(""))
+    "EXTENSION_SUPPORT_REQUIRED" => Some(ExtensionSupportRequired(""))
+    "VERSION_NOT_SUPPORTED" => Some(VersionNotSupported(""))
+    "INVALID_REQUEST" => Some(InvalidRequest(""))
+    "INVALID_PARAMS" => Some(InvalidParams(""))
+    _ => None
+  }
+}
+
+///|
 /// The one-line message a client shows a human, worded as the specification's error table words it.
 pub fn Refused::mention(self : Refused) -> String {
   match self {

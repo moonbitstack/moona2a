@@ -3,6 +3,7 @@ package "moonbitstack/moona2a"
 
 import {
   "moonbitlang/async",
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
   "moonbitstack/moonjrpc",
 }
@@ -12,7 +13,13 @@ pub let card_path : String
 
 pub let default_capacity : Int32
 
+pub fn failure_of(Error) -> @moonjrpc.Failure
+
+pub fn failure_of_status(Int32, String, Array[@json.Json]) -> @moonjrpc.Failure
+
 pub let follow_tick_millis : Int32
+
+pub let grpc_service : String
 
 pub fn is_streaming_method(String) -> Bool
 
@@ -44,6 +51,7 @@ pub fn Refused::detail(Self) -> String?
 pub fn Refused::failure(Self) -> @moonjrpc.Failure
 pub fn Refused::from_failure(@moonjrpc.Failure) -> Self
 pub fn Refused::mention(Self) -> String
+pub fn Refused::of(StringView) -> Self?
 pub fn Refused::reason(Self) -> String
 
 // Types and methods
@@ -81,6 +89,7 @@ pub(all) struct AgentCard {
   icon_url : String?
 }
 pub fn AgentCard::capable(Self, AgentCapabilities) -> Self
+pub fn AgentCard::choose(Self, Array[Binding]) -> AgentInterface?
 pub fn AgentCard::equal(Self, Self) -> Bool
 pub fn AgentCard::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
 pub fn AgentCard::input_modes(Self) -> Array[String]
@@ -114,6 +123,8 @@ pub(all) struct AgentInterface {
 }
 pub fn AgentInterface::equal(Self, Self) -> Bool
 pub fn AgentInterface::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AgentInterface::grpc(String, protocol_version~ : String) -> Self
+pub fn AgentInterface::http_json(String, protocol_version~ : String) -> Self
 pub fn AgentInterface::json_rpc(String, protocol_version~ : String) -> Self
 pub fn AgentInterface::not_equal(Self, Self) -> Bool
 pub fn AgentInterface::to_json(Self) -> @json.Json
@@ -182,6 +193,18 @@ pub fn AuthenticationInfo::not_equal(Self, Self) -> Bool
 pub fn AuthenticationInfo::to_json(Self) -> @json.Json
 pub impl @json.FromJson for AuthenticationInfo
 pub impl @json.ToJson for AuthenticationInfo
+
+#derive(Eq, @debug.Debug)
+pub(all) enum Binding {
+  JsonRpc
+  Grpc
+  HttpJson
+}
+pub fn Binding::code(Self) -> String
+pub fn Binding::equal(Self, Self) -> Bool
+pub fn Binding::not_equal(Self, Self) -> Bool
+pub fn Binding::of(StringView) -> Self?
+pub fn Binding::to_repr(Self) -> @debug.Repr
 
 pub struct CallableExecutor {
   run : async (RequestContext, &EventSink) -> Unit
@@ -294,8 +317,10 @@ pub(all) enum Method {
 }
 pub fn Method::equal(Self, Self) -> Bool
 pub fn Method::from_name(String) -> Self?
+pub fn Method::grpc_path(Self) -> String
 pub fn Method::name(Self) -> String
 pub fn Method::not_equal(Self, Self) -> Bool
+pub fn Method::rest(Self) -> (String, String)
 pub fn Method::streams(Self) -> Bool
 
 #derive(Eq)
@@ -407,6 +432,8 @@ pub fn Server::attach(Self, @async.TaskGroup[Unit]) -> Self
 pub fn Server::card(Self) -> AgentCard
 pub fn Server::card_json(Self) -> @json.Json
 pub fn Server::configured(executor~ : &Executor, card~ : AgentCard, store~ : &TaskStore, notifier~ : &Notifier, config~ : ServerConfig) -> Self
+pub async fn Server::invoke(Self, Method, params? : @json.Json, extensions? : Array[String], version? : String, headers? : Array[(String, String)]) -> @json.Json raise @moonjrpc.Failed
+pub async fn Server::invoke_stream(Self, Method, &EventSink, params? : @json.Json, extensions? : Array[String], version? : String, headers? : Array[(String, String)]) -> Unit raise @moonjrpc.Failed
 pub fn Server::new(&Executor, AgentCard) -> Self
 pub fn Server::notifying(Self, &Notifier) -> Self
 pub fn Server::storing(Self, &TaskStore) -> Self
@@ -422,6 +449,17 @@ pub(all) struct ServerConfig {
 pub fn ServerConfig::new() -> Self
 
 type ServerState
+
+#derive(Eq, @debug.Debug)
+pub(all) struct Status {
+  grpc : Int32
+  name : String
+  http : Int32
+}
+pub fn Status::equal(Self, Self) -> Bool
+pub fn Status::not_equal(Self, Self) -> Bool
+pub fn Status::of(Int32) -> Self
+pub fn Status::to_repr(Self) -> @debug.Repr
 
 #derive(Eq)
 pub(all) enum StreamEvent {

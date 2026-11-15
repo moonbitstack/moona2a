@@ -13,10 +13,14 @@ pub fn to_asgi(@moona2a.Server, options? : Options) -> async (@spec.Scope, async
 // Errors
 
 // Types and methods
+type Events
+pub async fn Events::emit(Self, @moona2a.StreamEvent) -> Unit
+
 pub(all) struct Options {
   rpc_path : String
   card_path : String
   cache_seconds : Int32
+  rest_path : String?
 }
 pub fn Options::new() -> Self
 

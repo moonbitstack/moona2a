@@ -487,3 +487,15 @@ async test "server: an extension the card requires must be declared" {
   ])
   assert_eq(error_code_of(declared), -32001)
 }
+
+///|
+async test "stream: cancelling a waiting task answers with the task itself, as a2a.proto declares" {
+  let server = @moona2a.Server::new(Scripted::{ }, test_card())
+  let task = waiting_task(server)
+  let answer = server.answer(
+    call_text(2, "CancelTask", "{\"id\":\"\{task.id}\"}"),
+  )
+  let read = bare_task_of(result_of(answer))
+  assert_eq(read.id, task.id)
+  assert_eq(read.status.state.wire(), "TASK_STATE_CANCELED")
+}

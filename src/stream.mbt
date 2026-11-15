@@ -22,43 +22,6 @@ impl EventSink for Broadcast with fn emit(self, event) {
 }
 
 ///|
-/// Answer a streaming method: `SendStreamingMessage` works the message, `SubscribeToTask` joins a
-/// task that is already running. Either way the caller gets one reply per event, and a refusal
-/// with the request's id if the call cannot start.
-async fn Server::stream_call(
-  self : Server,
-  id : @moonjrpc.Id,
-  rpc_name : String,
-  params : Json,
-  out : &ReplySink,
-  headers : Array[(String, String)],
-) -> Unit {
-  let broadcast : Broadcast = { id, out, }
-  let outcome = try {
-    match Method::from_name(rpc_name) {
-      Some(SendStreamingMessage) => {
-        let request : SendMessageRequest = decode(Some(params))
-        let prepared = self.prepare(request)
-        self.remember_inline_push(prepared.task, prepared.configuration.push)
-        self.work(prepared, broadcast, headers) |> ignore
-      }
-      Some(SubscribeToTask) => self.follow(Some(params), broadcast)
-      Some(_) | None => raise UnsupportedOperation(rpc_name).as_failed()
-    }
-    None
-  } catch {
-    error => Some(error)
-  }
-  match outcome {
-    Some(error) =>
-      out.reply(@moonjrpc.Message::Refusal(id~, failure=failure_of(error))) catch {
-        _ => ()
-      }
-    None => ()
-  }
-}
-
-///|
 /// Answer `SubscribeToTask`: the task as it stands, then everything that happens to it until it
 /// finishes or the caller goes away.
 async fn Server::follow(

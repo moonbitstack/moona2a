@@ -1,13 +1,15 @@
-// The HTTP binding: the card at its well-known address and one JSON-RPC endpoint, as an ASGI
-// application any server can drive.
+// The two bindings over HTTP, JSON-RPC and HTTP+JSON, with the card at its well-known address,
+// as an ASGI application any server can drive.
 
 import {
   "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/string",
   "moonbitstack/moona2a",
   "moonbitstack/moonasgi",
   "moonbitstack/moonasgi/spec",
   "moonbitstack/moonjrpc",
   "moonbitstack/moonjson",
+  "moonbitstack/moonurl",
 }
 
 import {

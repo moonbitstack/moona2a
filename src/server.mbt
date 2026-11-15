@@ -369,29 +369,22 @@ pub async fn Server::answer_stream(
   }
   match message {
     Call(id~, name~, params~) =>
-      if is_streaming_method(name) {
-        let declared = extensions.unwrap_or([])
-        let refuse = try {
-          self.enter(declared, version)
-          None
-        } catch {
-          error => Some(error)
-        }
-        match refuse {
-          Some(error) =>
+      if Method::from_name(name) is Some(rpc) && rpc.streams() {
+        let broadcast : Broadcast = { id, out, }
+        self.invoke_stream(
+          rpc,
+          broadcast,
+          params?,
+          extensions?,
+          version?,
+          headers?,
+        ) catch {
+          error =>
             out.reply(
               @moonjrpc.Message::Refusal(id~, failure=failure_of(error)),
             ) catch {
               _ => ()
             }
-          None =>
-            self.stream_call(
-              id,
-              name,
-              params.unwrap_or(Json::null()),
-              out,
-              headers.unwrap_or([]),
-            )
         }
       } else {
         let answer = self
@@ -434,43 +427,86 @@ fn Server::table(
   headers : Array[(String, String)],
 ) -> @moonjrpc.Methods {
   let methods = @moonjrpc.Methods::new()
-  methods.call(Method::SendMessage.name(), async fn(params) {
-    self.enter(extensions, version)
-    self.on_send(params, headers)
-  })
-  methods.call(Method::CancelTask.name(), async fn(params) {
-    self.enter(extensions, version)
-    self.on_cancel(params)
-  })
-  methods.call(Method::GetTask.name(), params => {
-    self.enter(extensions, version)
-    self.on_get(params)
-  })
-  methods.call(Method::ListTasks.name(), params => {
-    self.enter(extensions, version)
-    self.on_list(params)
-  })
-  methods.call(Method::CreatePushConfig.name(), params => {
-    self.enter(extensions, version)
-    self.on_push_create(params)
-  })
-  methods.call(Method::GetPushConfig.name(), params => {
-    self.enter(extensions, version)
-    self.on_push_get(params)
-  })
-  methods.call(Method::ListPushConfigs.name(), params => {
-    self.enter(extensions, version)
-    self.on_push_list(params)
-  })
-  methods.call(Method::DeletePushConfig.name(), params => {
-    self.enter(extensions, version)
-    self.on_push_delete(params)
-  })
-  methods.call(Method::GetExtendedCard.name(), params => {
-    self.enter(extensions, version)
-    self.on_extended_card(params)
-  })
+  for
+    rpc in [
+      SendMessage,
+      CancelTask,
+      GetTask,
+      ListTasks,
+      CreatePushConfig,
+      GetPushConfig,
+      ListPushConfigs,
+      DeletePushConfig,
+      GetExtendedCard,
+    ] {
+    methods.call(rpc.name(), async fn(params) {
+      self.invoke(rpc, params?, extensions~, version?, headers~)
+    })
+  }
   methods
+}
+
+///|
+/// Answer one call of `rpc` as any binding hands it over: the parameters are the JSON form of
+/// the request message and the result is the JSON form of the reply. A refusal raises the failure
+/// the caller sees, which each binding writes in its own way.
+///
+/// `extensions`, `version` and `headers` are what the call carried beside its parameters, read by
+/// the binding from its headers or metadata (sections 9.2, 10.2 and 11.2).
+pub async fn Server::invoke(
+  self : Server,
+  rpc : Method,
+  params? : Json,
+  extensions? : Array[String],
+  version? : String,
+  headers? : Array[(String, String)],
+) -> Json raise @moonjrpc.Failed {
+  self.enter(extensions.unwrap_or([]), version)
+  match rpc {
+    SendMessage => self.on_send(params, headers.unwrap_or([]))
+    CancelTask => self.on_cancel(params)
+    GetTask => self.on_get(params)
+    ListTasks => self.on_list(params)
+    CreatePushConfig => self.on_push_create(params)
+    GetPushConfig => self.on_push_get(params)
+    ListPushConfigs => self.on_push_list(params)
+    DeletePushConfig => self.on_push_delete(params)
+    GetExtendedCard => self.on_extended_card(params)
+    SendStreamingMessage | SubscribeToTask =>
+      raise UnsupportedOperation("\{rpc.name()} answers with a stream").as_failed()
+  }
+}
+
+///|
+/// Answer a streaming method, handing each event to `out` as it happens: `SendStreamingMessage`
+/// works the message, `SubscribeToTask` joins a running task. A call that cannot start raises
+/// before the first event; a binding tells that apart from a later failure by whether it has
+/// written anything yet.
+pub async fn Server::invoke_stream(
+  self : Server,
+  rpc : Method,
+  out : &EventSink,
+  params? : Json,
+  extensions? : Array[String],
+  version? : String,
+  headers? : Array[(String, String)],
+) -> Unit raise @moonjrpc.Failed {
+  try {
+    self.enter(extensions.unwrap_or([]), version)
+    match rpc {
+      SendStreamingMessage => {
+        let request : SendMessageRequest = decode(params)
+        let prepared = self.prepare(request)
+        self.remember_inline_push(prepared.task, prepared.configuration.push)
+        self.work(prepared, out, headers.unwrap_or([])) |> ignore
+      }
+      SubscribeToTask => self.follow(params, out)
+      _ =>
+        raise UnsupportedOperation("\{rpc.name()} answers with one reply").as_failed()
+    }
+  } catch {
+    error => raise @moonjrpc.Failed(failure_of(error))
+  }
 }
 
 ///|

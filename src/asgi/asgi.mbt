@@ -1,5 +1,5 @@
-// The ASGI application: the HTTP binding of the protocol, where a request body becomes a call and
-// a streamed event becomes a frame.
+// The ASGI application: the two bindings that run over HTTP, JSON-RPC at one path and HTTP+JSON
+// at its own paths (`rest.mbt`), with the card at its well-known address.
 
 ///|
 /// Where the endpoint answers, and how long a client may cache the card.
@@ -10,13 +10,21 @@ pub(all) struct Options {
   card_path : String
   /// How long a client may keep the card, in seconds. The specification asks a server to say.
   cache_seconds : Int32
+  /// The path the HTTP+JSON binding's routes hang off, `/message:send` and the rest; `None`
+  /// serves JSON-RPC alone.
+  rest_path : String?
 }
 
 ///|
-/// The endpoint at `/`, the card at its well-known address, and a card a client may keep for five
-/// minutes.
+/// The endpoint at `/`, the card at its well-known address, a card a client may keep for five
+/// minutes, and the HTTP+JSON routes from the root.
 pub fn Options::new() -> Options {
-  { rpc_path: "/", card_path: @moona2a.card_path, cache_seconds: 300, }
+  {
+    rpc_path: "/",
+    card_path: @moona2a.card_path,
+    cache_seconds: 300,
+    rest_path: Some(""),
+  }
 }
 
 ///|
@@ -54,7 +62,16 @@ async fn serve(
     return
   }
   if http.http_method != "POST" || http.path != options.rpc_path {
-    send_response(send, @moonasgi.Response::text(status=404, "not found"))
+    let found = match options.rest_path {
+      Some(prefix) => find(http.http_method, http.path, prefix)
+      None => Nowhere
+    }
+    match found {
+      Call(rpc, fields) => serve_rest(server, http, body, rpc, fields, send)
+      Verb(verbs) => send_response(send, rest_wrong_verb(verbs))
+      Nowhere =>
+        send_response(send, @moonasgi.Response::text(status=404, "not found"))
+    }
     return
   }
   let text = @utf8.decode(body) catch {

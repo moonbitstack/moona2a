@@ -25,7 +25,7 @@ priv struct Folding {
 /// Turn what raised into the failure a caller sees. A refusal keeps its own name and code;
 /// anything else is the internal error the specification reserves for a bug, because what an agent
 /// trips over is not the caller's to read.
-fn failure_of(error : Error) -> @moonjrpc.Failure {
+pub fn failure_of(error : Error) -> @moonjrpc.Failure {
   match error {
     @moonjrpc.Failed(failure) => failure
     TaskNotFound(detail) => TaskNotFound(detail).failure()
@@ -430,7 +430,8 @@ fn Server::on_list(
 }
 
 ///|
-/// Answer `CancelTask`.
+/// Answer `CancelTask` with the task as it stands after the cancellation, as `a2a.proto` declares
+/// it; the task is not wrapped the way a send's answer is.
 async fn Server::on_cancel(
   self : Server,
   params : Json?,
@@ -455,11 +456,9 @@ async fn Server::on_cancel(
     stopped,
     StatusChange(TaskStatusUpdate::of(task.id, task.context_id, Canceled)),
   )
-  Json::object({
-    "task": stopped.encode(view={
-      artifacts: true,
-      history: self.history(pick_int(fields, "historyLength", "history_length")),
-    }),
+  stopped.encode(view={
+    artifacts: true,
+    history: self.history(pick_int(fields, "historyLength", "history_length")),
   })
 }
 
