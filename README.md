@@ -318,24 +318,46 @@ itself by passing no version at all.
 ## Consistency
 
 The [official conformance suite](https://github.com/a2aproject/a2a-tck) runs against the server in
-`src/examples/05-conformance`, at commit `70f6f73`, over the JSON-RPC binding.
-`scripts/conformance/check.sh` reproduces the run.
+`src/examples/05-conformance`, at commit `70f6f73`, over all three bindings: JSON-RPC and HTTP+JSON
+on one port, gRPC on the next. `scripts/conformance/check.sh` reproduces the run, and CI fails on
+any failure `scripts/conformance/expected.txt` does not explain, or on an explained one that stops
+happening.
 
-| Run | Result |
-|:--|:--|
-| `--level must` | 85 passed, 0 failed |
-| all levels | 97 passed, 0 failed, 166 skipped |
+| Level | Passed | Failed | Skipped | Manual | Not tested |
+|:--|:--:|:--:|:--:|:--:|:--:|
+| MUST | 85 | 2 | 5 | 7 | 16 |
+| SHOULD | 9 | 0 | 1 | 2 | 2 |
+| MAY | 3 | 0 | 1 | 0 | 0 |
 
-The skips are the suite's own: the requirements it marks `not-automatable` (card signing, TLS
-deployment, client tenant propagation) and the two bindings this library does not declare — it
-speaks JSON-RPC, so there is no gRPC or HTTP+JSON endpoint for the suite to drive. The error codes
-of section 5.4, the multi-stream ordering, the resubscription cases and webhook delivery are all
-covered.
+| Binding | Checks passed |
+|:--|:--:|
+| agent card | 9 of 11, 2 skipped |
+| gRPC | 67 of 72, 4 skipped |
+| JSON-RPC | 91 of 99, 7 skipped |
+| HTTP+JSON | 87 of 95, 6 skipped |
 
-The same server and client were run against the [official Python SDK](https://github.com/a2aproject/a2a-python)
-(1.3.0) in both directions — the MoonBit client reading a card and streaming from a Python agent,
-and the Python client sending, streaming and reading a task back from the MoonBit server —
-with `scripts/interop/check.sh`.
+The two failures are places where the suite contradicts itself, and the server follows the
+specification:
+
+- **HTTP_JSON-ERR-001** wants `application/json` on an error body. Section 11.1 and the error
+  example of section 11.6 write `application/a2a+json`, and the suite's own HTTP_JSON-SVC-001 checks
+  for that type on the same response, which passes.
+- **CORE-SEND-003**, once per binding, asks for `ContentTypeNotSupported` but names no expected
+  error, so the refusal section 3.1.1 requires is counted as a failed call. HTTP_JSON-STATUS-001
+  asserts that refusal for the same probe, which passes.
+
+The skips are the suite's own: card signing, TLS deployment and client tenant propagation are
+marked manual or not automatable.
+
+The same server and client run against the [official Python SDK](https://github.com/a2aproject/a2a-python)
+1.3.0 in both directions over each binding, with `scripts/interop/check.sh`: the MoonBit client
+sends, streams, reads a task back and meets two refusals from a Python agent, and the Python client
+does the same against the MoonBit server, asserting `TaskNotFoundError` and
+`TaskNotCancelableError` where the specification names them. Six runs, all in CI.
+
+The error mapping of the two newer bindings and the order of streamed events are checked by
+breaking them: `scripts/check_mutations.py` changes one line at a time, seven in all, and each has
+to turn the test named for it red. It runs in CI.
 
 The spans of the `otel` package are checked against the semantic conventions they claim to follow.
 [Weaver](https://github.com/open-telemetry/weaver) 0.28.0 runs `registry live-check` over the spans

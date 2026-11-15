@@ -3,3 +3,6 @@
 # listed here that now passes, so the list stays what the server actually does.
 
 tests/compatibility/core_operations/test_error_handling.py::TestRestErrorStructure::test_error_uses_aip193_format  # HTTP_JSON-ERR-001 wants `application/json` on an error body; specification §11.1 and the error example of §11.6 use `application/a2a+json`, and the suite's own HTTP_JSON-SVC-001 checks for that type on the same response
+tests/compatibility/core_operations/test_requirements.py::test_must_requirement[CORE-SEND-003-grpc]  # CORE-SEND-003 asks for ContentTypeNotSupported but names no expected error, so the refusal §3.1.1 requires is counted as a failed operation; HTTP_JSON-STATUS-001 asserts that refusal for the same probe
+tests/compatibility/core_operations/test_requirements.py::test_must_requirement[CORE-SEND-003-jsonrpc]  # as above, over JSON-RPC
+tests/compatibility/core_operations/test_requirements.py::test_must_requirement[CORE-SEND-003-http_json]  # as above, over HTTP+JSON
