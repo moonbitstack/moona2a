@@ -1,0 +1,29 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moona2a/grpc"
+
+import {
+  "moonbitlang/core/json",
+  "moonbitstack/moona2a",
+  "moonbitstack/moonrpc/stream",
+}
+
+// Values
+pub let a2a_proto : String
+
+pub fn decode(String, BytesView) -> @json.Json raise
+
+pub fn details_of(BytesView) -> Array[@json.Json] raise
+
+pub fn encode(String, @json.Json) -> Bytes raise
+
+pub fn register(&@stream.Registrar, @moona2a.Server) -> Unit
+
+pub fn types_of(@moona2a.Method) -> (String, String)
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits

@@ -1,0 +1,24 @@
+// The gRPC binding: the A2A service registered on any moonrpc server, and the message codec a
+// client over a moonrpc channel uses. The messages are read from the specification's own
+// `a2a.proto`, so nothing here is generated code.
+
+import {
+  "moonbitlang/core/encoding/utf8",
+  "moonbitstack/moona2a",
+  "moonbitstack/moonrpc/stream",
+  "moonbitstack/moonproto/parser",
+  "moonbitstack/moonproto/desc",
+  "moonbitstack/moonproto/dynamic",
+  "moonbitstack/moonproto/json" @protojson,
+  "moonbitstack/moonproto/proto",
+  "moonbitstack/moonproto/known",
+  "moonbitstack/moonproto/reflect",
+}
+
+import {
+  "moonbitlang/async",
+  "moonbitstack/moona2a",
+  "moonbitstack/moonhttp/header",
+  "moonbitstack/moonrpc/stream",
+  "moonbitstack/moonjson",
+} for "test"

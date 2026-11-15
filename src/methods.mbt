@@ -36,27 +36,27 @@ pub fn Method::name(self : Method) -> String {
 }
 
 ///|
+/// Every method of the protocol, in the order section 3.1 lists them.
+pub fn Method::all() -> Array[Method] {
+  [
+    SendMessage,
+    SendStreamingMessage,
+    GetTask,
+    ListTasks,
+    CancelTask,
+    SubscribeToTask,
+    CreatePushConfig,
+    GetPushConfig,
+    ListPushConfigs,
+    DeletePushConfig,
+    GetExtendedCard,
+  ]
+}
+
+///|
 /// The method that goes by `name`, when it is one of the protocol's.
 pub fn Method::from_name(name : String) -> Method? {
-  for
-    candidate in [
-      SendMessage,
-      SendStreamingMessage,
-      GetTask,
-      ListTasks,
-      CancelTask,
-      SubscribeToTask,
-      CreatePushConfig,
-      GetPushConfig,
-      ListPushConfigs,
-      DeletePushConfig,
-      GetExtendedCard,
-    ] {
-    if candidate.name() == name {
-      return Some(candidate)
-    }
-  }
-  None
+  Method::all().iter().find_first(candidate => candidate.name() == name)
 }
 
 ///|
