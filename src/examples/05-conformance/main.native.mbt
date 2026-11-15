@@ -244,9 +244,12 @@ fn with_interfaces(
 async fn main {
   let port = 9999
   let store = @moona2a.MemoryStore::new()
+  // This agent reads text and nothing else, so a part of another type is refused rather than
+  // ignored; the library leaves that choice to the agent and is off by default.
   let server = @moona2a.Server::new(Conformance::{ artifacts: 0L, }, card(port))
     .storing(store)
     .notifying(@fetch.Webhook::{ })
+    .under({ ..@moona2a.ServerConfig::new(), refuse_unknown_media: true, })
   let app = @asgi.to_asgi(server)
   @async.with_task_group(async fn(group) {
     // A caller that asks not to wait leaves its run to this group, which outlives the request.

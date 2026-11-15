@@ -180,6 +180,30 @@ pub fn AgentCard::input_modes(self : AgentCard) -> Array[String] {
 }
 
 ///|
+/// Whether the card offers to take `media_type`: listed as it is, or under `type/*` or `*/*`.
+/// Parameters such as `charset` and the case of the name do not count (RFC 9110 §8.3.1).
+pub fn AgentCard::accepts(self : AgentCard, media_type : StringView) -> Bool {
+  let wanted = bare_media(media_type)
+  let family = match wanted.split("/").head() {
+    Some(kind) if wanted.contains("/") => "\{kind}/*"
+    _ => wanted
+  }
+  self
+  .input_modes()
+  .iter()
+  .any(mode => {
+    let mode = bare_media(mode)
+    mode == wanted || mode == family || mode == "*/*"
+  })
+}
+
+///|
+/// A media type without its parameters, in lower case.
+fn bare_media(text : StringView) -> String {
+  text.split(";").head().unwrap_or(text).trim().to_owned().to_lower()
+}
+
+///|
 /// The interface a client should try first, which is the one the card lists first.
 pub fn AgentCard::preferred(self : AgentCard) -> AgentInterface? {
   if self.supported_interfaces.length() > 0 {

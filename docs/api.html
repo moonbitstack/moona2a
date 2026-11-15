@@ -181,6 +181,11 @@
 <div class="doc"><p>A card with no provider, no security and no signatures, serving text in and out.</p></div>
 <div class="params"><span class="p"><b>name</b> <span class="pt">String</span></span><span class="p"><b>description</b> <span class="pt">String</span></span><span class="p"><b>version</b> <span class="pt">String</span></span><span class="p"><b>url</b> <span class="pt">String</span></span><span class="p"><b>skills</b> <span class="pt">Array[AgentSkill]</span></span></div>
 </article>
+<article class="api-item" id="m-moona2a-AgentCard-accepts">
+<div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCard::accepts</span>(Self, StringView) -&gt; Bool</div>
+<div class="doc"><p>Whether the card offers to take <code>media_type</code>: listed as it is, or under <code>type/*</code> or <code>*/*</code>. Parameters such as <code>charset</code> and the case of the name do not count (RFC 9110 §8.3.1).</p></div>
+<div class="params"><span class="p"><b>media_type</b> <span class="pt">StringView</span></span></div>
+</article>
 <article class="api-item" id="m-moona2a-AgentCard-capable">
 <div class="sig"><span class="kw">pub</span> <span class="kw">fn</span> <span class="name">AgentCard::capable</span>(Self, AgentCapabilities) -&gt; Self</div>
 <div class="doc"><p>The same card advertising <code>capabilities</code>.</p></div>

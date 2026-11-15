@@ -177,3 +177,18 @@ test "push: a registration from the wire keeps the id the caller chose" {
   assert_eq(read.task_id, "t-1")
   assert_true(read.authentication is None)
 }
+
+///|
+test "card: a media type is taken as listed, under its family or any type, parameters aside" {
+  let card = {
+    ..@moona2a.AgentCard::new("a", "b", "1.0.0", "http://h", []),
+    default_input_modes: ["text/plain", "image/*"],
+  }
+  assert_true(card.accepts("text/plain"))
+  assert_true(card.accepts("Text/Plain; charset=utf-8"))
+  assert_true(card.accepts("image/png"))
+  assert_false(card.accepts("application/json"))
+  assert_false(card.accepts("text/html"))
+  let open = { ..card, default_input_modes: ["*/*"], }
+  assert_true(open.accepts("application/x-anything"))
+}

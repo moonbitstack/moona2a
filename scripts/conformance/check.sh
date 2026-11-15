@@ -6,7 +6,7 @@
 # gRPC on the next one.
 #
 # Usage: scripts/conformance/check.sh [--level must|should|may] [--transport jsonrpc,grpc,http_json]
-# Exit status is the suite's own: 0 only when every automated check passed.
+# Exit status: 0 when every failure is one `scripts/conformance/expected.txt` explains.
 
 set -euo pipefail
 
@@ -89,4 +89,35 @@ fi
 if [[ -n "$transport" ]]; then
   suite_args+=(--transport "$transport")
 fi
-(cd "$workdir/a2a-tck" && "$suite_python" ./run_tck.py "${suite_args[@]}")
+log="$workdir/run.log"
+set +e
+(cd "$workdir/a2a-tck" && "$suite_python" ./run_tck.py "${suite_args[@]}") 2>&1 | tee "$log"
+set -e
+
+# The suite's exit status counts every failure; `expected.txt` names the ones this server does
+# not pass and why, so the run fails only on a failure nobody has explained, or on an explained
+# one that no longer happens.
+expected="$repo_root/scripts/conformance/expected.txt"
+failed="$(grep -E '^FAILED tests/' "$log" | sed -E 's/^FAILED ([^ ]+).*/\1/' | sort -u)"
+known="$(grep -vE '^[[:space:]]*(#|$)' "$expected" | sed -E 's/[[:space:]]+#.*$//' | sort -u)"
+unexpected="$(comm -23 <(printf '%s\n' "$failed" | sed '/^$/d') <(printf '%s\n' "$known" | sed '/^$/d'))"
+fixed="$(comm -13 <(printf '%s\n' "$failed" | sed '/^$/d') <(printf '%s\n' "$known" | sed '/^$/d'))"
+if [[ -n "$transport" || -n "$level" ]]; then
+  # A narrowed run does not reach every listed test, so a listed one missing says nothing.
+  fixed=""
+fi
+status=0
+if [[ -n "$unexpected" ]]; then
+  echo "== failures expected.txt does not explain =="
+  echo "$unexpected"
+  status=1
+fi
+if [[ -n "$fixed" ]]; then
+  echo "== listed in expected.txt but passing now; take them out =="
+  echo "$fixed"
+  status=1
+fi
+if [[ $status -eq 0 ]]; then
+  echo "conformance: every failure is one expected.txt explains"
+fi
+exit $status

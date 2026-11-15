@@ -173,7 +173,7 @@ fn Server::prepare(
     for part in message.parts {
       match part.media_type() {
         Some(media_type) =>
-          if !self.state.card.input_modes().contains(media_type) {
+          if !self.state.card.accepts(media_type) {
             raise ContentTypeNotSupported(media_type).as_failed()
           }
         None => ()
