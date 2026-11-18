@@ -63,7 +63,7 @@ pub(all) struct AgentCapabilities {
   extensions : Array[AgentExtension]
 }
 pub fn AgentCapabilities::equal(Self, Self) -> Bool
-pub fn AgentCapabilities::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AgentCapabilities::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn AgentCapabilities::not_equal(Self, Self) -> Bool
 pub fn AgentCapabilities::plain() -> Self
 pub fn AgentCapabilities::streaming_and_push() -> Self
@@ -92,7 +92,7 @@ pub fn AgentCard::accepts(Self, StringView) -> Bool
 pub fn AgentCard::capable(Self, AgentCapabilities) -> Self
 pub fn AgentCard::choose(Self, Array[Binding]) -> AgentInterface?
 pub fn AgentCard::equal(Self, Self) -> Bool
-pub fn AgentCard::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AgentCard::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn AgentCard::input_modes(Self) -> Array[String]
 pub fn AgentCard::new(String, String, String, String, Array[AgentSkill]) -> Self
 pub fn AgentCard::not_equal(Self, Self) -> Bool
@@ -109,7 +109,7 @@ pub(all) struct AgentExtension {
   params : @json.Json?
 }
 pub fn AgentExtension::equal(Self, Self) -> Bool
-pub fn AgentExtension::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AgentExtension::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn AgentExtension::not_equal(Self, Self) -> Bool
 pub fn AgentExtension::to_json(Self) -> @json.Json
 pub impl @json.FromJson for AgentExtension
@@ -123,7 +123,7 @@ pub(all) struct AgentInterface {
   tenant : String?
 }
 pub fn AgentInterface::equal(Self, Self) -> Bool
-pub fn AgentInterface::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AgentInterface::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn AgentInterface::grpc(String, protocol_version~ : String) -> Self
 pub fn AgentInterface::http_json(String, protocol_version~ : String) -> Self
 pub fn AgentInterface::json_rpc(String, protocol_version~ : String) -> Self
@@ -138,7 +138,7 @@ pub(all) struct AgentProvider {
   url : String
 }
 pub fn AgentProvider::equal(Self, Self) -> Bool
-pub fn AgentProvider::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AgentProvider::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn AgentProvider::not_equal(Self, Self) -> Bool
 pub fn AgentProvider::to_json(Self) -> @json.Json
 pub impl @json.FromJson for AgentProvider
@@ -155,7 +155,7 @@ pub(all) struct AgentSkill {
   output_modes : Array[String]
 }
 pub fn AgentSkill::equal(Self, Self) -> Bool
-pub fn AgentSkill::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AgentSkill::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn AgentSkill::new(String, String, String, Array[String]) -> Self
 pub fn AgentSkill::not_equal(Self, Self) -> Bool
 pub fn AgentSkill::to_json(Self) -> @json.Json
@@ -172,7 +172,7 @@ pub(all) struct Artifact {
   metadata : @json.Json?
 }
 pub fn Artifact::equal(Self, Self) -> Bool
-pub fn Artifact::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn Artifact::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn Artifact::named(Self, String) -> Self
 pub fn Artifact::new(String, Array[Part]) -> Self
 pub fn Artifact::not_equal(Self, Self) -> Bool
@@ -189,7 +189,7 @@ pub(all) struct AuthenticationInfo {
 }
 pub fn AuthenticationInfo::bearer(String) -> Self
 pub fn AuthenticationInfo::equal(Self, Self) -> Bool
-pub fn AuthenticationInfo::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn AuthenticationInfo::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn AuthenticationInfo::not_equal(Self, Self) -> Bool
 pub fn AuthenticationInfo::to_json(Self) -> @json.Json
 pub impl @json.FromJson for AuthenticationInfo
@@ -260,7 +260,7 @@ pub(all) struct ListTasksQuery {
 }
 pub fn ListTasksQuery::all() -> Self
 pub fn ListTasksQuery::equal(Self, Self) -> Bool
-pub fn ListTasksQuery::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn ListTasksQuery::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn ListTasksQuery::in_context(Self, String) -> Self
 pub fn ListTasksQuery::not_equal(Self, Self) -> Bool
 pub fn ListTasksQuery::to_json(Self) -> @json.Json
@@ -292,7 +292,7 @@ pub(all) struct Message {
 }
 pub fn Message::agent(String, String) -> Self
 pub fn Message::equal(Self, Self) -> Bool
-pub fn Message::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn Message::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn Message::in_task(Self, String, String) -> Self
 pub fn Message::new(String, Role, Array[Part]) -> Self
 pub fn Message::not_equal(Self, Self) -> Bool
@@ -333,7 +333,7 @@ pub(all) struct Part {
 pub fn Part::bytes(Bytes, filename? : String, media_type? : String) -> Self
 pub fn Part::data(@json.Json) -> Self
 pub fn Part::equal(Self, Self) -> Bool
-pub fn Part::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn Part::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn Part::media_type(Self) -> String?
 pub fn Part::not_equal(Self, Self) -> Bool
 pub fn Part::text(String) -> Self
@@ -360,7 +360,7 @@ pub(all) struct PushConfigPage {
   next_page_token : String
 }
 pub fn PushConfigPage::equal(Self, Self) -> Bool
-pub fn PushConfigPage::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn PushConfigPage::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn PushConfigPage::not_equal(Self, Self) -> Bool
 pub fn PushConfigPage::to_json(Self) -> @json.Json
 pub impl @json.FromJson for PushConfigPage
@@ -384,7 +384,7 @@ pub(all) enum Role {
   Agent
 }
 pub fn Role::equal(Self, Self) -> Bool
-pub fn Role::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn Role::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn Role::from_wire(String) -> Self
 pub fn Role::not_equal(Self, Self) -> Bool
 pub fn Role::to_json(Self) -> @json.Json
@@ -401,7 +401,7 @@ pub(all) struct SendMessageConfig {
 }
 pub fn SendMessageConfig::at_most(Self, Int32) -> Self
 pub fn SendMessageConfig::equal(Self, Self) -> Bool
-pub fn SendMessageConfig::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn SendMessageConfig::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn SendMessageConfig::immediately(Self) -> Self
 pub fn SendMessageConfig::not_equal(Self, Self) -> Bool
 pub fn SendMessageConfig::pushing(Self, TaskPushConfig) -> Self
@@ -418,7 +418,7 @@ pub(all) struct SendMessageRequest {
   tenant : String?
 }
 pub fn SendMessageRequest::equal(Self, Self) -> Bool
-pub fn SendMessageRequest::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn SendMessageRequest::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn SendMessageRequest::new(Message) -> Self
 pub fn SendMessageRequest::not_equal(Self, Self) -> Bool
 pub fn SendMessageRequest::to_json(Self) -> @json.Json
@@ -471,7 +471,7 @@ pub(all) enum StreamEvent {
   ArtifactChunk(TaskArtifactUpdate)
 }
 pub fn StreamEvent::equal(Self, Self) -> Bool
-pub fn StreamEvent::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn StreamEvent::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn StreamEvent::is_final(Self) -> Bool
 pub fn StreamEvent::not_equal(Self, Self) -> Bool
 pub fn StreamEvent::state(Self) -> TaskState?
@@ -492,7 +492,7 @@ pub(all) struct Task {
 pub fn Task::artifact(Self, String) -> Artifact?
 pub fn Task::encode(Self, view? : View) -> @json.Json
 pub fn Task::equal(Self, Self) -> Bool
-pub fn Task::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn Task::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn Task::new(String, String) -> Self
 pub fn Task::not_equal(Self, Self) -> Bool
 pub fn Task::recent(Self, Int32?) -> Array[Message]
@@ -513,7 +513,7 @@ pub(all) struct TaskArtifactUpdate {
   metadata : @json.Json?
 }
 pub fn TaskArtifactUpdate::equal(Self, Self) -> Bool
-pub fn TaskArtifactUpdate::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn TaskArtifactUpdate::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn TaskArtifactUpdate::not_equal(Self, Self) -> Bool
 pub fn TaskArtifactUpdate::of(String, String, Artifact, append? : Bool, last_chunk? : Bool) -> Self
 pub fn TaskArtifactUpdate::to_json(Self) -> @json.Json
@@ -534,7 +534,7 @@ pub(all) struct TaskPage {
   total_size : Int32
 }
 pub fn TaskPage::equal(Self, Self) -> Bool
-pub fn TaskPage::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn TaskPage::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn TaskPage::not_equal(Self, Self) -> Bool
 pub fn TaskPage::to_json(Self) -> @json.Json
 pub impl @json.FromJson for TaskPage
@@ -551,7 +551,7 @@ pub(all) struct TaskPushConfig {
 }
 pub fn TaskPushConfig::authenticating(Self, AuthenticationInfo) -> Self
 pub fn TaskPushConfig::equal(Self, Self) -> Bool
-pub fn TaskPushConfig::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn TaskPushConfig::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn TaskPushConfig::new(String, String, String) -> Self
 pub fn TaskPushConfig::not_equal(Self, Self) -> Bool
 pub fn TaskPushConfig::to_json(Self) -> @json.Json
@@ -572,7 +572,7 @@ pub(all) enum TaskState {
   AuthRequired
 }
 pub fn TaskState::equal(Self, Self) -> Bool
-pub fn TaskState::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn TaskState::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn TaskState::from_wire(String) -> Self
 pub fn TaskState::interrupted(Self) -> Bool
 pub fn TaskState::not_equal(Self, Self) -> Bool
@@ -589,7 +589,7 @@ pub(all) struct TaskStatus {
   timestamp : String?
 }
 pub fn TaskStatus::equal(Self, Self) -> Bool
-pub fn TaskStatus::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn TaskStatus::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn TaskStatus::not_equal(Self, Self) -> Bool
 pub fn TaskStatus::of(TaskState) -> Self
 pub fn TaskStatus::recorded(TaskState) -> Self
@@ -605,7 +605,7 @@ pub(all) struct TaskStatusUpdate {
   metadata : @json.Json?
 }
 pub fn TaskStatusUpdate::equal(Self, Self) -> Bool
-pub fn TaskStatusUpdate::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn TaskStatusUpdate::from_json(@json.Json, @json.DecodeContext) -> Self raise @json.JsonDecodeError
 pub fn TaskStatusUpdate::not_equal(Self, Self) -> Bool
 pub fn TaskStatusUpdate::of(String, String, TaskState) -> Self
 pub fn TaskStatusUpdate::to_json(Self) -> @json.Json

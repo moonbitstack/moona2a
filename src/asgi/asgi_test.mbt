@@ -78,7 +78,7 @@ fn response_of(
       _ => ()
     }
   }
-  let whole = chunks.fold(init=Bytes::new(0), fn(sum, chunk) { sum.add(chunk) })
+  let whole = chunks.fold(init=b"", fn(sum, chunk) { sum.add(chunk) })
   (status, headers, @utf8.decode(whole) catch { _ => "" })
 }
 

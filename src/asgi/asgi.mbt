@@ -227,7 +227,7 @@ async fn send_stop(send : @moonasgi.Send) -> Unit {
 ///|
 /// Read the whole request body, which the protocol sends in one piece for a call.
 async fn read_body(receive : @moonasgi.Receive) -> Bytes {
-  let mut whole = Bytes::new(0)
+  let mut whole = b""
   let mut reading = true
   while reading {
     match receive() {
